@@ -15445,9 +15445,11 @@ var isExtraneousPopstateEvent = function isExtraneousPopstateEvent(event) {
 
 "use strict";
 /* unused harmony export requireAuth */
-/* harmony export (immutable) */ __webpack_exports__["c"] = registerUser;
-/* harmony export (immutable) */ __webpack_exports__["a"] = loginUser;
-/* harmony export (immutable) */ __webpack_exports__["b"] = logoutUser;
+/* harmony export (immutable) */ __webpack_exports__["e"] = registerUser;
+/* harmony export (immutable) */ __webpack_exports__["c"] = loginUser;
+/* harmony export (immutable) */ __webpack_exports__["d"] = logoutUser;
+/* harmony export (immutable) */ __webpack_exports__["b"] = getAllUsers;
+/* harmony export (immutable) */ __webpack_exports__["a"] = getAllStudents;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react_router_dom__ = __webpack_require__(12);
@@ -15554,6 +15556,30 @@ function logoutUser() {
         console.error(error);
         console.error('Could not logout');
         return false;
+    });
+}
+
+// Users
+
+function getAllUsers() {
+    console.log('Getting users');
+    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('api/users').then(function (response) {
+        return response.data;
+    }).catch(function (error) {
+        console.log(error);
+        return [];
+    });
+}
+
+// Students
+
+function getAllStudents() {
+    console.log('Getting students');
+    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('api/students').then(function (response) {
+        return response.data;
+    }).catch(function (error) {
+        console.log(error);
+        return [];
     });
 }
 
@@ -58788,6 +58814,7 @@ var Example = function (_Component) {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react_dom___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react_dom__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_axios__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_axios__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__helpers__ = __webpack_require__(40);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -58799,6 +58826,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 /**
  * Created by aksha on 2/27/2018.
  */
+
 
 
 
@@ -58820,12 +58848,9 @@ var Students = function (_React$Component) {
     _createClass(Students, [{
         key: 'componentDidMount',
         value: function componentDidMount() {
-            var _this2 = this;
-
-            __WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('http://localhost:8000/api/students').then(function (response) {
-                _this2.setState({ students: response.data });
-            }).catch(function (error) {
-                console.log(error);
+            var comp = this;
+            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["a" /* getAllStudents */])().then(function (resp) {
+                comp.setState({ students: resp });
             });
         }
     }, {
@@ -58835,8 +58860,7 @@ var Students = function (_React$Component) {
                 return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                     'li',
                     { key: student.id },
-                    student.first_name,
-                    student.last_name
+                    student.first_name + ' ' + student.last_name
                 );
             });
         }
@@ -58927,7 +58951,7 @@ var Register = function (_React$Component) {
                 password_confirmation = _state.password_confirmation;
 
 
-            var no_err = Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["c" /* registerUser */])(name, email, password, password_confirmation);
+            var no_err = Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["e" /* registerUser */])(name, email, password, password_confirmation);
             if (no_err) {
                 this.refs.name.value = "";
                 this.refs.password.value = "";
@@ -58966,7 +58990,7 @@ var Register = function (_React$Component) {
                     ),
                     __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                         'button',
-                        { onClick: __WEBPACK_IMPORTED_MODULE_3__helpers__["b" /* logoutUser */].bind(this) },
+                        { onClick: __WEBPACK_IMPORTED_MODULE_3__helpers__["d" /* logoutUser */].bind(this) },
                         'Logout'
                     )
                 );
@@ -59082,6 +59106,7 @@ var Register = function (_React$Component) {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react_dom___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react_dom__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_axios__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_axios__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__helpers__ = __webpack_require__(40);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -59096,6 +59121,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 /**
  * Created by aksha on 2/27/2018.
  */
+
 
 
 
@@ -59119,12 +59145,9 @@ var Users = function (_React$Component) {
     _createClass(Users, [{
         key: 'componentDidMount',
         value: function componentDidMount() {
-            var _this2 = this;
-
-            __WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('http://localhost:8000/api/users').then(function (response) {
-                _this2.setState({ users: response.data });
-            }).catch(function (error) {
-                console.log(error);
+            var comp = this;
+            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["b" /* getAllUsers */])().then(function (resp) {
+                comp.setState({ users: resp });
             });
         }
     }, {
@@ -59134,7 +59157,7 @@ var Users = function (_React$Component) {
                 return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                     'li',
                     { key: user.id },
-                    user.name
+                    user.email
                 );
             });
         }
@@ -59276,7 +59299,7 @@ var Login = function (_React$Component) {
                 password = _state.password;
 
 
-            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["a" /* loginUser */])(email, password);
+            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["c" /* loginUser */])(email, password);
             this.forceUpdate();
         }
     }, {
@@ -59306,7 +59329,7 @@ var Login = function (_React$Component) {
                     ),
                     __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                         'button',
-                        { onClick: __WEBPACK_IMPORTED_MODULE_3__helpers__["b" /* logoutUser */].bind(this) },
+                        { onClick: __WEBPACK_IMPORTED_MODULE_3__helpers__["d" /* logoutUser */].bind(this) },
                         'Logout'
                     )
                 );

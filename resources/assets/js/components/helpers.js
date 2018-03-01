@@ -6,6 +6,7 @@ import React from "react";
 import { Redirect } from "react-router-dom";
 import axios from 'axios';
 
+
 // Redirect to login page if not logged in, or continue
 export function requireAuth() {
     if(!localStorage.getItem('user_token')) {
@@ -112,4 +113,32 @@ export function logoutUser() {
             console.error('Could not logout');
             return false;
         });
+}
+
+// Users
+
+export function getAllUsers() {
+    console.log('Getting users');
+    return axios.get('api/users')
+        .then(response => {
+            return response.data
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+// Students
+
+export function getAllStudents() {
+    console.log('Getting students');
+    return axios.get('api/students')
+        .then(response => {
+            return response.data
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
 }

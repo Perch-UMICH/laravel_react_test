@@ -4,6 +4,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom';
 import axios from 'axios'
+import {getAllStudents} from './helpers'
 
 
 class Students extends React.Component {
@@ -17,21 +18,17 @@ class Students extends React.Component {
     }
 
     componentDidMount() {
-        axios.get('http://localhost:8000/api/students')
-            .then(response => {
-                this.setState({ students: response.data });
-            })
-            .catch(function (error) {
-                console.log(error);
-            })
+        let comp = this;
+        getAllStudents().then(function (resp) {
+            comp.setState({students: resp});
+        });
     }
 
     renderStudents() {
         return this.state.students.map(student => {
             return (
                 <li key={student.id} >
-                    { student.first_name }
-                    { student.last_name }
+                    { student.first_name + ' ' + student.last_name }
                 </li>
             );
         })

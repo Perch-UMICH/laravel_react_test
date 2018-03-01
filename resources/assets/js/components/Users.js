@@ -7,6 +7,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom';
 import axios from 'axios'
+import {getAllUsers} from './helpers'
 
 // Makes get request to server for all users on site
 class Users extends React.Component {
@@ -20,20 +21,17 @@ class Users extends React.Component {
     }
 
     componentDidMount() {
-        axios.get('http://localhost:8000/api/users')
-            .then(response => {
-                this.setState({ users: response.data });
-            })
-            .catch(function (error) {
-                console.log(error);
-            })
+        let comp = this;
+        getAllUsers().then(function (resp) {
+            comp.setState({users: resp});
+        });
     }
 
     renderUsers() {
         return this.state.users.map(user => {
             return (
                 <li key={user.id} >
-                    { user.name }
+                    { user.email }
                 </li>
             );
         })
