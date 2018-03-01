@@ -8,6 +8,7 @@ import Students from './Students'
 import Register from './Register'
 import Users from './Users'
 import Home from './Home'
+import Login from './Login';
 
 const Main = () => (
     <main>
@@ -17,6 +18,7 @@ const Main = () => (
             <Route path='/users' component={Users}/>
             <Route path='/students' component={Students}/>
             <Route path='/register' component={Register}/>
+            <Route path='/login' component={Login}/>
         </Switch>
     </main>
 );

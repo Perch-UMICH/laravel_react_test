@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Passport\HasApiTokens;
+use App\Student;
 
 class User extends Authenticatable
 {
@@ -28,9 +29,9 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
-    public function getId()
-    {
-        return $this->id;
+    public function student() {
+        return $this->hasOne('App\Student');
     }
+
 
 }

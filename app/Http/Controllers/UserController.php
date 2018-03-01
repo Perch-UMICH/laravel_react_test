@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Http\Controllers\api;
+namespace App\Http\Controllers;
 
 
 use Illuminate\Http\Request;
@@ -9,7 +9,7 @@ use App\Http\Controllers\Controller;
 use App\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Validator;
-
+use Lcobucci\JWT\Parser;
 
 class UserController extends Controller
 {
@@ -29,15 +29,27 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function login()
+    public function login(Request $request)
     {
-        if (Auth::attempt(['email' => request('email'), 'password' => request('password')])) {
+        $user = User::where('email', $request['email'])->first();
+
+        if($user == null) {
+            return $this->outputJSON(null,"Incorrect Email Address",404);
+        } elseif (Auth::attempt(['email' => $request['email'], 'password' => $request['password']])) {
             $user = Auth::user();
-            $success['token'] = $user->createToken('MyApp')->accessToken;
-            return response()->json(['success' => $success], $this->successStatus);
+            $token['token'] = $user->createToken('token')->accessToken;
+            return $this->outputJSON($token,"Logged In Successfully");
         } else {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return $this->outputJSON(null,"Incorrect Password",404);
         }
+    }
+
+    public function logout(Request $request)
+    {
+        $user = $request->user();
+        $user->token()->revoke();
+        $user->token()->delete();
+        return $this->outputJSON(null,"Successfully Logged Out");
     }
 
 
@@ -48,27 +60,30 @@ class UserController extends Controller
      */
     public function register(Request $request)
     {
-        $validator = $request->validate([
-            'name' => 'required',
-            'email' => 'required|email',
-            'password' => 'required',
-            'password_confirmation' => 'required|same:password',
-        ]);
-
-
-//        if ($validator->fails()) {
-//            return response()->json(['error' => $validator->errors()], 401);
-//        }
-
+//        $validator = $request->validate([
+//            'name' => 'required',
+//            'email' => 'required|email',
+//            'password' => 'required',
+//            'password_confirmation' => 'required|same:password',
+//        ]);
 
         $input = $request->all();
+        if ($input['password'] != $input['password_confirmation']) {
+            return $this->outputJSON(null,"Passwords do not match", 404);
+        }
+        if (User::where('name', $input['name'])->first() != null) {
+            return $this->outputJSON(null,"Name already taken", 404);
+        }
+        if (User::where('email', $input['email'])->first() != null) {
+            return $this->outputJSON(null,"Email already taken", 404);
+        }
         $input['password'] = bcrypt($input['password']);
         $user = User::create($input);
-        $success['token'] = $user->createToken('MyApp')->accessToken;
-        $success['name'] = $user->name;
+        $token['token'] = $user->createToken('token')->accessToken;
 
+        Auth::attempt(['email' => request('email'), 'password' => request('password')]);
 
-        return response()->json(['success' => $success], $this->successStatus);
+        return $this->outputJSON($token,"Successfully Registered");
     }
 
 
@@ -77,9 +92,9 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function details()
+    public function details(Request $request)
     {
-        $user = Auth::user();
-        return response()->json(['success' => $user], $this->successStatus);
+        $user = $request->user();
+        return $this->outputJSON($user,"Found user details");
     }
 }

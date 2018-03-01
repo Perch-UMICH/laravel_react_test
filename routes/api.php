@@ -24,6 +24,8 @@ Route::post('login', 'UserController@login');
 Route::post('register', 'UserController@register');
 Route::group(['middleware' => 'auth:api'], function(){
     Route::post('details', 'UserController@details');
+
+    Route::post('logout', 'UserController@logout');
 });
 
 // Users
@@ -32,11 +34,11 @@ Route::get('users', 'UserController@index');
 // Students:
 Route::get('students', 'StudentController@index');
 
-Route::get('students/{student}', 'StudentController@show');
-
 Route::post('students','StudentController@store');
 
 Route::put('students/{student}','StudentController@update');
 
 Route::delete('students/{student}', 'StudentController@delete');
+
+Route::post('students/user_id', 'StudentController@user_id');
 

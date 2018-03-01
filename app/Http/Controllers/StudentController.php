@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Student;
 use Illuminate\Http\Request;
+use App\User;
 
 class StudentController extends Controller
 {
@@ -57,14 +58,17 @@ class StudentController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Display student based on user id.
      *
      * @param  \App\Student  $student
      * @return \Illuminate\Http\Response
      */
-    public function show(Student $student)
+    public function user_id(Request $request)
     {
-        return $student;
+        $input = $request->all();
+        $user_id = $input['user_id'];
+        $student = Student::where('user_id', $user_id)->first();
+        return response()->json($student, 201);
     }
 
     /**

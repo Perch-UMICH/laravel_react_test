@@ -21,6 +21,7 @@ class UsersTableSeeder extends Seeder
         $student->name = 'akshayro';
         $student->email = 'akshayro@umich.edu';
         $student->password = bcrypt('password');
+        $student->api_token = str_random(60);
         $student->save();
 
         // Create student profile object for student
@@ -38,6 +39,7 @@ class UsersTableSeeder extends Seeder
         $student->name = 'perch';
         $student->email = 'test@perch.com';
         $student->password = bcrypt('test');
+        $student->api_token = str_random(60);
         $student->save();
 
         $profile = new Student();

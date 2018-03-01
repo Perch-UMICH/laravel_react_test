@@ -4,6 +4,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom';
 import axios from 'axios'
+ import {logoutUser, registerUser} from './helpers';
 
 
 class Register extends React.Component {
@@ -27,23 +28,19 @@ class Register extends React.Component {
     onSubmit(e){
         e.preventDefault();
         const {name, email, password, password_confirmation} = this.state ;
-        axios.post('api/register', {
-            name,
-            email,
-            password,
-            password_confirmation
-        })
-            .then(response=> {
-                this.setState({err: false});
-                this.props.history.push("home") ;
-            })
-            .catch(error=> {
-                this.refs.name.value="";
-                this.refs.password.value="";
-                this.refs.email.value="";
-                this.refs.password_confirmation.value="";
-                this.setState({err: true});
-            });
+
+        let no_err = registerUser(name, email, password, password_confirmation);
+        if (no_err) {
+            this.refs.name.value="";
+            this.refs.password.value="";
+            this.refs.email.value="";
+            this.refs.confirm.value="";
+            this.setState({err: false});
+        }
+        else {
+            this.setState({err: true});
+        }
+        this.forceUpdate();
     }
 
     onChange(e) {
@@ -55,11 +52,20 @@ class Register extends React.Component {
         let error = this.state.err ;
         let msg = (!error) ? 'Registered successfully' : 'Error in registration' ;
 
+        if (localStorage.getItem('user_logged_in')) {
+            return(
+                <div>
+                    <h3>You are logged in as {localStorage.getItem('user_name')}</h3>
+                    <button onClick={logoutUser.bind(this)}>Logout</button>
+                </div>
+            )
+        }
+
         return(
             <div>
                 <h3>Register</h3>
                 <div>
-                    <div role="alert">{msg}</div>}
+                    {this.state.err != undefined && <div role="alert">{msg}</div>}
                 </div>
                 <form className="form-horizontal" role="form" method="POST" onSubmit= {this.onSubmit.bind(this)}>
 
