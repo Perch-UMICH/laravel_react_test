@@ -21,7 +21,7 @@ class UsersTableSeeder extends Seeder
         $student->name = 'akshayro';
         $student->email = 'akshayro@umich.edu';
         $student->password = bcrypt('password');
-        $student->api_token = str_random(60);
+        $student->is_student = true;
         $student->save();
 
         // Create student profile object for student
@@ -32,6 +32,7 @@ class UsersTableSeeder extends Seeder
         $profile->major = 'Physics';
         $profile->year = 'Junior';
         $profile->gpa = '4.0';
+        $profile->email = $student->email;
         $profile->save();
 
         // Create additional users
@@ -39,7 +40,7 @@ class UsersTableSeeder extends Seeder
         $student->name = 'perch';
         $student->email = 'test@perch.com';
         $student->password = bcrypt('test');
-        $student->api_token = str_random(60);
+        $student->is_student = true;
         $student->save();
 
         $profile = new Student();
@@ -48,6 +49,7 @@ class UsersTableSeeder extends Seeder
         $profile->last_name = 'User';
         $profile->year = 'Freshman';
         $profile->major = 'Biology';
+        $profile->email = $student->email;
         $profile->save();
     }
 }

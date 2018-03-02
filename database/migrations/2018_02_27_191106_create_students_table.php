@@ -26,6 +26,8 @@ class CreateStudentsTable extends Migration
             $table->string('year');
             $table->double('gpa')->nullable();
             $table->string('linkedin_user')->nullable();
+            $table->string('email');
+
             $table->timestamps();
 
         });

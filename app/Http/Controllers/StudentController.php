@@ -57,19 +57,6 @@ class StudentController extends Controller
         return response()->json($student, 201);
     }
 
-    /**
-     * Display student based on user id.
-     *
-     * @param  \App\Student  $student
-     * @return \Illuminate\Http\Response
-     */
-    public function user_id(Request $request)
-    {
-        $input = $request->all();
-        $user_id = $input['user_id'];
-        $student = Student::where('user_id', $user_id)->first();
-        return response()->json($student, 201);
-    }
 
     /**
      * Show the form for editing the specified resource.
@@ -112,5 +99,32 @@ class StudentController extends Controller
         $student->delete();
 
         return response()->json(null, 204);
+    }
+
+    // Get student skills of a student, based on student_id
+    public function skills(Request $request) {
+        $input = $request->all();
+        $student_id = $input['student_id'];
+        $student = Student::where('id', $student_id)->first();
+        $skills = $student->skills()->wherePivot('student_id', $student_id)->get();
+        return $this->outputJSON($skills,"Skills retrieved");
+    }
+
+    // Get student tags of a student, based on student_id
+    public function tags(Request $request) {
+        $input = $request->all();
+        $student_id = $input['student_id'];
+        $student = Student::where('id', $student_id)->first();
+        $tags = $student->tags()->wherePivot('student_id', $student_id)->get();
+        return $this->outputJSON($tags,"Tags retrieved");
+    }
+
+    // Get Student based on student_id
+    public function getStudent(Request $request)
+    {
+        $input = $request->all();
+        $user_id = $input['student_id'];
+        $student = Student::where('id', $user_id)->first();
+        return $this->outputJSON($student,"Student retrieved");
     }
 }

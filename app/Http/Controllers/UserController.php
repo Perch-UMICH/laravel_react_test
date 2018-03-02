@@ -31,11 +31,12 @@ class UserController extends Controller
      */
     public function login(Request $request)
     {
-        $user = User::where('email', $request['email'])->first();
+        $input = $request->all();
+        $user = User::where('email', $input['email'])->first();
 
         if($user == null) {
             return $this->outputJSON(null,"Incorrect Email Address",404);
-        } elseif (Auth::attempt(['email' => $request['email'], 'password' => $request['password']])) {
+        } elseif (Auth::attempt(['email' => $input['email'], 'password' => $input['password']])) {
             $user = Auth::user();
             $token['token'] = $user->createToken('token')->accessToken;
             return $this->outputJSON($token,"Logged In Successfully");
@@ -96,5 +97,13 @@ class UserController extends Controller
     {
         $user = $request->user();
         return $this->outputJSON($user,"Found user details");
+    }
+
+    public function isStudent(Request $request) {
+        $input = $request->all();
+        $user_id = $input['user_id'];
+        $user = User::find($user_id);
+        $isStudent = $user->is_student;
+        return $this->outputJSON($isStudent,"Checked if student");
     }
 }

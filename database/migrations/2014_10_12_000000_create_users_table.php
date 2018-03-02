@@ -18,8 +18,9 @@ class CreateUsersTable extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->string('password');
-            $table->string('api_token',60)->unique()->nullable();
-            //$table->rememberToken();
+            $table->boolean('is_student')->nullable();
+            $table->boolean('is_faculty')->nullable();
+            $table->rememberToken();
             $table->timestamps();
         });
     }

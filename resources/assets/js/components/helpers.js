@@ -8,14 +8,16 @@ import axios from 'axios';
 
 
 // Redirect to login page if not logged in, or continue
-export function requireAuth() {
-    if(!localStorage.getItem('user_token')) {
-        return <Redirect to='/login'  />
+export function isLoggedIn() {
+    if(localStorage.getItem('user_token') == null) {
+        console.log('Not logged in');
+        return false;
     }
+    console.log('Logged in');
+    return true;
 }
 
 export function registerUser(name, email, password, password_confirmation) {
-    console.log(name + ' ' + email + ' ' + password + ' ' + password_confirmation);
     axios.post('api/register', {
         name,
         email,
@@ -34,7 +36,6 @@ export function registerUser(name, email, password, password_confirmation) {
 }
 
 function successfulReg(response_in) {
-    console.log(response_in);
     localStorage.setItem('user_logged_in', true);
     localStorage.setItem('user_token', response_in.data.result.token);
 
@@ -42,7 +43,12 @@ function successfulReg(response_in) {
 }
 
 export function loginUser(email, password) {
-    logoutUser();
+    // Clear all user vars in local storage
+    localStorage.removeItem('user_logged_in');
+    localStorage.removeItem('user_email');
+    localStorage.removeItem('user_name');
+    localStorage.removeItem('user_id');
+
     // Login
     console.log('logging in ' + email);
     console.log(password);
@@ -51,14 +57,14 @@ export function loginUser(email, password) {
         email, password
     })
         .then(response => {
-            localStorage.setItem('user_token', response.data.success.token);
+            localStorage.setItem('user_token', response.data.result.token);
             localStorage.setItem('user_logged_in', true);
             console.log('Successfully logged in');
-            setUserDetails(email, password, response.data.success.token);
+            setUserDetails(response.data.result.token);
         })
         .catch(error => {
             console.error('Log in unsuccessful');
-            console.error(error.response);
+            console.error(error);
             return false;
         });
 
@@ -66,11 +72,12 @@ export function loginUser(email, password) {
 }
 
 function setUserDetails(token) {
+    console.log(token);
     // Save user details to local storage
     axios.post('api/details',
         {
             headers: {
-                'Authorization': 'Bearer ' + token,
+                'Authorization': 'Bearer ' + token
             }
         }
     )
@@ -129,6 +136,18 @@ export function getAllUsers() {
         })
 }
 
+export function getUserEmail() {
+    return localStorage.getItem('user_email');
+}
+
+export function getUserId() {
+    return localStorage.getItem('user_id');
+}
+
+export function getUsername() {
+    return localStorage.getItem('user_name');
+}
+
 // Students
 
 export function getAllStudents() {
@@ -136,6 +155,45 @@ export function getAllStudents() {
     return axios.get('api/students')
         .then(response => {
             return response.data
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+export function getStudent(student_id) {
+    console.log('Checking if user is student');
+    return axios.post('api/students/getStudent', student_id)
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+export function getStudentSkills(student_id) {
+    console.log('Getting student skills');
+    return axios.post('api/students/skills', student_id)
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+export function getStudentTags(student_id) {
+    console.log('Getting student tags');
+    return axios.post('api/students/tags', student_id)
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
         })
         .catch(function (error) {
             console.log(error);

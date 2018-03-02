@@ -920,15 +920,15 @@ module.exports = warning;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__Prompt__ = __webpack_require__(91);
 /* unused harmony reexport Prompt */
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__Redirect__ = __webpack_require__(93);
-/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return __WEBPACK_IMPORTED_MODULE_6__Redirect__["a"]; });
+/* unused harmony reexport Redirect */
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__Route__ = __webpack_require__(37);
-/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "d", function() { return __WEBPACK_IMPORTED_MODULE_7__Route__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return __WEBPACK_IMPORTED_MODULE_7__Route__["a"]; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__Router__ = __webpack_require__(19);
 /* unused harmony reexport Router */
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__StaticRouter__ = __webpack_require__(99);
 /* unused harmony reexport StaticRouter */
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__Switch__ = __webpack_require__(101);
-/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "e", function() { return __WEBPACK_IMPORTED_MODULE_10__Switch__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "d", function() { return __WEBPACK_IMPORTED_MODULE_10__Switch__["a"]; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__matchPath__ = __webpack_require__(103);
 /* unused harmony reexport matchPath */
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__withRouter__ = __webpack_require__(104);
@@ -15444,12 +15444,18 @@ var isExtraneousPopstateEvent = function isExtraneousPopstateEvent(event) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* unused harmony export requireAuth */
-/* harmony export (immutable) */ __webpack_exports__["e"] = registerUser;
-/* harmony export (immutable) */ __webpack_exports__["c"] = loginUser;
-/* harmony export (immutable) */ __webpack_exports__["d"] = logoutUser;
+/* harmony export (immutable) */ __webpack_exports__["d"] = isLoggedIn;
+/* harmony export (immutable) */ __webpack_exports__["g"] = registerUser;
+/* harmony export (immutable) */ __webpack_exports__["e"] = loginUser;
+/* harmony export (immutable) */ __webpack_exports__["f"] = logoutUser;
 /* harmony export (immutable) */ __webpack_exports__["b"] = getAllUsers;
+/* unused harmony export getUserEmail */
+/* unused harmony export getUserId */
+/* harmony export (immutable) */ __webpack_exports__["c"] = getUsername;
 /* harmony export (immutable) */ __webpack_exports__["a"] = getAllStudents;
+/* unused harmony export getStudent */
+/* unused harmony export getStudentSkills */
+/* unused harmony export getStudentTags */
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react_router_dom__ = __webpack_require__(12);
@@ -15464,14 +15470,16 @@ var isExtraneousPopstateEvent = function isExtraneousPopstateEvent(event) {
 
 
 // Redirect to login page if not logged in, or continue
-function requireAuth() {
-    if (!localStorage.getItem('user_token')) {
-        return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1_react_router_dom__["c" /* Redirect */], { to: "/login" });
+function isLoggedIn() {
+    if (localStorage.getItem('user_token') == null) {
+        console.log('Not logged in');
+        return false;
     }
+    console.log('Logged in');
+    return true;
 }
 
 function registerUser(name, email, password, password_confirmation) {
-    console.log(name + ' ' + email + ' ' + password + ' ' + password_confirmation);
     __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/register', {
         name: name,
         email: email,
@@ -15488,7 +15496,6 @@ function registerUser(name, email, password, password_confirmation) {
 }
 
 function successfulReg(response_in) {
-    console.log(response_in);
     localStorage.setItem('user_logged_in', true);
     localStorage.setItem('user_token', response_in.data.result.token);
 
@@ -15496,7 +15503,12 @@ function successfulReg(response_in) {
 }
 
 function loginUser(email, password) {
-    logoutUser();
+    // Clear all user vars in local storage
+    localStorage.removeItem('user_logged_in');
+    localStorage.removeItem('user_email');
+    localStorage.removeItem('user_name');
+    localStorage.removeItem('user_id');
+
     // Login
     console.log('logging in ' + email);
     console.log(password);
@@ -15504,13 +15516,13 @@ function loginUser(email, password) {
     __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/login', {
         email: email, password: password
     }).then(function (response) {
-        localStorage.setItem('user_token', response.data.success.token);
+        localStorage.setItem('user_token', response.data.result.token);
         localStorage.setItem('user_logged_in', true);
         console.log('Successfully logged in');
-        setUserDetails(email, password, response.data.success.token);
+        setUserDetails(response.data.result.token);
     }).catch(function (error) {
         console.error('Log in unsuccessful');
-        console.error(error.response);
+        console.error(error);
         return false;
     });
 
@@ -15518,6 +15530,7 @@ function loginUser(email, password) {
 }
 
 function setUserDetails(token) {
+    console.log(token);
     // Save user details to local storage
     __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/details', {
         headers: {
@@ -15571,12 +15584,57 @@ function getAllUsers() {
     });
 }
 
+function getUserEmail() {
+    return localStorage.getItem('user_email');
+}
+
+function getUserId() {
+    return localStorage.getItem('user_id');
+}
+
+function getUsername() {
+    return localStorage.getItem('user_name');
+}
+
 // Students
 
 function getAllStudents() {
     console.log('Getting students');
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('api/students').then(function (response) {
         return response.data;
+    }).catch(function (error) {
+        console.log(error);
+        return [];
+    });
+}
+
+function getStudent(student_id) {
+    console.log('Checking if user is student');
+    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/students/getStudent', student_id).then(function (response) {
+        console.log(response.data.message);
+        return response.data.result;
+    }).catch(function (error) {
+        console.log(error);
+        return [];
+    });
+}
+
+function getStudentSkills(student_id) {
+    console.log('Getting student skills');
+    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/students/skills', student_id).then(function (response) {
+        console.log(response.data.message);
+        return response.data.result;
+    }).catch(function (error) {
+        console.log(error);
+        return [];
+    });
+}
+
+function getStudentTags(student_id) {
+    console.log('Getting student tags');
+    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/students/tags', student_id).then(function (response) {
+        console.log(response.data.message);
+        return response.data.result;
     }).catch(function (error) {
         console.log(error);
         return [];
@@ -57291,7 +57349,7 @@ Prompt.contextTypes = {
 // Written in this round about way for babel-transform-imports
 
 
-/* harmony default export */ __webpack_exports__["a"] = (__WEBPACK_IMPORTED_MODULE_0_react_router_es_Redirect__["a" /* default */]);
+/* unused harmony default export */ var _unused_webpack_default_export = (__WEBPACK_IMPORTED_MODULE_0_react_router_es_Redirect__["a" /* default */]);
 
 /***/ }),
 /* 94 */
@@ -58723,14 +58781,14 @@ var Main = function Main() {
         'main',
         null,
         __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-            __WEBPACK_IMPORTED_MODULE_1_react_router_dom__["e" /* Switch */],
+            __WEBPACK_IMPORTED_MODULE_1_react_router_dom__["d" /* Switch */],
             null,
-            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1_react_router_dom__["d" /* Route */], { exact: true, path: '/', component: __WEBPACK_IMPORTED_MODULE_6__Home__["a" /* default */] }),
-            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1_react_router_dom__["d" /* Route */], { path: '/example', component: __WEBPACK_IMPORTED_MODULE_2__Example__["a" /* default */] }),
-            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1_react_router_dom__["d" /* Route */], { path: '/users', component: __WEBPACK_IMPORTED_MODULE_5__Users__["a" /* default */] }),
-            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1_react_router_dom__["d" /* Route */], { path: '/students', component: __WEBPACK_IMPORTED_MODULE_3__Students__["a" /* default */] }),
-            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1_react_router_dom__["d" /* Route */], { path: '/register', component: __WEBPACK_IMPORTED_MODULE_4__Register__["a" /* default */] }),
-            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1_react_router_dom__["d" /* Route */], { path: '/login', component: __WEBPACK_IMPORTED_MODULE_7__Login__["a" /* default */] })
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1_react_router_dom__["c" /* Route */], { exact: true, path: '/', component: __WEBPACK_IMPORTED_MODULE_6__Home__["a" /* default */] }),
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1_react_router_dom__["c" /* Route */], { path: '/example', component: __WEBPACK_IMPORTED_MODULE_2__Example__["a" /* default */] }),
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1_react_router_dom__["c" /* Route */], { path: '/users', component: __WEBPACK_IMPORTED_MODULE_5__Users__["a" /* default */] }),
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1_react_router_dom__["c" /* Route */], { path: '/students', component: __WEBPACK_IMPORTED_MODULE_3__Students__["a" /* default */] }),
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1_react_router_dom__["c" /* Route */], { path: '/register', component: __WEBPACK_IMPORTED_MODULE_4__Register__["a" /* default */] }),
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1_react_router_dom__["c" /* Route */], { path: '/login', component: __WEBPACK_IMPORTED_MODULE_7__Login__["a" /* default */] })
         )
     );
 };
@@ -58951,7 +59009,7 @@ var Register = function (_React$Component) {
                 password_confirmation = _state.password_confirmation;
 
 
-            var no_err = Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["e" /* registerUser */])(name, email, password, password_confirmation);
+            var no_err = Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["g" /* registerUser */])(name, email, password, password_confirmation);
             if (no_err) {
                 this.refs.name.value = "";
                 this.refs.password.value = "";
@@ -58990,7 +59048,7 @@ var Register = function (_React$Component) {
                     ),
                     __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                         'button',
-                        { onClick: __WEBPACK_IMPORTED_MODULE_3__helpers__["d" /* logoutUser */].bind(this) },
+                        { onClick: __WEBPACK_IMPORTED_MODULE_3__helpers__["f" /* logoutUser */].bind(this) },
                         'Logout'
                     )
                 );
@@ -59282,6 +59340,7 @@ var Login = function (_React$Component) {
         _this.state = {
             email: '',
             password: '',
+            logged_in: '',
             err: undefined
         };
         return _this;
@@ -59289,7 +59348,9 @@ var Login = function (_React$Component) {
 
     _createClass(Login, [{
         key: 'componentDidMount',
-        value: function componentDidMount() {}
+        value: function componentDidMount() {
+            this.setState({ logged_in: Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["d" /* isLoggedIn */])() });
+        }
     }, {
         key: 'onSubmit',
         value: function onSubmit(e) {
@@ -59299,7 +59360,7 @@ var Login = function (_React$Component) {
                 password = _state.password;
 
 
-            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["c" /* loginUser */])(email, password);
+            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["e" /* loginUser */])(email, password);
             this.forceUpdate();
         }
     }, {
@@ -59317,7 +59378,7 @@ var Login = function (_React$Component) {
             var error = this.state.err;
             var msg = !error ? 'Login successful' : 'Error in login';
 
-            if (localStorage.getItem('user_logged_in')) {
+            if (this.state.logged_in) {
                 return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                     'div',
                     null,
@@ -59325,11 +59386,11 @@ var Login = function (_React$Component) {
                         'h3',
                         null,
                         'You are logged in as ',
-                        localStorage.getItem('user_name')
+                        __WEBPACK_IMPORTED_MODULE_3__helpers__["c" /* getUsername */].bind(this)
                     ),
                     __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                         'button',
-                        { onClick: __WEBPACK_IMPORTED_MODULE_3__helpers__["d" /* logoutUser */].bind(this) },
+                        { onClick: __WEBPACK_IMPORTED_MODULE_3__helpers__["f" /* logoutUser */].bind(this) },
                         'Logout'
                     )
                 );

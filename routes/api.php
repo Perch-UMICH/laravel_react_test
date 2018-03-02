@@ -24,21 +24,22 @@ Route::post('login', 'UserController@login');
 Route::post('register', 'UserController@register');
 Route::group(['middleware' => 'auth:api'], function(){
     Route::post('details', 'UserController@details');
-
     Route::post('logout', 'UserController@logout');
 });
 
 // Users
 Route::get('users', 'UserController@index');
+Route::post('users/isStudent', 'UserController@isStudent');
 
 // Students:
 Route::get('students', 'StudentController@index');
-
 Route::post('students','StudentController@store');
-
 Route::put('students/{student}','StudentController@update');
-
 Route::delete('students/{student}', 'StudentController@delete');
 
-Route::post('students/user_id', 'StudentController@user_id');
+Route::post('students/getStudent', 'StudentController@getStudent');
+Route::post('students/tags', 'StudentController@tags');
+Route::post('students/skills', 'StudentController@skills');
 
+// Skills:
+Route::get('skills', 'SkillController@index');
