@@ -22,6 +22,7 @@ class CreateFacultiesTable extends Migration
             $table->string('first_name');
             $table->string('last_name');
             $table->string('title')->nullable();
+            $table->string('pi_of_lab_id')->nullable();
             $table->string('email');
 
             $table->timestamps();

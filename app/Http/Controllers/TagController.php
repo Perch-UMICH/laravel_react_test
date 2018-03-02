@@ -14,7 +14,8 @@ class TagController extends Controller
      */
     public function index()
     {
-        //
+        $tags = Tag::all();
+        return $this->outputJSON($tags, 'Retrieved tags');
     }
 
     /**
@@ -46,7 +47,7 @@ class TagController extends Controller
      */
     public function show(Tag $tag)
     {
-        //
+        return $this->outputJSON($tag, 'Retrieved tag');
     }
 
     /**

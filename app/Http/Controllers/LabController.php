@@ -14,7 +14,8 @@ class LabController extends Controller
      */
     public function index()
     {
-        //
+        $labs = Lab::all();
+        return $this->outputJSON($labs,"Labs retrieved");
     }
 
     /**

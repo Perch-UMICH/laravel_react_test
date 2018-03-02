@@ -4,7 +4,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom';
 import axios from 'axios'
- import {logoutUser, registerUser} from './helpers';
+ import {logoutCurrentUser, registerUser, getCurrentUsername} from './helpers';
 
 
 class Register extends React.Component {
@@ -17,12 +17,14 @@ class Register extends React.Component {
             email : '',
             password: '',
             password_confirmation: '',
+            username: '',
             err: undefined
         }
     }
 
     componentDidMount() {
-
+        let name = getCurrentUsername();
+        this.setState({username: name});
     }
 
     onSubmit(e){
@@ -55,8 +57,8 @@ class Register extends React.Component {
         if (localStorage.getItem('user_logged_in')) {
             return(
                 <div>
-                    <h3>You are logged in as {localStorage.getItem('user_name')}</h3>
-                    <button onClick={logoutUser.bind(this)}>Logout</button>
+                    <h3>You are logged in as {this.state.username}</h3>
+                    <button onClick={logoutCurrentUser.bind(this)}>Logout</button>
                 </div>
             )
         }

@@ -15,6 +15,17 @@ class CreateLabsTable extends Migration
     {
         Schema::create('labs', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('name')->index();
+            $table->string('department')->index();
+            $table->string('location')->nullable();
+            $table->text('description');
+            $table->text('publications')->nullable();
+            $table->string('url')->nullable();
+
+            // lab qualifications
+            $table->float('gpa')->nullable(); // required gpa to apply
+            $table->integer('weeklyCommitment')->nullable(); // weekly time commitment
+
             $table->timestamps();
         });
     }

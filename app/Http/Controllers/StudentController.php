@@ -25,7 +25,17 @@ class StudentController extends Controller
     public function index()
     {
         $students = Student::all();
-        return response()->json($students);
+        return $this->outputJSON($students, 'Students retrieved');
+    }
+
+
+    // Get Student based on student_id
+    public function show(Student $student)
+    {
+//        $input = $request->all();
+//        $student_id = $input['student_id'];
+//        $student = Student::where('id', $student_id)->first();
+        return $this->outputJSON($student,"Student retrieved");
     }
 
     /**
@@ -46,27 +56,21 @@ class StudentController extends Controller
      */
     public function store(Request $request)
     {
+        $student = Student::where('user_id', $request['user_id']);
+        if ($student) {
+            return $this->outputJSON($student, 'Error: this user already has a student profile');
+        }
         $student = new Student([
+            'user_id' => $request->get('user_id'),
             'first_name' => $request->get('first_name'),
             'last_name' => $request->get('last_name'),
             'major' => $request->get('major'),
             'year' => $request->get('year'),
-            'gpa' => $request->get('gpa')
+            'gpa' => $request->get('gpa'),
+            'email' => $request->get('email')
         ]);
         $student->save();
-        return response()->json($student, 201);
-    }
-
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Student  $student
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Student $student)
-    {
-        return response()->json($student);
+        return $this->outputJSON($student, 'Student profile created');
     }
 
     /**
@@ -83,9 +87,10 @@ class StudentController extends Controller
         $student->major = $request->get('major');
         $student->gpa = $request->get('gpa');
         $student->year = $request->get('year');
+        $student->email = $request->get('email');
         $student->save();
 
-        return response()->json($student, 200);
+        return $this->outputJSON($student, 'Student profile updates');
     }
 
     /**
@@ -98,33 +103,34 @@ class StudentController extends Controller
     {
         $student->delete();
 
-        return response()->json(null, 204);
+        return $this->outputJSON(null, 'Student profile deleted');
     }
 
     // Get student skills of a student, based on student_id
-    public function skills(Request $request) {
-        $input = $request->all();
-        $student_id = $input['student_id'];
-        $student = Student::where('id', $student_id)->first();
-        $skills = $student->skills()->wherePivot('student_id', $student_id)->get();
+    public function skills(Student $student) {
+//        $input = $request->all();
+//        $student_id = $input['student_id'];
+//        $student = Student::where('id', $student_id)->first();
+        $skills = $student->skills()->wherePivot('student_id', $student->id)->get();
         return $this->outputJSON($skills,"Skills retrieved");
     }
 
     // Get student tags of a student, based on student_id
-    public function tags(Request $request) {
-        $input = $request->all();
-        $student_id = $input['student_id'];
-        $student = Student::where('id', $student_id)->first();
-        $tags = $student->tags()->wherePivot('student_id', $student_id)->get();
+    public function tags(Student $student) {
+//        $input = $request->all();
+//        $student_id = $input['student_id'];
+//        $student = Student::where('id', $student_id)->first();
+        $tags = $student->tags()->wherePivot('student_id', $student->id)->get();
         return $this->outputJSON($tags,"Tags retrieved");
     }
 
-    // Get Student based on student_id
-    public function getStudent(Request $request)
-    {
-        $input = $request->all();
-        $user_id = $input['student_id'];
-        $student = Student::where('id', $user_id)->first();
-        return $this->outputJSON($student,"Student retrieved");
+    // Get favorited labs of student, based on student_id
+    public function labs(Student $student) {
+//        $input = $request->all();
+//        $student_id = $input['student_id'];
+//        $student = Student::where('id', $student_id)->first();
+        $labs = $student->labs()->wherePivot('student_id', $student->id)->get();
+        return $this->outputJSON($labs,"Labs retrieved");
     }
+
 }

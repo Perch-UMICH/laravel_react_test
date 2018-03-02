@@ -37,9 +37,8 @@ class UserController extends Controller
         if($user == null) {
             return $this->outputJSON(null,"Incorrect Email Address",404);
         } elseif (Auth::attempt(['email' => $input['email'], 'password' => $input['password']])) {
-            $user = Auth::user();
             $token['token'] = $user->createToken('token')->accessToken;
-            return $this->outputJSON($token,"Logged In Successfully");
+            return $this->outputJSON($user,"Logged In Successfully");
         } else {
             return $this->outputJSON(null,"Incorrect Password",404);
         }

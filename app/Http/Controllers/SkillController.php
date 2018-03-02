@@ -15,7 +15,7 @@ class SkillController extends Controller
     public function index()
     {
         $skills = Skill::all();
-        return response()->json($skills);
+        return $this->outputJSON($skills, 'Retrieved skills');
     }
 
     /**
@@ -36,7 +36,17 @@ class SkillController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $skill = Skill::where('name', $request['name']);
+        if ($skill) {
+            return $this->outputJSON($skill, 'Error: skill of this name already exists');
+        }
+
+        $skill = new Skill([
+            'name' => $request->get('name'),
+            'description' => $request->get('description'),
+        ]);
+        $skill->save();
+        return $this->outputJSON($skill, 'Skill definition created');
     }
 
     /**
@@ -47,7 +57,8 @@ class SkillController extends Controller
      */
     public function show(Skill $skill)
     {
-        //
+        return $this->outputJSON($skill, 'Retrieved skill');
+
     }
 
     /**
@@ -70,7 +81,11 @@ class SkillController extends Controller
      */
     public function update(Request $request, Skill $skill)
     {
-        //
+        $skill->name = $request->get('name');
+        $skill->description = $request->get('description');
+        $skill->save();
+
+        return $this->outputJSON($skill, 'Skill definition updated');
     }
 
     /**
@@ -81,7 +96,8 @@ class SkillController extends Controller
      */
     public function destroy(Skill $skill)
     {
-        //
+        $skill->delete();
+        return $this->outputJSON(null, 'Skill definition deleted');
     }
 
 

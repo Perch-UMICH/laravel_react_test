@@ -8,7 +8,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom';
 import axios from 'axios'
-import {loginUser, logoutUser, getUsername, isLoggedIn} from './helpers';
+import {loginUser, logoutCurrentUser, getCurrentUsername, isLoggedIn} from './helpers';
 
 
 class Login extends React.Component {
@@ -20,12 +20,14 @@ class Login extends React.Component {
             email: '',
             password: '',
             logged_in: '',
+            username: '',
             err: undefined
         }
     }
 
     componentDidMount() {
-        this.setState({logged_in: isLoggedIn()})
+        this.setState({logged_in: isLoggedIn()});
+        this.setState({username: getCurrentUsername()});
     }
 
 
@@ -50,8 +52,8 @@ class Login extends React.Component {
         if (this.state.logged_in) {
             return(
                 <div>
-                    <h3>You are logged in as {getUsername.bind(this)}</h3>
-                    <button onClick={logoutUser.bind(this)}>Logout</button>
+                    <h3>You are logged in as {this.state.username}</h3>
+                    <button onClick={logoutCurrentUser.bind(this)}>Logout</button>
                 </div>
             )
         }

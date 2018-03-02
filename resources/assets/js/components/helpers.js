@@ -9,7 +9,7 @@ import axios from 'axios';
 
 // Redirect to login page if not logged in, or continue
 export function isLoggedIn() {
-    if(localStorage.getItem('user_token') == null) {
+    if(!localStorage.getItem('user_logged_in')) {
         console.log('Not logged in');
         return false;
     }
@@ -57,10 +57,13 @@ export function loginUser(email, password) {
         email, password
     })
         .then(response => {
-            localStorage.setItem('user_token', response.data.result.token);
+            //localStorage.setItem('user_token', response.data.result.token);
             localStorage.setItem('user_logged_in', true);
+            localStorage.setItem('user_name', response.data.result.name);
+            localStorage.setItem('user_id', response.data.result.id);
+            localStorage.setItem('user_email', response.data.result.email);
             console.log('Successfully logged in');
-            setUserDetails(response.data.result.token);
+            //setUserDetails(response.data.result.token);
         })
         .catch(error => {
             console.error('Log in unsuccessful');
@@ -96,7 +99,7 @@ function setUserDetails(token) {
     return true;
 }
 
-export function logoutUser() {
+export function logoutCurrentUser() {
   // Clear all user vars in local storage
     localStorage.removeItem('user_logged_in');
     localStorage.removeItem('user_email');
@@ -136,15 +139,15 @@ export function getAllUsers() {
         })
 }
 
-export function getUserEmail() {
+export function getCurrentUserEmail() {
     return localStorage.getItem('user_email');
 }
 
-export function getUserId() {
+export function getCurrentUserId() {
     return localStorage.getItem('user_id');
 }
 
-export function getUsername() {
+export function getCurrentUsername() {
     return localStorage.getItem('user_name');
 }
 

@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use App\Skill;
 use App\Tag;
+use App\Lab;
 
 class Student extends Model
 {
@@ -16,5 +17,9 @@ class Student extends Model
 
     public function tags() {
         return $this->belongsToMany('App\Tag', 'student_tag');
+    }
+
+    public function labs() {
+        return $this->belongsToMany('App\Lab', 'lab_student');
     }
 }

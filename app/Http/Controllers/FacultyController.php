@@ -14,7 +14,8 @@ class FacultyController extends Controller
      */
     public function index()
     {
-        //
+        $faculty = Faculty::all();
+        return $this->outputJSON($faculty, 'Faculty retrieved');
     }
 
     /**
@@ -35,7 +36,19 @@ class FacultyController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $faculty = Faculty::where('user_id', $request['user_id']);
+        if ($faculty) {
+            return $this->outputJSON($faculty, 'Error: this user already has a faculty profile');
+        }
+        $faculty = new Faculty([
+            'user_id' => $request->get('user_id'),
+            'first_name' => $request->get('first_name'),
+            'last_name' => $request->get('last_name'),
+            'title' => $request->get('title'),
+            'email' => $request->get('email'),
+        ]);
+        $faculty->save();
+        return $this->outputJSON($faculty, 'Faculty profile created');
     }
 
     /**
@@ -46,7 +59,7 @@ class FacultyController extends Controller
      */
     public function show(Faculty $faculty)
     {
-        //
+        return $this->outputJSON($faculty,"Faculty retrieved");
     }
 
     /**
@@ -69,7 +82,13 @@ class FacultyController extends Controller
      */
     public function update(Request $request, Faculty $faculty)
     {
-        //
+        $faculty->first_name = $request->get('first_name');
+        $faculty->last_name = $request->get('last_name');
+        $faculty->title = $request->get('title');
+        $faculty->email = $request->get('email');
+        $faculty->save();
+
+        return $this->outputJSON($faculty, 'Faculty profile updates');
     }
 
     /**
@@ -80,6 +99,13 @@ class FacultyController extends Controller
      */
     public function destroy(Faculty $faculty)
     {
-        //
+        $faculty->delete();
+
+        return $this->outputJSON(null, 'Faculty profile deleted');
+    }
+
+    public function labs(Faculty $faculty) {
+        $labs = $faculty->labs()->wherePivot('faculty_id', $faculty->id)->get();
+        return $this->outputJSON($labs,"Labs retrieved");
     }
 }
