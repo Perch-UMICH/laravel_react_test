@@ -166,8 +166,48 @@ export function getAllStudents() {
 }
 
 export function getStudent(student_id) {
-    console.log('Checking if user is student');
-    return axios.post('api/students/getStudent', student_id)
+    console.log('Getting student');
+    return axios.get('api/students/' + student_id)
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+export function createStudent(user_id, first_name, last_name, major, year, gpa, email) {
+    console.log('Creating student');
+    return axios.post('api/students/', [user_id, first_name, last_name, major, year, gpa, email])
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+export function updateStudent(user_id, first_name, last_name, major, year, gpa, email) {
+    console.log('Updating student');
+    let _method = 'PUT';
+    return axios.post('api/students/', {_method, user_id, first_name, last_name, major, year, gpa, email})
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+export function deleteStudent(student_id) {
+    console.log('Deleting student');
+    return axios.delete('api/students/' + student_id)
         .then(response => {
             console.log(response.data.message);
             return response.data.result;
@@ -180,7 +220,7 @@ export function getStudent(student_id) {
 
 export function getStudentSkills(student_id) {
     console.log('Getting student skills');
-    return axios.post('api/students/skills', student_id)
+    return axios.get('api/students/' + student_id + '/skills')
         .then(response => {
             console.log(response.data.message);
             return response.data.result;
@@ -193,7 +233,7 @@ export function getStudentSkills(student_id) {
 
 export function getStudentTags(student_id) {
     console.log('Getting student tags');
-    return axios.post('api/students/tags', student_id)
+    return axios.get('api/students/' + student_id + '/tags')
         .then(response => {
             console.log(response.data.message);
             return response.data.result;
@@ -203,3 +243,5 @@ export function getStudentTags(student_id) {
             return [];
         })
 }
+
+// Faculties

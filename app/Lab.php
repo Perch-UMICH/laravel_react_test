@@ -15,4 +15,12 @@ class Lab extends Model
     public function tags() {
         return $this->belongsToMany('App\Tag', 'lab_tag');
     }
+
+    public function students() {
+        return $this->belongsToMany('App\Student', 'lab_student');
+    }
+
+    public function faculties() {
+        return $this->belongsToMany('App\Faculty', 'faculty_lab');
+    }
 }

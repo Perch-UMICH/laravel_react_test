@@ -4,7 +4,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom';
 import axios from 'axios'
-import {getAllStudents} from './helpers'
+import {getAllStudents, getStudent, getStudentSkills, getStudentTags} from './helpers'
 
 
 class Students extends React.Component {
@@ -14,32 +14,54 @@ class Students extends React.Component {
 
         this.state = {
             students: [],
+            student: [],
+            skills: [],
+            tags: []
         }
     }
 
     componentDidMount() {
         let comp = this;
+
         getAllStudents().then(function (resp) {
-            comp.setState({students: resp});
+            comp.setState({students: JSON.stringify(resp)});
+        });
+
+        getStudent(2).then(function (resp) {
+            comp.setState({student: JSON.stringify(resp)});
+        });
+
+        getStudentSkills(1).then(function (resp) {
+            comp.setState({skills: JSON.stringify(resp)});
+        });
+
+        getStudentTags(2).then(function (resp) {
+            comp.setState({tags: JSON.stringify(resp)});
         });
     }
 
     renderStudents() {
-        return this.state.students.map(student => {
-            return (
-                <li key={student.id} >
-                    { student.first_name + ' ' + student.last_name }
-                </li>
-            );
-        })
+
     }
 
     render() {
         return(
             <div>
-                <h3>List of Students (first name, last name)</h3>
+                <h3>All students</h3>
                 <ul>
-                    {this.renderStudents()}
+                    {this.state.students}
+                </ul>
+                <h3>Student with id 2</h3>
+                <ul>
+                    {this.state.student}
+                </ul>
+                <h3>Skills of student with id 1</h3>
+                <ul>
+                    {this.state.skills}
+                </ul>
+                <h3>Tags of student with id 2</h3>
+                <ul>
+                    {this.state.tags}
                 </ul>
             </div>
         )

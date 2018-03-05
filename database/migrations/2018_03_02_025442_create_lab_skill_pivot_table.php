@@ -14,10 +14,13 @@ class CreateLabSkillPivotTable extends Migration
     {
         Schema::create('lab_skill', function (Blueprint $table) {
             $table->integer('lab_id')->unsigned()->index();
-            $table->foreign('lab_id')->references('id')->on('lab')->onDelete('cascade');
             $table->integer('skill_id')->unsigned()->index();
-            $table->foreign('skill_id')->references('id')->on('skill')->onDelete('cascade');
             $table->primary(['lab_id', 'skill_id']);
+        });
+        Schema::table('lab_skill', function(Blueprint $table)
+        {
+            $table->foreign('lab_id')->references('id')->on('labs')->onDelete('cascade');
+            $table->foreign('skill_id')->references('id')->on('skills')->onDelete('cascade');
         });
     }
 

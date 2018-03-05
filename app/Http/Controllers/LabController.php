@@ -36,7 +36,22 @@ class LabController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $lab = Lab::where('name', $request['name']);
+        if ($lab == null) {
+            return $this->outputJSON($lab, 'Error: lab with this name already exists');
+        }
+        $lab = new Lab([
+            'name' => $request->get('name'),
+            'department' => $request->get('department'),
+            'location' => $request->get('location'),
+            'description' => $request->get('description'),
+            'publications' => $request->get('publications'),
+            'url' => $request->get('url'),
+            'gpa' => $request->get('gpa'),
+            'weeklyCommitment' => $request->get('weeklyCommitment')
+        ]);
+        $lab->save();
+        return $this->outputJSON($lab, 'Lab page created');
     }
 
     /**
@@ -47,7 +62,7 @@ class LabController extends Controller
      */
     public function show(Lab $lab)
     {
-        //
+        return $this->outputJSON($lab,"Lab retrieved");
     }
 
     /**
@@ -70,7 +85,19 @@ class LabController extends Controller
      */
     public function update(Request $request, Lab $lab)
     {
-        //
+        $input = $request->all();
+        $lab->name = $input['name'];
+        $lab->department = $input['department'];
+        $lab->location = $input['location'];
+        $lab->description = $input['description'];
+        $lab->publications = $input['publications'];
+        $lab->url = $input['url'];
+        $lab->gpa = $input['gpa'];
+        $lab->weeklyCommitment = $input['weeklyCommitment'];
+
+        $lab->save();
+
+        return $this->outputJSON($lab, 'Lab page updated');
     }
 
     /**
@@ -81,6 +108,28 @@ class LabController extends Controller
      */
     public function destroy(Lab $lab)
     {
-        //
+        $lab->delete();
+
+        return $this->outputJSON(null, 'Lab page deleted');
+    }
+
+    public function students(Lab $lab) {
+        $students = $lab->students()->wherePivot('lab_id', $lab->id)->get();
+        return $this->outputJSON($students,"Students from lab retrieved");
+    }
+
+    public function faculties(Lab $lab) {
+        $faculties = $lab->faculties()->wherePivot('lab_id', $lab->id)->get();
+        return $this->outputJSON($faculties,"Faculties from lab retrieved");
+    }
+
+    public function skills(Lab $lab) {
+        $skills = $lab->skills()->wherePivot('lab_id', $lab->id)->get();
+        return $this->outputJSON($skills,"Skills from lab retrieved");
+    }
+
+    public function tags(Lab $lab) {
+        $tags = $lab->tags()->wherePivot('lab_id', $lab->id)->get();
+        return $this->outputJSON($tags,"Tags from lab retrieved");
     }
 }

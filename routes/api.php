@@ -37,23 +37,33 @@ Route::post('users/isStudent', 'UserController@isStudent'); // Check if user_id 
 // Students (note: {student} means student_id):
 Route::get('students', 'StudentController@index'); // Get all students
 Route::post('students','StudentController@store'); // Create a student
-
 Route::get('students/{student}', 'StudentController@show'); // Get student
+Route::put('students/{student}','StudentController@update'); // Update a student
+Route::delete('students/{student}', 'StudentController@destroy'); // Delete a student
 
 Route::get('students/{student}/tags', 'StudentController@tags'); // Get a student's tags
 Route::get('students/{student}/skills', 'StudentController@skills'); // Get student's skills
 Route::get('students/{student}/labs', 'StudentController@labs'); // Get student's skills
-
-Route::put('students/{student}','StudentController@update'); // Update a student
-Route::delete('students/{student}', 'StudentController@delete'); // Delete a student
 
 //Faculty:
 Route::get('faculties', 'FacultyController@index'); // Get all faculty
 Route::get('faculties/{faculty}', 'FacultyController@show');
 Route::post('faculties', 'FacultyController@store');
 Route::put('faculties/{faculty}', 'FacultyController@update');
+Route::get('faculties/{faculty}/labs', 'FacultyController@labs');
 
-Route::get('faculties/{faculty}/labs', 'FacultyController@getLabs');
+// Labs
+Route::get('labs', 'LabController@index');
+Route::get('labs/{lab}', 'LabController@show');
+Route::post('labs', 'LabController@store');
+Route::put('labs/{lab}', 'LabController@update');
+Route::delete('labs/{lab}', 'LabController@destroy');
+
+
+Route::get('labs/{lab}/students', 'LabController@students');
+Route::get('labs/{lab}/faculties', 'LabController@faculties');
+Route::get('labs/{lab}/skills', 'LabController@skills');
+Route::get('labs/{lab}/tags', 'LabController@tags');
 
 // Skills:
 Route::get('skills', 'SkillController@index');
@@ -64,3 +74,4 @@ Route::get('skills/{skill}', 'SkillController@show');
 // Tags
 Route::get('tags', 'SkillController@index');
 Route::get('tags/{tag}', 'SkillController@show');
+

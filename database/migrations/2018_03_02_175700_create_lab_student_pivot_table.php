@@ -14,10 +14,12 @@ class CreateLabStudentPivotTable extends Migration
     {
         Schema::create('lab_student', function (Blueprint $table) {
             $table->integer('lab_id')->unsigned()->index();
-            $table->foreign('lab_id')->references('id')->on('lab')->onDelete('cascade');
             $table->integer('student_id')->unsigned()->index();
-            $table->foreign('student_id')->references('id')->on('student')->onDelete('cascade');
             $table->primary(['lab_id', 'student_id']);
+        });
+        Schema::table('lab_student', function (Blueprint $table) {
+            $table->foreign('lab_id')->references('id')->on('labs')->onDelete('cascade');
+            $table->foreign('student_id')->references('id')->on('students')->onDelete('cascade');
         });
     }
 

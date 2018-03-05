@@ -1041,18 +1041,21 @@ var locationsAreEqual = function locationsAreEqual(a, b) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (immutable) */ __webpack_exports__["d"] = isLoggedIn;
-/* harmony export (immutable) */ __webpack_exports__["g"] = registerUser;
-/* harmony export (immutable) */ __webpack_exports__["e"] = loginUser;
-/* harmony export (immutable) */ __webpack_exports__["f"] = logoutCurrentUser;
+/* harmony export (immutable) */ __webpack_exports__["g"] = isLoggedIn;
+/* harmony export (immutable) */ __webpack_exports__["j"] = registerUser;
+/* harmony export (immutable) */ __webpack_exports__["h"] = loginUser;
+/* harmony export (immutable) */ __webpack_exports__["i"] = logoutCurrentUser;
 /* harmony export (immutable) */ __webpack_exports__["b"] = getAllUsers;
 /* unused harmony export getCurrentUserEmail */
 /* unused harmony export getCurrentUserId */
 /* harmony export (immutable) */ __webpack_exports__["c"] = getCurrentUsername;
 /* harmony export (immutable) */ __webpack_exports__["a"] = getAllStudents;
-/* unused harmony export getStudent */
-/* unused harmony export getStudentSkills */
-/* unused harmony export getStudentTags */
+/* harmony export (immutable) */ __webpack_exports__["d"] = getStudent;
+/* unused harmony export createStudent */
+/* unused harmony export updateStudent */
+/* unused harmony export deleteStudent */
+/* harmony export (immutable) */ __webpack_exports__["e"] = getStudentSkills;
+/* harmony export (immutable) */ __webpack_exports__["f"] = getStudentTags;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react_router_dom__ = __webpack_require__(12);
@@ -1209,8 +1212,42 @@ function getAllStudents() {
 }
 
 function getStudent(student_id) {
-    console.log('Checking if user is student');
-    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/students/getStudent', student_id).then(function (response) {
+    console.log('Getting student');
+    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('api/students/' + student_id).then(function (response) {
+        console.log(response.data.message);
+        return response.data.result;
+    }).catch(function (error) {
+        console.log(error);
+        return [];
+    });
+}
+
+function createStudent(user_id, first_name, last_name, major, year, gpa, email) {
+    console.log('Creating student');
+    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/students/', [user_id, first_name, last_name, major, year, gpa, email]).then(function (response) {
+        console.log(response.data.message);
+        return response.data.result;
+    }).catch(function (error) {
+        console.log(error);
+        return [];
+    });
+}
+
+function updateStudent(user_id, first_name, last_name, major, year, gpa, email) {
+    console.log('Updating student');
+    var _method = 'PUT';
+    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/students/', { _method: _method, user_id: user_id, first_name: first_name, last_name: last_name, major: major, year: year, gpa: gpa, email: email }).then(function (response) {
+        console.log(response.data.message);
+        return response.data.result;
+    }).catch(function (error) {
+        console.log(error);
+        return [];
+    });
+}
+
+function deleteStudent(student_id) {
+    console.log('Deleting student');
+    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.delete('api/students/' + student_id).then(function (response) {
         console.log(response.data.message);
         return response.data.result;
     }).catch(function (error) {
@@ -1221,7 +1258,7 @@ function getStudent(student_id) {
 
 function getStudentSkills(student_id) {
     console.log('Getting student skills');
-    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/students/skills', student_id).then(function (response) {
+    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('api/students/' + student_id + '/skills').then(function (response) {
         console.log(response.data.message);
         return response.data.result;
     }).catch(function (error) {
@@ -1232,7 +1269,7 @@ function getStudentSkills(student_id) {
 
 function getStudentTags(student_id) {
     console.log('Getting student tags');
-    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/students/tags', student_id).then(function (response) {
+    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('api/students/' + student_id + '/tags').then(function (response) {
         console.log(response.data.message);
         return response.data.result;
     }).catch(function (error) {
@@ -1240,6 +1277,8 @@ function getStudentTags(student_id) {
         return [];
     });
 }
+
+// Faculties
 
 /***/ }),
 /* 15 */
@@ -58901,7 +58940,10 @@ var Students = function (_React$Component) {
         var _this = _possibleConstructorReturn(this, (Students.__proto__ || Object.getPrototypeOf(Students)).call(this));
 
         _this.state = {
-            students: []
+            students: [],
+            student: [],
+            skills: [],
+            tags: []
         };
         return _this;
     }
@@ -58910,21 +58952,26 @@ var Students = function (_React$Component) {
         key: 'componentDidMount',
         value: function componentDidMount() {
             var comp = this;
+
             Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["a" /* getAllStudents */])().then(function (resp) {
-                comp.setState({ students: resp });
+                comp.setState({ students: JSON.stringify(resp) });
+            });
+
+            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["d" /* getStudent */])(2).then(function (resp) {
+                comp.setState({ student: JSON.stringify(resp) });
+            });
+
+            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["e" /* getStudentSkills */])(1).then(function (resp) {
+                comp.setState({ skills: JSON.stringify(resp) });
+            });
+
+            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["f" /* getStudentTags */])(2).then(function (resp) {
+                comp.setState({ tags: JSON.stringify(resp) });
             });
         }
     }, {
         key: 'renderStudents',
-        value: function renderStudents() {
-            return this.state.students.map(function (student) {
-                return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                    'li',
-                    { key: student.id },
-                    student.first_name + ' ' + student.last_name
-                );
-            });
-        }
+        value: function renderStudents() {}
     }, {
         key: 'render',
         value: function render() {
@@ -58934,12 +58981,42 @@ var Students = function (_React$Component) {
                 __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                     'h3',
                     null,
-                    'List of Students (first name, last name)'
+                    'All students'
                 ),
                 __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                     'ul',
                     null,
-                    this.renderStudents()
+                    this.state.students
+                ),
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'h3',
+                    null,
+                    'Student with id 2'
+                ),
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'ul',
+                    null,
+                    this.state.student
+                ),
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'h3',
+                    null,
+                    'Skills of student with id 1'
+                ),
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'ul',
+                    null,
+                    this.state.skills
+                ),
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'h3',
+                    null,
+                    'Tags of student with id 2'
+                ),
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'ul',
+                    null,
+                    this.state.tags
                 )
             );
         }
@@ -59016,7 +59093,7 @@ var Register = function (_React$Component) {
                 password_confirmation = _state.password_confirmation;
 
 
-            var no_err = Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["g" /* registerUser */])(name, email, password, password_confirmation);
+            var no_err = Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["j" /* registerUser */])(name, email, password, password_confirmation);
             if (no_err) {
                 this.refs.name.value = "";
                 this.refs.password.value = "";
@@ -59055,7 +59132,7 @@ var Register = function (_React$Component) {
                     ),
                     __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                         'button',
-                        { onClick: __WEBPACK_IMPORTED_MODULE_3__helpers__["f" /* logoutCurrentUser */].bind(this) },
+                        { onClick: __WEBPACK_IMPORTED_MODULE_3__helpers__["i" /* logoutCurrentUser */].bind(this) },
                         'Logout'
                     )
                 );
@@ -59357,7 +59434,7 @@ var Login = function (_React$Component) {
     _createClass(Login, [{
         key: 'componentDidMount',
         value: function componentDidMount() {
-            this.setState({ logged_in: Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["d" /* isLoggedIn */])() });
+            this.setState({ logged_in: Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["g" /* isLoggedIn */])() });
             this.setState({ username: Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["c" /* getCurrentUsername */])() });
         }
     }, {
@@ -59369,7 +59446,7 @@ var Login = function (_React$Component) {
                 password = _state.password;
 
 
-            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["e" /* loginUser */])(email, password);
+            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["h" /* loginUser */])(email, password);
             this.forceUpdate();
         }
     }, {
@@ -59399,7 +59476,7 @@ var Login = function (_React$Component) {
                     ),
                     __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                         'button',
-                        { onClick: __WEBPACK_IMPORTED_MODULE_3__helpers__["f" /* logoutCurrentUser */].bind(this) },
+                        { onClick: __WEBPACK_IMPORTED_MODULE_3__helpers__["i" /* logoutCurrentUser */].bind(this) },
                         'Logout'
                     )
                 );
