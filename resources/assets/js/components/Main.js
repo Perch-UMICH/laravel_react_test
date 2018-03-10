@@ -3,6 +3,8 @@
  */
 import React from 'react'
 import { Switch, Route } from 'react-router-dom'
+import Labs from './Labs'
+import Faculties from './Faculties'
 import Example from './Example'
 import Students from './Students'
 import Register from './Register'
@@ -17,6 +19,8 @@ const Main = () => (
             <Route path='/example' component={Example}/>
             <Route path='/users' component={Users}/>
             <Route path='/students' component={Students}/>
+            <Route path='/faculties' component={Faculties}/>
+            <Route path='/labs' component={Labs}/>
             <Route path='/register' component={Register}/>
             <Route path='/login' component={Login}/>
         </Switch>

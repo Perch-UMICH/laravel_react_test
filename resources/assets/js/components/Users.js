@@ -27,22 +27,13 @@ class Users extends React.Component {
         });
     }
 
-    renderUsers() {
-        return this.state.users.map(user => {
-            return (
-                <li key={user.id} >
-                    { user.email }
-                </li>
-            );
-        })
-    }
 
     render() {
         return(
             <div>
-                <h3>List of Users (email)</h3>
+                <h3>All Users</h3>
                 <ul>
-                    {this.renderUsers()}
+                    {this.state.users}
                 </ul>
             </div>
         )

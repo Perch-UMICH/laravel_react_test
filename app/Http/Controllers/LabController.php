@@ -132,4 +132,44 @@ class LabController extends Controller
         $tags = $lab->tags()->wherePivot('lab_id', $lab->id)->get();
         return $this->outputJSON($tags,"Tags from lab retrieved");
     }
+
+    public function add_skill(Request $request, Lab $lab) {
+        $input = $request->all();
+        $lab->skills()->attach([$input['skill_id']]);
+    }
+
+    public function add_tag(Request $request, Lab $lab) {
+        $input = $request->all();
+        $lab->tags()->attach([$input['tag_id']]);
+    }
+
+    public function add_student(Request $request, Lab $lab) {
+        $input = $request->all();
+        $lab->students()->attach([$input['student_id']]);
+    }
+
+    public function add_faculty(Request $request, Lab $lab) {
+        $input = $request->all();
+        $lab->faculties()->attach([$input['faculty_id']]);
+    }
+
+    public function remove_skill(Request $request, Lab $lab) {
+        $input = $request->all();
+        $lab->skills()->detach([$input['skill_id']]);
+    }
+
+    public function remove_tag(Request $request, Lab $lab) {
+        $input = $request->all();
+        $lab->tags()->detach([$input['tag_id']]);
+    }
+
+    public function remove_student(Request $request, Lab $lab) {
+        $input = $request->all();
+        $lab->students()->detach([$input['student_id']]);
+    }
+
+    public function remove_faculty(Request $request, Lab $lab) {
+        $input = $request->all();
+        $lab->faculties()->detach([$input['faculty_id']]);
+    }
 }

@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Student;
 use Illuminate\Http\Request;
 use App\User;
+use App\Skill;
+use App\Tag;
+use App\Lab;
 
 class StudentController extends Controller
 {
@@ -131,6 +134,36 @@ class StudentController extends Controller
 //        $student = Student::where('id', $student_id)->first();
         $labs = $student->labs()->wherePivot('student_id', $student->id)->get();
         return $this->outputJSON($labs,"Labs retrieved");
+    }
+
+    public function add_skill(Request $request, Student $student) {
+        $input = $request->all();
+        $student->skills()->attach([$input['skill_id']]);
+    }
+
+    public function add_tag(Request $request, Student $student) {
+        $input = $request->all();
+        $student->tags()->attach([$input['tag_id']]);
+    }
+
+    public function add_lab(Request $request, Student $student) {
+        $input = $request->all();
+        $student->labs()->attach([$input['lab_id']]);
+    }
+
+    public function remove_skill(Request $request, Student $student) {
+        $input = $request->all();
+        $student->skills()->detach([$input['skill_id']]);
+    }
+
+    public function remove_tag(Request $request, Student $student) {
+        $input = $request->all();
+        $student->tags()->detach([$input['tag_id']]);
+    }
+
+    public function remove_lab(Request $request, Student $student) {
+        $input = $request->all();
+        $student->labs()->detach([$input['lab_id']]);
     }
 
 }

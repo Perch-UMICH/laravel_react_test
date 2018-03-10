@@ -9,6 +9,9 @@
 
 define('LARAVEL_START', microtime(true));
 
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: GET, PUT, POST, DELETE, OPTIONS');
+
 /*
 |--------------------------------------------------------------------------
 | Register The Auto Loader
@@ -54,6 +57,11 @@ $kernel = $app->make(Illuminate\Contracts\Http\Kernel::class);
 $response = $kernel->handle(
     $request = Illuminate\Http\Request::capture()
 );
+
+if(DB::connection()->getDatabaseName())
+{
+    echo "Connected to database ".DB::connection()->getDatabaseName();
+}
 
 $response->send();
 

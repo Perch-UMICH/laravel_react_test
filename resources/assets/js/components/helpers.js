@@ -7,6 +7,10 @@ import { Redirect } from "react-router-dom";
 import axios from 'axios';
 
 
+const BASE_URL = window.location.hostname + '/';
+//const BASE_URL = 'http://perch-api.us-east-1.elasticbeanstalk.com/';
+//const BASE_URL = 'http://localhost:8000/';
+
 // Redirect to login page if not logged in, or continue
 export function isLoggedIn() {
     if(!localStorage.getItem('user_logged_in')) {
@@ -155,7 +159,7 @@ export function getCurrentUsername() {
 
 export function getAllStudents() {
     console.log('Getting students');
-    return axios.get('api/students')
+    return axios.get(BASE_URL + 'api/students')
         .then(response => {
             return response.data
         })
@@ -167,7 +171,7 @@ export function getAllStudents() {
 
 export function getStudent(student_id) {
     console.log('Getting student');
-    return axios.get('api/students/' + student_id)
+    return axios.get(BASE_URL + 'api/students/' + student_id)
         .then(response => {
             console.log(response.data.message);
             return response.data.result;
@@ -180,7 +184,7 @@ export function getStudent(student_id) {
 
 export function createStudent(user_id, first_name, last_name, major, year, gpa, email) {
     console.log('Creating student');
-    return axios.post('api/students/', [user_id, first_name, last_name, major, year, gpa, email])
+    return axios.post(BASE_URL + 'api/students/', [user_id, first_name, last_name, major, year, gpa, email])
         .then(response => {
             console.log(response.data.message);
             return response.data.result;
@@ -191,10 +195,10 @@ export function createStudent(user_id, first_name, last_name, major, year, gpa, 
         })
 }
 
-export function updateStudent(user_id, first_name, last_name, major, year, gpa, email) {
+export function updateStudent(student_id, first_name, last_name, major, year, gpa, email) {
     console.log('Updating student');
     let _method = 'PUT';
-    return axios.post('api/students/', {_method, user_id, first_name, last_name, major, year, gpa, email})
+    return axios.post(BASE_URL + 'api/students/' + student_id, {_method, student_id, first_name, last_name, major, year, gpa, email})
         .then(response => {
             console.log(response.data.message);
             return response.data.result;
@@ -207,7 +211,7 @@ export function updateStudent(user_id, first_name, last_name, major, year, gpa, 
 
 export function deleteStudent(student_id) {
     console.log('Deleting student');
-    return axios.delete('api/students/' + student_id)
+    return axios.delete(BASE_URL + 'api/students/' + student_id)
         .then(response => {
             console.log(response.data.message);
             return response.data.result;
@@ -217,10 +221,11 @@ export function deleteStudent(student_id) {
             return [];
         })
 }
+
 
 export function getStudentSkills(student_id) {
     console.log('Getting student skills');
-    return axios.get('api/students/' + student_id + '/skills')
+    return axios.get(BASE_URL + 'api/students/' + student_id + '/skills')
         .then(response => {
             console.log(response.data.message);
             return response.data.result;
@@ -231,9 +236,102 @@ export function getStudentSkills(student_id) {
         })
 }
 
+export function addSkillToStudent(student_id, skill_id) {
+    console.log('Adding skill to student');
+    return axios.post(BASE_URL + 'api/students/' + student_id + '/skills', {skill_id})
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+export function removeSkillFromStudent(student_id, skill_id) {
+    console.log('Removing skill from student');
+    return axios.delete(BASE_URL + 'api/students/' + student_id + '/skills', {skill_id})
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+
 export function getStudentTags(student_id) {
     console.log('Getting student tags');
-    return axios.get('api/students/' + student_id + '/tags')
+    return axios.get(BASE_URL + 'api/students/' + student_id + '/tags')
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+export function addTagToStudent(student_id, tag_id) {
+    console.log('Adding tag to student');
+    return axios.post(BASE_URL + 'api/students/' + student_id + '/tags', {tag_id})
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+export function removeTagFromStudent(student_id, tag_id) {
+    console.log('Removing tag from student');
+    return axios.delete(BASE_URL + 'api/students/' + student_id + '/tags', {tag_id})
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+
+export function getStudentFavLabs(student_id) {
+    console.log('Getting student favorite labs');
+    return axios.get(BASE_URL + 'api/students/' + student_id + '/labs')
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+export function addFavLabToStudent(student_id, lab_id) {
+    console.log('Adding favorite lab to student');
+    return axios.post(BASE_URL + 'api/students/' + student_id + '/labs', {lab_id})
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+export function removeFavLabFromStudent(student_id, lab_id) {
+    console.log('Removing favorite lab from student');
+    return axios.delete(BASE_URL + 'api/students/' + student_id + '/labs', {lab_id})
         .then(response => {
             console.log(response.data.message);
             return response.data.result;
@@ -245,3 +343,310 @@ export function getStudentTags(student_id) {
 }
 
 // Faculties
+
+export function getAllFaculties() {
+    console.log('Getting all faculty');
+    return axios.get(BASE_URL + 'api/faculties')
+        .then(response => {
+            return response.data
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+export function getFaculty(faculty_id) {
+    console.log('Getting faculty');
+    return axios.get(BASE_URL + 'api/faculties/' + faculty_id)
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+export function createFaculty(user_id, first_name, last_name, title, email) {
+    console.log('Creating faculty');
+    return axios.post(BASE_URL + 'api/faculties/', [user_id, first_name, last_name, title, email])
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+export function updateFaculty(faculty_id, first_name, last_name, title, email) {
+    console.log('Updating faculty');
+    let _method = 'PUT';
+    return axios.post(BASE_URL + 'api/faculties/' + faculty_id, {_method, faculty_id, first_name, last_name, title, email})
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+export function deleteFaculty(faculty_id) {
+    console.log('Deleting faculty');
+    return axios.delete(BASE_URL + 'api/faculties/' + faculty_id)
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+
+export function getFacultyLabs(faculty_id) {
+    console.log('Getting faculty labs');
+    return axios.get(BASE_URL + 'api/faculties/' + faculty_id + '/labs')
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+export function addLabToFaculty(faculty_id, lab_id) {
+    console.log('Adding lab to faculty');
+    return axios.post(BASE_URL + 'api/faculties/' + faculty_id + '/labs', {lab_id})
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+export function removeLabFromFaculty(faculty_id, lab_id) {
+    console.log('Removing lab from faculty');
+    return axios.delete(BASE_URL + 'api/faculties/' + faculty_id + '/labs', {lab_id})
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+// Labs
+
+export function getAllLabs() {
+    console.log('Getting all labs');
+    return axios.get(BASE_URL + 'api/labs')
+        .then(response => {
+            return response.data
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+export function getLab(lab_id) {
+    console.log('Getting lab');
+    return axios.get(BASE_URL + 'api/labs/' + lab_id)
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+export function createLab(faculty_id, name, department, location, description, publications, url, gpa, weeklyCommitment) {
+    console.log('Creating lab');
+    return axios.post(BASE_URL + 'api/labs/', [faculty_id, name, department, location, description, publications, url, gpa, weeklyCommitment])
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+export function updateLab(lab_id, name, department, location, description, publications, url, gpa, weeklyCommitment) {
+    console.log('Updating lab');
+    let _method = 'PUT';
+    return axios.post(BASE_URL + 'api/labs/' + lab_id, {_method, lab_id, name, department, location, description, publications, url, gpa, weeklyCommitment})
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+export function deleteLab(lab_id) {
+    console.log('Deleting lab');
+    return axios.delete(BASE_URL + 'api/labs/' + lab_id)
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+
+export function getLabSkills(lab_id) {
+    console.log('Getting lab skills');
+    return axios.get(BASE_URL + 'api/labs/' + lab_id + '/skills')
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+export function addSkillToLab(lab_id, skill_id) {
+    console.log('Adding skill to lab');
+    return axios.post(BASE_URL + 'api/labs/' + lab_id + '/skills', {skill_id})
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+export function removeSkillFromLab(lab_id, skill_id) {
+    console.log('Removing skill from lab');
+    return axios.delete(BASE_URL + 'api/labs/' + lab_id + '/skills', {skill_id})
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+
+export function getLabTags(lab_id) {
+    console.log('Getting lab tags');
+    return axios.get(BASE_URL + 'api/labs/' + lab_id + '/tags')
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+export function addTagToLab(lab_id, tag_id) {
+    console.log('Adding tag to lab');
+    return axios.post(BASE_URL + 'api/labs/' + tag_id + '/tags', {tag_id})
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+export function removeTagFromLab(lab_id, tag_id) {
+    console.log('Removing tag from lab');
+    return axios.delete(BASE_URL + 'api/labs/' + tag_id + '/tags', {tag_id})
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+// Skills
+
+export function getAllSkills() {
+    console.log('Getting all skills');
+    return axios.get(BASE_URL + 'api/skills')
+        .then(response => {
+            return response.data
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+export function getSkill(skill_id) {
+    console.log('Getting skill');
+    return axios.get(BASE_URL + 'api/skills/' + skill_id)
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+// Tags
+
+export function getAllTags() {
+    console.log('Getting all tags');
+    return axios.get(BASE_URL + 'api/tags')
+        .then(response => {
+            return response.data
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+export function getTag(tag_id) {
+    console.log('Getting tag');
+    return axios.get(BASE_URL + 'api/tags/' + tag_id)
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+

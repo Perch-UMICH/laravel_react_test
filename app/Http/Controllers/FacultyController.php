@@ -108,4 +108,14 @@ class FacultyController extends Controller
         $labs = $faculty->labs()->wherePivot('faculty_id', $faculty->id)->get();
         return $this->outputJSON($labs,"Labs retrieved");
     }
+
+    public function add_lab(Request $request, Faculty $faculty) {
+        $input = $request->all();
+        $faculty->labs()->attach([$input['lab_id']]);
+    }
+
+    public function remove_lab(Request $request, Faculty $faculty) {
+        $input = $request->all();
+        $faculty->labs()->detach([$input['lab_id']]);
+    }
 }

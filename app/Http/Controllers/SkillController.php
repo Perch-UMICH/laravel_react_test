@@ -58,7 +58,6 @@ class SkillController extends Controller
     public function show(Skill $skill)
     {
         return $this->outputJSON($skill, 'Retrieved skill');
-
     }
 
     /**
