@@ -28,7 +28,15 @@ class StudentController extends Controller
     public function index()
     {
         $students = Student::all();
-        return $this->outputJSON($students, 'Students retrieved');
+
+        $student_data = [];
+
+        foreach( $students as $student ) {
+            $skills = $student->skills()->wherePivot('student_id', $student->id)->get();
+            $tags = $student->tags()->wherePivot('student_id', $student->id)->get();
+            $student_data[$student->id] = ['data' => $student, 'skills' => $skills, 'tags' => $tags];
+        }
+        return $this->outputJSON($student_data, 'Students retrieved');
     }
 
 
@@ -38,7 +46,10 @@ class StudentController extends Controller
 //        $input = $request->all();
 //        $student_id = $input['student_id'];
 //        $student = Student::where('id', $student_id)->first();
-        return $this->outputJSON($student,"Student retrieved");
+        $skills = $student->skills()->wherePivot('student_id', $student->id)->get();
+        $tags = $student->tags()->wherePivot('student_id', $student->id)->get();
+        $student_data = ['data' => $student, 'skills' => $skills, 'tags' => $tags];
+        return $this->outputJSON($student_data,"Student retrieved");
     }
 
     /**

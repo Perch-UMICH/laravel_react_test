@@ -15,7 +15,15 @@ class LabController extends Controller
     public function index()
     {
         $labs = Lab::all();
-        return $this->outputJSON($labs,"Labs retrieved");
+
+        $lab_data = [];
+
+        foreach( $labs as $lab ) {
+            $skills = $lab->skills()->wherePivot('lab_id', $lab->id)->get();
+            $tags = $lab->tags()->wherePivot('lab_id', $lab->id)->get();
+            $lab_data[$lab->id] = ['data' => $lab, 'skills' => $skills, 'tags' => $tags];
+        }
+        return $this->outputJSON($lab_data,"Labs retrieved");
     }
 
     /**
@@ -62,7 +70,12 @@ class LabController extends Controller
      */
     public function show(Lab $lab)
     {
-        return $this->outputJSON($lab,"Lab retrieved");
+        $skills = $lab->skills()->wherePivot('lab_id', $lab->id)->get();
+        $tags = $lab->tags()->wherePivot('lab_id', $lab->id)->get();
+
+        $lab_data = ['data' => $lab, 'skills' => $skills, 'tags' => $tags];
+
+        return $this->outputJSON($lab_data,"Lab retrieved");
     }
 
     /**

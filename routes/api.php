@@ -55,7 +55,6 @@ Route::get('students/{student}/labs', 'StudentController@labs'); // Get student'
 Route::post('students/{student}/labs', 'StudentController@add_lab');
 Route::delete('students/{student}/labs', 'StudentController@remove_skill');
 
-
 //Faculty:
 Route::get('faculties', 'FacultyController@index'); // Get all faculty
 Route::get('faculties/{faculty}', 'FacultyController@show');
