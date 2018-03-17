@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Socialite; // OAuth
+use App\User;
+use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
@@ -35,5 +38,67 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
+    }
+
+    /**
+     * Redirect the user to the GitHub authentication page.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function redirectToProvider()
+    {
+        return Socialite::driver('google')->redirect();
+    }
+
+    /**
+     * Obtain the user information from GitHub.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function handleProviderCallback()
+    {
+        $oauth_user = Socialite::driver('google')->stateless()->user();
+
+        $token = $oauth_user->token;
+        // $user = Socialite::driver('google')->userFromToken($token);
+
+        echo '<pre>';
+        print_r($oauth_user);
+        echo '</pre>';
+
+        /*/ login the user, redirect
+        if ($this->userLogin($oauth_user)) {
+            return redirect($this->redirectTo);
+        }*/
+    }
+
+    /**
+     * Login the user, if user doesn't exist, create a record, then login
+     */
+    public function userLogin($oauth_user) {
+        $expiresIn = $oauth_user->expiresIn;
+        $id = $oauth_user->getId();
+        $nickname = $oauth_user->getNickname();
+        $name = $oauth_user->getName();
+        $email = $oauth_user->getEmail();
+
+        $user = User::where('google_id', $id)->first();
+
+        if (!$user) {
+
+            // TODO check if user is from umich.edu domain
+            // if not, return false
+
+            $user = new User;
+            $user->name = $name;
+            $user->email = $email;
+            $user->google_id = $id;
+            $user->save();
+
+        }
+
+        Auth::login($user, true);
+        return true;
+
     }
 }

@@ -17,6 +17,9 @@
 </body>
 </html>
 
+<!-- LOGIN WITH GOOGLE --!>
+<!-- https://developers.google.com/identity/sign-in/web/ --!>
+
 
 {{--<div class="flex-center position-ref full-height">--}}
     {{--@if (Route::has('login'))--}}
