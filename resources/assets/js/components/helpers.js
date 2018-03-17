@@ -5,13 +5,14 @@
 import React from "react";
 import { Redirect } from "react-router-dom";
 import axios from 'axios';
+import { cookie } from 'react-cookie'
 
 axios.defaults.baseURL = 'http://perch-api.us-east-1.elasticbeanstalk.com';
 
 // Authentication
 // NOTE: Login/register funcs aren't fully working yet, so you may get response errors if you call them
 export function isLoggedIn() {
-    if(!localStorage.getItem('user_logged_in')) {
+    if(cookie.get('perch_api_key') == null) {
         console.log('Not logged in');
         return false;
     }
@@ -28,7 +29,8 @@ export function registerUser(name, email, password, password_confirmation) {
     })
         .then(response=> {
             console.log(response.data.message);
-            return successfulReg(response);
+            // redirect to login
+            return response.data;
         })
         .catch(error=> {
             console.error('Error in registration');
@@ -37,35 +39,23 @@ export function registerUser(name, email, password, password_confirmation) {
         });
 }
 
-function successfulReg(response_in) {
-    localStorage.setItem('user_logged_in', true);
-    localStorage.setItem('user_token', response_in.data.result.token);
-
-    return setUserDetails(response_in.data.result.token);
-}
-
 export function loginUser(email, password) {
-    // Clear all user vars in local storage
-    localStorage.removeItem('user_logged_in');
-    localStorage.removeItem('user_email');
-    localStorage.removeItem('user_name');
-    localStorage.removeItem('user_id');
+    // Clear all user cookies
+    cookie.remove('perch_api_key');
+    cookie.remove('perch_user_id');
 
     // Login
     console.log('logging in ' + email);
-    console.log(password);
+    //console.log(password);
 
     axios.post('api/login', {
         email, password
     })
         .then(response => {
-            //localStorage.setItem('user_token', response.data.result.token);
-            localStorage.setItem('user_logged_in', true);
-            localStorage.setItem('user_name', response.data.result.name);
-            localStorage.setItem('user_id', response.data.result.id);
-            localStorage.setItem('user_email', response.data.result.email);
+            cookie.set('perch_api_key', response.data.result.token, {path: "/"});
+            cookie.set('perch_user_id', response.data.result.id, {path: "/"});
             console.log('Successfully logged in');
-            //setUserDetails(response.data.result.token);
+            return response.data
         })
         .catch(error => {
             console.error('Log in unsuccessful');
@@ -76,47 +66,46 @@ export function loginUser(email, password) {
     return true;
 }
 
-function setUserDetails(token) {
-    console.log(token);
-    // Save user details to local storage
-    axios.post('api/details',
-        {
-            headers: {
-                'Authorization': 'Bearer ' + token
-            }
-        }
-    )
-        .then(response => {
-            localStorage.setItem('user_name', response.data.result.name);
-            localStorage.setItem('user_id', response.data.result.id);
-            localStorage.setItem('user_email', response.data.result.email);
-            console.log(response.data.message);
-        })
-        .catch(error => {
-            console.error(error);
-            console.error('Could not get user details');
-            return false;
-        });
-
-    return true;
-}
+// function setUserDetails(token) {
+//     console.log(token);
+//     // Save user details to local storage
+//     axios.post('api/details',
+//         {
+//             headers: {
+//                 'Authorization': 'Bearer ' + token
+//             }
+//         }
+//     )
+//         .then(response => {
+//             localStorage.setItem('user_name', response.data.result.name);
+//             localStorage.setItem('user_id', response.data.result.id);
+//             localStorage.setItem('user_email', response.data.result.email);
+//             console.log(response.data.message);
+//         })
+//         .catch(error => {
+//             console.error(error);
+//             console.error('Could not get user details');
+//             return false;
+//         });
+//
+//     return true;
+// }
 
 export function logoutCurrentUser() {
-  // Clear all user vars in local storage
-    localStorage.removeItem('user_logged_in');
-    localStorage.removeItem('user_email');
-    localStorage.removeItem('user_name');
-    localStorage.removeItem('user_id');
+  // Clear all user cookies
+    cookie.remove('perch_api_key');
+    cookie.remove('perch_user_id');
 
     axios.post('api/logout',
         {
             headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem('user_token'),
+                'Authorization': 'Bearer ' + cookie.get('perch_api_key'),
             }
         }
     )
         .then(response => {
-            localStorage.removeItem('user_token');
+            cookie.remove('perch_api_key');
+            cookie.remove('perch_user_id');
             console.log(response.data.message);
             return true;
         })
@@ -180,9 +169,9 @@ export function getStudent(student_id) {
         })
 }
 
-export function createStudent(user_id, first_name, last_name, major, year, gpa, email) {
+export function createStudent(user_id, first_name, last_name, major, year, gpa, email, bio) {
     console.log('Creating student');
-    return axios.post('api/students/', [user_id, first_name, last_name, major, year, gpa, email])
+    return axios.post('api/students/', [user_id, first_name, last_name, major, year, gpa, email, bio])
         .then(response => {
             console.log(response.data.message);
             return response.data.result;
@@ -193,10 +182,10 @@ export function createStudent(user_id, first_name, last_name, major, year, gpa, 
         })
 }
 
-export function updateStudent(student_id, first_name, last_name, major, year, gpa, email) {
+export function updateStudent(student_id, first_name, last_name, major, year, gpa, email, bio) {
     console.log('Updating student');
     let _method = 'PUT';
-    return axios.post('api/students/' + student_id, {_method, student_id, first_name, last_name, major, year, gpa, email})
+    return axios.post('api/students/' + student_id, {_method, student_id, first_name, last_name, major, year, gpa, email, bio})
         .then(response => {
             console.log(response.data.message);
             return response.data.result;
@@ -219,7 +208,6 @@ export function deleteStudent(student_id) {
             return [];
         })
 }
-
 
 export function getStudentSkills(student_id) {
     console.log('Getting student skills');

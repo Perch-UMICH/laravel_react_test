@@ -81,7 +81,8 @@ class StudentController extends Controller
             'major' => $request->get('major'),
             'year' => $request->get('year'),
             'gpa' => $request->get('gpa'),
-            'email' => $request->get('email')
+            'email' => $request->get('email'),
+            'bio' => $request->get('bio')
         ]);
         $student->save();
         return $this->outputJSON($student, 'Student profile created');
@@ -96,15 +97,31 @@ class StudentController extends Controller
      */
     public function update(Request $request, Student $student)
     {
-        $student->first_name = $request->get('first_name');
-        $student->last_name = $request->get('last_name');
-        $student->major = $request->get('major');
-        $student->gpa = $request->get('gpa');
-        $student->year = $request->get('year');
-        $student->email = $request->get('email');
+        if ($request->has('first_name')) {
+            $student->first_name = $request->get('first_name');
+        }
+        if ($request->has('last_name')) {
+            $student->first_name = $request->get('last_name');
+        }
+        if ($request->has('major')) {
+            $student->first_name = $request->get('major');
+        }
+        if ($request->has('gpa')) {
+            $student->first_name = $request->get('gpa');
+        }
+        if ($request->has('year')) {
+            $student->first_name = $request->get('year');
+        }
+        if ($request->has('email')) {
+            $student->first_name = $request->get('email');
+        }
+        if ($request->has('bio')) {
+            $student->first_name = $request->get('bio');
+        }
+
         $student->save();
 
-        return $this->outputJSON($student, 'Student profile updates');
+        return $this->outputJSON($student, 'Student profile updated');
     }
 
     /**
