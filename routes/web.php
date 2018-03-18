@@ -16,7 +16,7 @@ Route::get('/', function () {
 });
 
 //Auth::routes();
-
+Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout');
 Route::get('login/google', 'Auth\LoginController@redirectToProvider');
 Route::get('login/google/callback', 'Auth\LoginController@handleProviderCallback');
 

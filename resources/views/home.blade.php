@@ -13,8 +13,10 @@
                             {{ session('status') }}
                         </div>
                     @endif
-
-                    You are logged in!
+                    <p>You are logged in!</p>
+                    <p>google_id: {{ Auth::user()->google_id }}</p>
+                    <p>Email: {{ Auth::user()->email }}</p>
+                    <a class='btn btn-primary' href={{url('logout')}}>Logout</a>
                 </div>
             </div>
         </div>

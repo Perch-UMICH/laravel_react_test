@@ -66,19 +66,18 @@ class LoginController extends Controller
         print_r($oauth_user);
         echo '</pre>';
 
-        /*/ login the user, redirect
+        // login the user, redirect
+        // comment out to see object returned by google api
         if ($this->userLogin($oauth_user)) {
             return redirect($this->redirectTo);
-        }*/
+        }
     }
 
     /**
      * Login the user, if user doesn't exist, create a record, then login
      */
     public function userLogin($oauth_user) {
-        $expiresIn = $oauth_user->expiresIn;
         $id = $oauth_user->getId();
-        $nickname = $oauth_user->getNickname();
         $name = $oauth_user->getName();
         $email = $oauth_user->getEmail();
 
@@ -88,6 +87,8 @@ class LoginController extends Controller
 
             // TODO check if user is from umich.edu domain
             // if not, return false
+
+            // TODO redirect user to registration form?
 
             $user = new User;
             $user->name = $name;

@@ -16,6 +16,7 @@ const Header = () => (
                 <li><Link to='/labs'>Labs</Link></li>
                 <li><Link to='/register'>Register</Link></li>
                 <li><Link to='/login'>Login</Link></li>
+                <li><a href={'login/google'}><img width={191} height={46} src={'../../images/btn_google_signin_dark_normal_web@2x.png'} /></a></li>
             </ul>
         </nav>
     </header>
