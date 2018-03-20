@@ -20,8 +20,8 @@ use Illuminate\Support\Facades\Auth;
 //});
 
 // User Registration:
-//Route::post('login', 'UserController@login');
-//Route::post('register', 'UserController@register');
+Route::post('login', 'UserController@login');
+Route::post('register', 'UserController@register');
 
 Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout');
 Route::get('login/google', 'Auth\LoginController@redirectToProvider');
@@ -30,7 +30,7 @@ Route::get('login/google/callback', 'Auth\LoginController@handleProviderCallback
 // Note: calls to routes protected by auth:api require a valid
 // user api key to be sent in the header of the request
 Route::group(['middleware' => 'auth:api'], function(){
-    Route::post('details', 'UserController@details');
+    Route::post('verify', 'UserController@verify');
     Route::post('logout', 'UserController@logout');
 });
 

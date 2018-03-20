@@ -97,10 +97,10 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function details(Request $request)
+    public function verify(Request $request)
     {
         $user = $request->user();
-        return $this->outputJSON($user,"Found user details");
+        return $this->outputJSON($user,"User token verified");
     }
 
     public function isStudent(Request $request) {

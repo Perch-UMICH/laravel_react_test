@@ -17,12 +17,31 @@ axios.defaults.headers.common['Access-Control-Allow-Methods'] = 'GET, PUT, POST,
 // Authentication
 // NOTE: Login/register funcs aren't fully working yet, so you may get response errors if you call them
 export function isLoggedIn() {
-    if(cookie.get('perch_api_key') == null) {
+    if(localStorage.getItem('token') == null) {
         console.log('Not logged in');
         return false;
     }
     console.log('Logged in');
     return true;
+}
+
+export function verifyLogin() {
+    axios.post('api/verify',
+        {
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('token'),
+            }
+        }
+    )
+        .then(response => {
+            console.log(response.data);
+            return true;
+        })
+        .catch(error => {
+            console.error(error);
+            console.error('User not verified');
+            return false;
+        });
 }
 
 export function registerUser(name, email, password, password_confirmation) {
@@ -45,9 +64,12 @@ export function registerUser(name, email, password, password_confirmation) {
 }
 
 export function loginUser(email, password) {
-    // Clear all user cookies
-    cookie.remove('perch_api_key');
-    cookie.remove('perch_user_id');
+    // // Clear all user cookies
+    // cookie.remove('perch_api_key');
+    // cookie.remove('perch_user_id');
+
+    localStorage.removeItem('token');
+    localStorage.removeItem('user_id');
 
     // Login
     console.log('logging in ' + email);
@@ -57,8 +79,10 @@ export function loginUser(email, password) {
         email, password
     })
         .then(response => {
-            cookie.set('perch_api_key', response.data.result.token, {path: "/"});
-            cookie.set('perch_user_id', response.data.result.id, {path: "/"});
+            // cookie.set('perch_api_key', response.data.result.token, {path: "/"});
+            // cookie.set('perch_user_id', response.data.result.id, {path: "/"});
+            localStorage.setItem('token', response.data.result[1].token);
+            localStorage.setItem('user_id', response.data.result[0].id);
             console.log('Successfully logged in');
             return response.data
         })
@@ -104,7 +128,7 @@ export function logoutCurrentUser() {
     axios.post('api/logout',
         {
             headers: {
-                'Authorization': 'Bearer ' + cookie.get('perch_api_key'),
+                'Authorization': 'Bearer ' + localStorage.getItem('token'),
             }
         }
     )
@@ -170,7 +194,7 @@ export function getCurrentUsername() {
     // gpa - (double)
     // linkedin_user - (string) link to linkedin user profile
     // belongs_to_lab_id - (int, foreign) id of lab on site that student current belongs to
-    // faculty_endorsement_id - (text) names of endorsing professors
+    // faculty_endorsements - (text) names of endorsing professors
 // Associations
     // Users
     // Skills
