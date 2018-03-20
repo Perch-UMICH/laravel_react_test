@@ -70,8 +70,9 @@ class StudentController extends Controller
      */
     public function store(Request $request)
     {
-        $student = Student::where('user_id', $request['user_id']);
-        if ($student) {
+        $input = $request->all();
+        $student = Student::where('user_id', $input['user_id']);
+        if ($student->exists()) {
             return $this->outputJSON($student, 'Error: this user already has a student profile');
         }
         $student = new Student([
@@ -97,28 +98,29 @@ class StudentController extends Controller
      */
     public function update(Request $request, Student $student)
     {
-        if ($request->has('first_name')) {
-            $student->first_name = $request->get('first_name');
-        }
-        if ($request->has('last_name')) {
-            $student->first_name = $request->get('last_name');
-        }
-        if ($request->has('major')) {
-            $student->first_name = $request->get('major');
-        }
-        if ($request->has('gpa')) {
-            $student->first_name = $request->get('gpa');
-        }
-        if ($request->has('year')) {
-            $student->first_name = $request->get('year');
-        }
-        if ($request->has('email')) {
-            $student->first_name = $request->get('email');
-        }
-        if ($request->has('bio')) {
-            $student->first_name = $request->get('bio');
-        }
+//        if ($request->has('first_name')) {
+//            $student->first_name = $request->get('first_name');
+//        }
+//        if ($request->has('last_name')) {
+//            $student->last_name = $request->get('last_name');
+//        }
+//        if ($request->has('major')) {
+//            $student->major = $request->get('major');
+//        }
+//        if ($request->has('gpa')) {
+//            $student->gpa = $request->get('gpa');
+//        }
+//        if ($request->has('year')) {
+//            $student->year = $request->get('year');
+//        }
+//        if ($request->has('email')) {
+//            $student->email = $request->get('email');
+//        }
+//        if ($request->has('bio')) {
+//            $student->bio = $request->get('bio');
+//        }
 
+        $student->update($request->all());
         $student->save();
 
         return $this->outputJSON($student, 'Student profile updated');

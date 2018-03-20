@@ -20,8 +20,12 @@ use Illuminate\Support\Facades\Auth;
 //});
 
 // User Registration:
-Route::post('login', 'UserController@login');
-Route::post('register', 'UserController@register');
+//Route::post('login', 'UserController@login');
+//Route::post('register', 'UserController@register');
+
+Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout');
+Route::get('login/google', 'Auth\LoginController@redirectToProvider');
+Route::get('login/google/callback', 'Auth\LoginController@handleProviderCallback');
 
 // Note: calls to routes protected by auth:api require a valid
 // user api key to be sent in the header of the request
@@ -33,6 +37,7 @@ Route::group(['middleware' => 'auth:api'], function(){
 // Users:
 Route::get('users', 'UserController@index');
 Route::post('users/isStudent', 'UserController@isStudent'); // Check if user_id is a student
+Route::put('users/{user}', 'UserController@update');
 
 // Students (note: {student} means student_id):
 Route::get('students', 'StudentController@index'); // Get all students

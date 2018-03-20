@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
-use Socialite; // OAuth
+use Laravel\Socialite\Facades\Socialite; // OAuth
 use App\User;
 use Illuminate\Support\Facades\Auth;
 
@@ -66,11 +66,36 @@ class LoginController extends Controller
         print_r($oauth_user);
         echo '</pre>';
 
+        $id = $oauth_user->getId();
+        $name = $oauth_user->getName();
+        $email = $oauth_user->getEmail();
+
+        $user = User::where('email', $email)->first();
+
+        if (!$user) {
+            // TODO redirect user to registration form with email?
+
+            $user = new User;
+            $user->name = $name;
+            $user->email = $email;
+            $user->google_id = $id;
+            $user->save();
+
+        }
+        else {
+            // Update google id in case null
+            $user->google_id = $id;
+        }
+
+        $token = $user->createToken('token')->accessToken;
+        return $this->outputJSON([$user, $token],"Logged In Successfully");
+
+
         // login the user, redirect
         // comment out to see object returned by google api
-        if ($this->userLogin($oauth_user)) {
-            return redirect($this->redirectTo);
-        }
+//        if ($this->userLogin($oauth_user)) {
+//            return redirect($this->redirectTo);
+//        }
     }
 
     /**
@@ -81,12 +106,13 @@ class LoginController extends Controller
         $name = $oauth_user->getName();
         $email = $oauth_user->getEmail();
 
-        $user = User::where('google_id', $id)->first();
+        // TODO check if user is from umich.edu domain
+        // if not, return false
+
+        $user = User::where('email', $email)->first();
 
         if (!$user) {
 
-            // TODO check if user is from umich.edu domain
-            // if not, return false
 
             // TODO redirect user to registration form?
 
@@ -96,6 +122,10 @@ class LoginController extends Controller
             $user->google_id = $id;
             $user->save();
 
+        }
+        else {
+            // Update google id in case null
+            $user->google_id = $id;
         }
 
         Auth::login($user, true);

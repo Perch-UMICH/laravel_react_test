@@ -20,7 +20,7 @@ class UserController extends Controller
     public function index()
     {
         $users = User::all();
-        return response()->json($users);
+        return $this->outputJSON($users, "Users retrieved");
     }
 
 
@@ -84,6 +84,11 @@ class UserController extends Controller
         Auth::attempt(['email' => request('email'), 'password' => request('password')]);
 
         return $this->outputJSON($token,"Successfully Registered");
+    }
+
+    public function update(Request $request, User $user) {
+        $user->update($request->all());
+        $user->save();
     }
 
 

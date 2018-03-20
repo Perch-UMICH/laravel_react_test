@@ -14,7 +14,6 @@ class CreateSkillStudentPivotTable extends Migration
     {
         Schema::create('skill_student', function (Blueprint $table) {
             $table->integer('skill_id')->unsigned()->index();
-
             $table->integer('student_id')->unsigned()->index();
 
             $table->primary(['skill_id', 'student_id']);

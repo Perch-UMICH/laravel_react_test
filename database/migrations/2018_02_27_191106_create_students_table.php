@@ -21,13 +21,16 @@ class CreateStudentsTable extends Migration
 
             $table->string('first_name');
             $table->string('last_name');
+            $table->string('email');
+            $table->string('year');
+
+            $table->string('past_research')->nullable();
             $table->text('bio')->nullable();
             $table->string('major')->nullable();
-            $table->string('year');
             $table->double('gpa')->nullable();
             $table->string('linkedin_user')->nullable();
-            $table->string('email');
             $table->integer('belongs_to_lab_id')->nullable();
+            $table->integer('faculty_endorsement_id')->unsigned()->unique()->nullable();
 
             $table->timestamps();
 

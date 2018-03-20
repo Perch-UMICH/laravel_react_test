@@ -169,9 +169,9 @@ export function getStudent(student_id) {
         })
 }
 
-export function createStudent(user_id, first_name, last_name, major, year, gpa, email, bio) {
+export function createStudent(user_id, first_name, last_name, major, year, gpa, email, bio, past_research, faculty_endorsement_id) {
     console.log('Creating student');
-    return axios.post('api/students/', [user_id, first_name, last_name, major, year, gpa, email, bio])
+    return axios.post('api/students/', [user_id, first_name, last_name, major, year, gpa, email, bio, past_research, faculty_endorsement_id])
         .then(response => {
             console.log(response.data.message);
             return response.data.result;
@@ -182,10 +182,10 @@ export function createStudent(user_id, first_name, last_name, major, year, gpa, 
         })
 }
 
-export function updateStudent(student_id, first_name, last_name, major, year, gpa, email, bio) {
+export function updateStudent(student_id, first_name, last_name, major, year, gpa, email, bio, past_research, faculty_endorsement_id) {
     console.log('Updating student');
     let _method = 'PUT';
-    return axios.post('api/students/' + student_id, {_method, student_id, first_name, last_name, major, year, gpa, email, bio})
+    return axios.post('api/students/' + student_id, {_method, student_id, first_name, last_name, major, year, gpa, email, bio, past_research, faculty_endorsement_id})
         .then(response => {
             console.log(response.data.message);
             return response.data.result;
@@ -558,7 +558,7 @@ export function getLabTags(lab_id) {
 
 export function addTagToLab(lab_id, tag_id) {
     console.log('Adding tag to lab');
-    return axios.post('api/labs/' + tag_id + '/tags', {tag_id})
+    return axios.post('api/labs/' + lab_id + '/tags', {tag_id})
         .then(response => {
             console.log(response.data.message);
             return response.data.result;
@@ -571,7 +571,7 @@ export function addTagToLab(lab_id, tag_id) {
 
 export function removeTagFromLab(lab_id, tag_id) {
     console.log('Removing tag from lab');
-    return axios.delete('api/labs/' + tag_id + '/tags', {tag_id})
+    return axios.delete('api/labs/' + lab_id + '/tags', {tag_id})
         .then(response => {
             console.log(response.data.message);
             return response.data.result;
