@@ -17,10 +17,13 @@ class CreateLabsTable extends Migration
             $table->increments('id');
             $table->string('name')->index();
             $table->string('department')->index();
-            $table->string('location')->nullable();
             $table->text('description');
+
             $table->text('publications')->nullable();
             $table->string('url')->nullable();
+            $table->string('location')->nullable();
+            $table->string('contact_phone')->nullable();
+            $table->string('contact_email')->nullable();
 
             // lab qualifications
             $table->float('gpa')->nullable(); // required gpa to apply

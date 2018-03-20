@@ -168,32 +168,44 @@ class StudentController extends Controller
 
     public function add_skill(Request $request, Student $student) {
         $input = $request->all();
-        $student->skills()->attach([$input['skill_id']]);
+        $ids = $input['skill_ids'];
+        $student->tags()->attach($ids);
+        return $this->outputJSON(null,"Added skills");
     }
 
     public function add_tag(Request $request, Student $student) {
         $input = $request->all();
-        $student->tags()->attach([$input['tag_id']]);
+        $ids = $input['tag_ids'];
+        $student->tags()->attach($ids);
+        return $this->outputJSON(null,"Added tags");
     }
 
     public function add_lab(Request $request, Student $student) {
         $input = $request->all();
-        $student->labs()->attach([$input['lab_id']]);
+        $ids = $input['lab_ids'];
+        $student->tags()->attach($ids);
+        return $this->outputJSON(null,"Added labs");
     }
 
     public function remove_skill(Request $request, Student $student) {
         $input = $request->all();
-        $student->skills()->detach([$input['skill_id']]);
+        $ids = $input['skill_ids'];
+        $student->tags()->detach($ids);
+        return $this->outputJSON(null,"Removed skills");
     }
 
     public function remove_tag(Request $request, Student $student) {
         $input = $request->all();
-        $student->tags()->detach([$input['tag_id']]);
+        $ids = $input['tag_ids'];
+        $student->tags()->detach($ids);
+        return $this->outputJSON(null,"Removed tags");
     }
 
     public function remove_lab(Request $request, Student $student) {
         $input = $request->all();
-        $student->labs()->detach([$input['lab_id']]);
+        $ids = $input['lab_ids'];
+        $student->tags()->detach($ids);
+        return $this->outputJSON(null,"Removed labs");
     }
 
 }

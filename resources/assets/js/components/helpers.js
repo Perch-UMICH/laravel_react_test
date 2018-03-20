@@ -8,6 +8,9 @@ import axios from 'axios';
 import { cookie } from 'react-cookie'
 
 axios.defaults.baseURL = 'http://perch-api.us-east-1.elasticbeanstalk.com';
+axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
+axios.defaults.headers.common['Access-Control-Allow-Methods'] = 'GET, PUT, POST, DELETE, OPTIONS';
 
 // Authentication
 // NOTE: Login/register funcs aren't fully working yet, so you may get response errors if you call them
@@ -116,7 +119,15 @@ export function logoutCurrentUser() {
         });
 }
 
-// Users
+// USERS
+// Base user on website
+// Required:
+    // name - (string) username
+    // email - (string) sign up email
+    // google_id - (int) unique id associated with google account
+// Optional:
+    // is_student - (bool)
+    // is_faculty - (bool)
 
 export function getAllUsers() {
     console.log('Getting users');
@@ -143,6 +154,26 @@ export function getCurrentUsername() {
 }
 
 // Students
+// Student profile
+// Required:
+    //  user_id - (int, foreign) id of User associated with this profile
+    //  first_name - (string)
+    //  last_name - (string)
+    //  email - (string)
+    //  year - (string)
+// Optional:
+    // past_research - (text) description of past research experience
+    // bio - (text) short bio on student goals
+    // major - (string) degree pursuing
+    // gpa - (double)
+    // linkedin_user - (string) link to linkedin user profile
+    // belongs_to_lab_id - (int, foreign) id of lab on site that student current belongs to
+    // faculty_endorsement_id - (text) names of endorsing professors
+// Associations
+    // Users
+    // Skills
+    // Tags
+    // Labs ("favorited")
 
 export function getAllStudents() {
     console.log('Getting students');
@@ -209,6 +240,7 @@ export function deleteStudent(student_id) {
         })
 }
 
+
 export function getStudentSkills(student_id) {
     console.log('Getting student skills');
     return axios.get('api/students/' + student_id + '/skills')
@@ -222,9 +254,13 @@ export function getStudentSkills(student_id) {
         })
 }
 
-export function addSkillToStudent(student_id, skill_id) {
-    console.log('Adding skill to student');
-    return axios.post('api/students/' + student_id + '/skills', {skill_id})
+export function addSkillsToStudent(student_id, skill_ids) {
+    console.log('Adding skills to student');
+
+    let payload = {
+        skill_ids: skill_ids
+    };
+    return axios.post('api/students/' + student_id + '/skills', payload)
         .then(response => {
             console.log(response.data.message);
             return response.data.result;
@@ -235,9 +271,13 @@ export function addSkillToStudent(student_id, skill_id) {
         })
 }
 
-export function removeSkillFromStudent(student_id, skill_id) {
+export function removeSkillsFromStudent(student_id, skill_ids) {
     console.log('Removing skill from student');
-    return axios.delete('api/students/' + student_id + '/skills', {skill_id})
+
+    let payload = {
+        skill_ids: skill_ids
+    };
+    return axios.delete('api/students/' + student_id + '/skills', payload)
         .then(response => {
             console.log(response.data.message);
             return response.data.result;
@@ -262,9 +302,13 @@ export function getStudentTags(student_id) {
         })
 }
 
-export function addTagToStudent(student_id, tag_id) {
+export function addTagsToStudent(student_id, tag_ids) {
     console.log('Adding tag to student');
-    return axios.post('api/students/' + student_id + '/tags', {tag_id})
+
+    let payload = {
+        tag_ids: tag_ids
+    };
+    return axios.post('api/students/' + student_id + '/tags', payload)
         .then(response => {
             console.log(response.data.message);
             return response.data.result;
@@ -275,9 +319,13 @@ export function addTagToStudent(student_id, tag_id) {
         })
 }
 
-export function removeTagFromStudent(student_id, tag_id) {
+export function removeTagsFromStudent(student_id, tag_ids) {
     console.log('Removing tag from student');
-    return axios.delete('api/students/' + student_id + '/tags', {tag_id})
+
+    let payload = {
+        tag_ids: tag_ids
+    };
+    return axios.delete('api/students/' + student_id + '/tags', payload)
         .then(response => {
             console.log(response.data.message);
             return response.data.result;
@@ -302,9 +350,13 @@ export function getStudentFavLabs(student_id) {
         })
 }
 
-export function addFavLabToStudent(student_id, lab_id) {
+export function addFavLabsToStudent(student_id, lab_ids) {
     console.log('Adding favorite lab to student');
-    return axios.post('api/students/' + student_id + '/labs', {lab_id})
+
+    let payload = {
+        tag_ids: lab_ids
+    };
+    return axios.post('api/students/' + student_id + '/labs', payload)
         .then(response => {
             console.log(response.data.message);
             return response.data.result;
@@ -315,9 +367,13 @@ export function addFavLabToStudent(student_id, lab_id) {
         })
 }
 
-export function removeFavLabFromStudent(student_id, lab_id) {
+export function removeFavLabsFromStudent(student_id, lab_ids) {
     console.log('Removing favorite lab from student');
-    return axios.delete('api/students/' + student_id + '/labs', {lab_id})
+
+    let payload = {
+        tag_ids: lab_ids
+    };
+    return axios.delete('api/students/' + student_id + '/labs', payload)
         .then(response => {
             console.log(response.data.message);
             return response.data.result;
@@ -329,6 +385,17 @@ export function removeFavLabFromStudent(student_id, lab_id) {
 }
 
 // Faculties
+// Faculty profile
+// Required:
+    // user_id - (int, foreign) id of User associated with this profile
+    // first_name - (string)
+    // last_name - (string)
+    // email - (string) contact email address
+// Optional:
+    // title - (string) title of position in university (e.g. PI, assistant prof, grad student)
+// Associations
+    // Users
+    // Labs
 
 export function getAllFaculties() {
     console.log('Getting all faculty');
@@ -436,6 +503,24 @@ export function removeLabFromFaculty(faculty_id, lab_id) {
 }
 
 // Labs
+// Lab page
+// Required:
+    // name - (string)
+    // department - (string)
+    // description - (text) short description of lab goals
+// Optional:
+    // publications - (text) description of recent publications
+    // url - (string) url to official lab page
+    // location - (string) location at university
+    // contact_phone - (string)
+    // contact_email - (string)
+    // gpa - (float) desired GPA of applicants
+    // weeklyCommitment - (int) hours/week of commitment expected
+// Associations
+    // Skills
+    // Tags
+    // Students
+    // Faculties
 
 export function getAllLabs() {
     console.log('Getting all labs');
@@ -462,9 +547,9 @@ export function getLab(lab_id) {
         })
 }
 
-export function createLab(faculty_id, name, department, location, description, publications, url, gpa, weeklyCommitment) {
+export function createLab(faculty_id, name, department, location, description, publications, url, gpa, weeklyCommitment, contact_phone, contact_email) {
     console.log('Creating lab');
-    return axios.post('api/labs/', [faculty_id, name, department, location, description, publications, url, gpa, weeklyCommitment])
+    return axios.post('api/labs/', [faculty_id, name, department, location, description, publications, url, gpa, weeklyCommitment, contact_phone, contact_email])
         .then(response => {
             console.log(response.data.message);
             return response.data.result;
@@ -475,10 +560,10 @@ export function createLab(faculty_id, name, department, location, description, p
         })
 }
 
-export function updateLab(lab_id, name, department, location, description, publications, url, gpa, weeklyCommitment) {
+export function updateLab(lab_id, name, department, location, description, publications, url, gpa, weeklyCommitment, contact_phone, contact_email) {
     console.log('Updating lab');
     let _method = 'PUT';
-    return axios.post('api/labs/' + lab_id, {_method, lab_id, name, department, location, description, publications, url, gpa, weeklyCommitment})
+    return axios.post('api/labs/' + lab_id, {_method, lab_id, name, department, location, description, publications, url, gpa, weeklyCommitment, contact_phone, contact_email})
         .then(response => {
             console.log(response.data.message);
             return response.data.result;
@@ -516,9 +601,13 @@ export function getLabSkills(lab_id) {
         })
 }
 
-export function addSkillToLab(lab_id, skill_id) {
-    console.log('Adding skill to lab');
-    return axios.post('api/labs/' + lab_id + '/skills', {skill_id})
+export function addSkillsToLab(lab_id, skill_ids) {
+    console.log('Adding skills to lab');
+
+    let payload = {
+        skill_ids: skill_ids
+    };
+    return axios.post('api/labs/' + lab_id + '/skills', payload)
         .then(response => {
             console.log(response.data.message);
             return response.data.result;
@@ -529,9 +618,13 @@ export function addSkillToLab(lab_id, skill_id) {
         })
 }
 
-export function removeSkillFromLab(lab_id, skill_id) {
-    console.log('Removing skill from lab');
-    return axios.delete('api/labs/' + lab_id + '/skills', {skill_id})
+export function removeSkillsFromLab(lab_id, skill_ids) {
+    console.log('Removing skills from lab');
+
+    let payload = {
+        skill_ids: skill_ids
+    };
+    return axios.delete('api/labs/' + lab_id + '/skills', payload)
         .then(response => {
             console.log(response.data.message);
             return response.data.result;
@@ -556,9 +649,13 @@ export function getLabTags(lab_id) {
         })
 }
 
-export function addTagToLab(lab_id, tag_id) {
-    console.log('Adding tag to lab');
-    return axios.post('api/labs/' + lab_id + '/tags', {tag_id})
+export function addTagsToLab(lab_id, tag_ids) {
+    console.log('Adding tags to lab');
+
+    let payload = {
+        tag_ids: tag_ids
+    };
+    return axios.post('api/labs/' + lab_id + '/tags', payload)
         .then(response => {
             console.log(response.data.message);
             return response.data.result;
@@ -569,9 +666,13 @@ export function addTagToLab(lab_id, tag_id) {
         })
 }
 
-export function removeTagFromLab(lab_id, tag_id) {
-    console.log('Removing tag from lab');
-    return axios.delete('api/labs/' + lab_id + '/tags', {tag_id})
+export function removeTagsFromLab(lab_id, tag_ids) {
+    console.log('Removings tag from lab');
+
+    let payload = {
+        tag_ids: tag_ids
+    };
+    return axios.delete('api/labs/' + lab_id + '/tags', payload)
         .then(response => {
             console.log(response.data.message);
             return response.data.result;
@@ -583,7 +684,11 @@ export function removeTagFromLab(lab_id, tag_id) {
 }
 
 // Skills
-
+// Laboratory skills
+// Required:
+    // name - (string)
+// Optional:
+    // description - (string)
 export function getAllSkills() {
     console.log('Getting all skills');
     return axios.get('api/skills')
@@ -610,7 +715,11 @@ export function getSkill(skill_id) {
 }
 
 // Tags
-
+// Academic subjects/disciplines, areas of study, etc.
+// Required:
+    // name - (string)
+// Optional:
+    // description - (string)
 export function getAllTags() {
     console.log('Getting all tags');
     return axios.get('api/tags')
