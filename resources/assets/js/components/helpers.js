@@ -6,6 +6,8 @@ import React from "react";
 import { Redirect } from "react-router-dom";
 import axios from 'axios';
 import { cookie } from 'react-cookie'
+import FormData from 'form-data'
+
 
 axios.defaults.baseURL = 'http://perch-api.us-east-1.elasticbeanstalk.com';
 axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
@@ -735,6 +737,24 @@ export function getAllTags() {
 export function getTag(tag_id) {
     console.log('Getting tag');
     return axios.get('api/tags/' + tag_id)
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+// data should be of type FormData
+// see: https://stackoverflow.com/questions/39663961/how-do-you-send-images-to-node-js-with-axios
+// type - should be either "student", "faculity", or "lab"
+// id - based on type, should be the id of that object
+export function uploadPic(type, id, data) {
+    data.append('type', type);
+    data.append('id', id);
+    return axios.post('api/pics', data)
         .then(response => {
             console.log(response.data.message);
             return response.data.result;

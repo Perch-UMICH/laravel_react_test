@@ -105,3 +105,6 @@ Route::get('skills/{skill}', 'SkillController@show');
 Route::get('tags', 'SkillController@index');
 Route::get('tags/{tag}', 'SkillController@show');
 
+// Profile pics
+Route::post('pics', 'ProfilepicController@store');
+
