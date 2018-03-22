@@ -120,8 +120,10 @@ export function loginUser(email, password) {
 
 export function logoutCurrentUser() {
   // Clear all user cookies
-    cookie.remove('perch_api_key');
-    cookie.remove('perch_user_id');
+  //   cookie.remove('perch_api_key');
+  //   cookie.remove('perch_user_id');
+    localStorage.removeItem('token');
+    localStorage.removeItem('user_id');
 
     return axios.post('api/logout',
         {
@@ -131,8 +133,9 @@ export function logoutCurrentUser() {
         }
     )
         .then(response => {
-            cookie.remove('perch_api_key');
-            cookie.remove('perch_user_id');
+            // cookie.remove('perch_api_key');
+            // cookie.remove('perch_user_id');
+
             console.log(response.data.message);
             return true;
         })
