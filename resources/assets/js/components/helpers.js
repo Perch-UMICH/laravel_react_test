@@ -26,7 +26,7 @@ export function isLoggedIn() {
 }
 
 export function verifyLogin() {
-    axios.post('api/verify',
+    return axios.post('api/verify',
         {
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem('token'),
@@ -45,7 +45,7 @@ export function verifyLogin() {
 }
 
 export function registerUser(name, email, password, password_confirmation) {
-    axios.post('api/register', {
+    return axios.post('api/register', {
         name,
         email,
         password,
@@ -75,7 +75,7 @@ export function loginUser(email, password) {
     console.log('logging in ' + email);
     //console.log(password);
 
-    axios.post('api/login', {
+    return axios.post('api/login', {
         email, password
     })
         .then(response => {
@@ -91,8 +91,6 @@ export function loginUser(email, password) {
             console.error(error);
             return false;
         });
-
-    return true;
 }
 
 // function setUserDetails(token) {
@@ -125,7 +123,7 @@ export function logoutCurrentUser() {
     cookie.remove('perch_api_key');
     cookie.remove('perch_user_id');
 
-    axios.post('api/logout',
+    return axios.post('api/logout',
         {
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem('token'),
