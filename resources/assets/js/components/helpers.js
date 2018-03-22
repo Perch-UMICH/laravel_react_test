@@ -11,8 +11,6 @@ import FormData from 'form-data'
 
 axios.defaults.baseURL = 'http://perch-api.us-east-1.elasticbeanstalk.com';
 axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
-axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
-axios.defaults.headers.common['Access-Control-Allow-Methods'] = 'GET, PUT, POST, DELETE, OPTIONS';
 
 // Authentication
 // NOTE: Login/register funcs aren't fully working yet, so you may get response errors if you call them
