@@ -226,7 +226,7 @@ export function getStudent(student_id) {
 
 export function createStudent(user_id, first_name, last_name, major, year, gpa, email, bio, past_research, faculty_endorsement_id) {
     console.log('Creating student');
-    return axios.post('api/students/', [user_id, first_name, last_name, major, year, gpa, email, bio, past_research, faculty_endorsement_id])
+    return axios.post('api/students/', {user_id, first_name, last_name, major, year, gpa, email, bio, past_research, faculty_endorsement_id})
         .then(response => {
             console.log(response.data.message);
             return response.data.result;
