@@ -38,6 +38,7 @@ Route::group(['middleware' => 'auth:api'], function(){
 Route::get('users', 'UserController@index');
 Route::post('users/isStudent', 'UserController@isStudent'); // Check if user_id is a student
 Route::put('users/{user}', 'UserController@update');
+Route::delete('users/{user}', 'UserController@delete');
 
 // Students (note: {student} means student_id):
 Route::get('students', 'StudentController@index'); // Get all students

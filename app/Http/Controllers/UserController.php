@@ -89,14 +89,16 @@ class UserController extends Controller
     public function update(Request $request, User $user) {
         $user->update($request->all());
         $user->save();
+        return $this->outputJSON($user, 'User updated');
+
     }
 
+    public function delete(User $user) {
+        $user->delete();
 
-    /**
-     * details api
-     *
-     * @return \Illuminate\Http\Response
-     */
+        return $this->outputJSON(null, 'User deleted');
+    }
+
     public function verify(Request $request)
     {
         $user = $request->user();

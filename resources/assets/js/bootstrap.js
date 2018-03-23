@@ -25,6 +25,7 @@ window.react_cookie = require('react-cookie');
 
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
+
 //window.axios.defaults.baseURL = 'http://perch-api.us-east-1.elasticbeanstalk.com';
 
 /**
