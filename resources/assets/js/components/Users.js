@@ -23,7 +23,7 @@ class Users extends React.Component {
     componentDidMount() {
         let comp = this;
         getAllUsers().then(function (resp) {
-            comp.setState({users: resp});
+            comp.setState({users: JSON.stringify(resp)});
         });
     }
 

@@ -606,13 +606,11 @@ if (false) {
 /* harmony export (immutable) */ __webpack_exports__["o"] = loginUser;
 /* harmony export (immutable) */ __webpack_exports__["p"] = logoutCurrentUser;
 /* harmony export (immutable) */ __webpack_exports__["d"] = getAllUsers;
-/* unused harmony export getCurrentUserEmail */
-/* unused harmony export getCurrentUserId */
-/* harmony export (immutable) */ __webpack_exports__["e"] = getCurrentUsername;
+/* unused harmony export deleteUser */
 /* harmony export (immutable) */ __webpack_exports__["c"] = getAllStudents;
 /* harmony export (immutable) */ __webpack_exports__["k"] = getStudent;
 /* unused harmony export createStudent */
-/* unused harmony export updateStudent */
+/* harmony export (immutable) */ __webpack_exports__["r"] = updateStudent;
 /* unused harmony export deleteStudent */
 /* harmony export (immutable) */ __webpack_exports__["l"] = getStudentSkills;
 /* unused harmony export addSkillsToStudent */
@@ -667,7 +665,7 @@ if (false) {
 
 
 __WEBPACK_IMPORTED_MODULE_2_axios___default.a.defaults.headers.common = {};
-__WEBPACK_IMPORTED_MODULE_2_axios___default.a.defaults.baseURL = 'http://perch-api.us-east-1.elasticbeanstalk.com';
+//axios.defaults.baseURL = 'http://perch-api.us-east-1.elasticbeanstalk.com';
 __WEBPACK_IMPORTED_MODULE_2_axios___default.a.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
 // Authentication
@@ -810,18 +808,15 @@ function getAllUsers() {
     });
 }
 
-function getCurrentUserEmail() {
-    return localStorage.getItem('user_email');
+function deleteUser(user_id) {
+    console.log('Deleting user');
+    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.delete('api/users/' + user_id).then(function (response) {
+        return response.data;
+    }).catch(function (error) {
+        console.log(error);
+        return [];
+    });
 }
-
-function getCurrentUserId() {
-    return localStorage.getItem('user_id');
-}
-
-function getCurrentUsername() {
-    return localStorage.getItem('user_name');
-}
-
 // Students
 // Student profile
 // Required:
@@ -867,7 +862,7 @@ function getStudent(student_id) {
 
 function createStudent(user_id, first_name, last_name, major, year, gpa, email, bio, past_research, faculty_endorsement_id) {
     console.log('Creating student');
-    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/students/', [user_id, first_name, last_name, major, year, gpa, email, bio, past_research, faculty_endorsement_id]).then(function (response) {
+    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/students', { user_id: user_id, first_name: first_name, last_name: last_name, major: major, year: year, gpa: gpa, email: email, bio: bio, past_research: past_research, faculty_endorsement_id: faculty_endorsement_id }).then(function (response) {
         console.log(response.data.message);
         return response.data.result;
     }).catch(function (error) {
@@ -1336,7 +1331,7 @@ function getTag(tag_id) {
 
 // data should be of type FormData
 // see: https://stackoverflow.com/questions/39663961/how-do-you-send-images-to-node-js-with-axios
-// type - should be either "student", "faculity", or "lab"
+// type - should be either "student", "faculty", or "lab"
 // id - based on type, should be the id of that object
 function uploadPic(type, id, data) {
     data.append('type', type);
@@ -60319,6 +60314,13 @@ var Students = function (_React$Component) {
         key: 'renderStudents',
         value: function renderStudents() {}
     }, {
+        key: 'update',
+        value: function update() {
+            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["r" /* updateStudent */])(1, 'test', 'test', null, null, null, null, null, null, null).then(function (resp) {
+                console.log(resp);
+            });
+        }
+    }, {
         key: 'render',
         value: function render() {
             return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
@@ -60363,6 +60365,11 @@ var Students = function (_React$Component) {
                     'ul',
                     null,
                     this.state.tags
+                ),
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'button',
+                    { onClick: this.update },
+                    'Update'
                 )
             );
         }
@@ -60425,7 +60432,7 @@ var Register = function (_React$Component) {
     _createClass(Register, [{
         key: 'componentDidMount',
         value: function componentDidMount() {
-            var name = Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["e" /* getCurrentUsername */])();
+            var name = Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["getCurrentUsername"])();
             this.setState({ username: name });
         }
     }, {
@@ -60635,7 +60642,7 @@ var Users = function (_React$Component) {
         value: function componentDidMount() {
             var comp = this;
             Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["d" /* getAllUsers */])().then(function (resp) {
-                comp.setState({ users: resp });
+                comp.setState({ users: JSON.stringify(resp) });
             });
         }
     }, {
@@ -60770,7 +60777,7 @@ var Login = function (_React$Component) {
         key: 'componentDidMount',
         value: function componentDidMount() {
             this.setState({ logged_in: Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["n" /* isLoggedIn */])() });
-            this.setState({ username: Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["e" /* getCurrentUsername */])() });
+            this.setState({ username: Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["getCurrentUsername"])() });
         }
     }, {
         key: 'onSubmit',

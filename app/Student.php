@@ -11,6 +11,11 @@ class Student extends Model
 {
     protected $fillable = ['first_name', 'last_name', 'major', 'gpa', 'bio', 'year', 'email'];
 
+    public function user()
+    {
+        return $this->belongsTo('App\User');
+    }
+
     public function skills() {
         return $this->belongsToMany('App\Skill', 'skill_student');
     }

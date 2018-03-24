@@ -9,6 +9,11 @@ class Faculty extends Model
 {
     protected $fillable = ['first_name', 'last_name', 'title', 'email'];
 
+    public function user()
+    {
+        return $this->belongsTo('App\User');
+    }
+
     public function labs() {
         return $this->belongsToMany('App\Lab', 'faculty_lab');
     }

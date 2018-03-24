@@ -44,21 +44,17 @@ class LabController extends Controller
      */
     public function store(Request $request)
     {
+        $input = $request->all();
+        $input = array_filter($input);
+
         $lab = Lab::where('name', $request['name']);
         if ($lab == null) {
             return $this->outputJSON($lab, 'Error: lab with this name already exists');
         }
-        $lab = new Lab([
-            'name' => $request->get('name'),
-            'department' => $request->get('department'),
-            'location' => $request->get('location'),
-            'description' => $request->get('description'),
-            'publications' => $request->get('publications'),
-            'url' => $request->get('url'),
-            'gpa' => $request->get('gpa'),
-            'weeklyCommitment' => $request->get('weeklyCommitment')
-        ]);
+
+        $lab = new Lab($input);
         $lab->save();
+
         return $this->outputJSON($lab, 'Lab page created');
     }
 
@@ -99,15 +95,8 @@ class LabController extends Controller
     public function update(Request $request, Lab $lab)
     {
         $input = $request->all();
-        $lab->name = $input['name'];
-        $lab->department = $input['department'];
-        $lab->location = $input['location'];
-        $lab->description = $input['description'];
-        $lab->publications = $input['publications'];
-        $lab->url = $input['url'];
-        $lab->gpa = $input['gpa'];
-        $lab->weeklyCommitment = $input['weeklyCommitment'];
-
+        $input = array_filter($input);
+        $lab->update($input);
         $lab->save();
 
         return $this->outputJSON($lab, 'Lab page updated');

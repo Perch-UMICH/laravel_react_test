@@ -4,7 +4,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom';
 import axios from 'axios'
-import {getAllStudents, getStudent, getStudentSkills, getStudentTags} from './helpers'
+import {getAllStudents, getStudent, getStudentSkills, getStudentTags, updateStudent} from './helpers'
 
 
 class Students extends React.Component {
@@ -44,6 +44,12 @@ class Students extends React.Component {
 
     }
 
+    update() {
+        updateStudent(1, 'test', 'test', null, null, null, null, null, null, null).then(function (resp) {
+            console.log(resp);
+        });
+    }
+
     render() {
         return(
             <div>
@@ -63,6 +69,7 @@ class Students extends React.Component {
                 <ul>
                     {this.state.tags}
                 </ul>
+                <button onClick={this.update}>Update</button>
             </div>
         )
     }
