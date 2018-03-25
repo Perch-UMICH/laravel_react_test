@@ -21,7 +21,6 @@ try {
  */
 
 window.axios = require('axios');
-window.react_cookie = require('react-cookie');
 
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 

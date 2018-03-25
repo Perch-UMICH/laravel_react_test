@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta name="token" id="token" content="{{ auth()->check() ? auth()->user()->api_token : null }}">
 
     <title>Laravel</title>
     <link href="{{asset('css/app.css')}}" rel="stylesheet" type="text/css">

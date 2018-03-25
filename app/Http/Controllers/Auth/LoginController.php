@@ -70,9 +70,9 @@ class LoginController extends Controller
         $name = $oauth_user->getName();
         $email = $oauth_user->getEmail();
 
-        $user = User::where('email', $email)->first();
+        $user = User::where('email', $email);
 
-        if (!$user) {
+        if (!$user->exists()) {
             // TODO redirect user to registration form with email?
 
             $user = new User;

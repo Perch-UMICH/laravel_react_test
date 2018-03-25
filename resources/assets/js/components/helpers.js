@@ -13,7 +13,6 @@ axios.defaults.headers.common = {};
 axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
 // Authentication
-// NOTE: Login/register funcs aren't fully working yet, so you may get response errors if you call them
 export function isLoggedIn() {
     if(localStorage.getItem('token') == null) {
         console.log('Not logged in');
@@ -91,31 +90,6 @@ export function loginUser(email, password) {
         });
 }
 
-// function setUserDetails(token) {
-//     console.log(token);
-//     // Save user details to local storage
-//     axios.post('api/details',
-//         {
-//             headers: {
-//                 'Authorization': 'Bearer ' + token
-//             }
-//         }
-//     )
-//         .then(response => {
-//             localStorage.setItem('user_name', response.data.result.name);
-//             localStorage.setItem('user_id', response.data.result.id);
-//             localStorage.setItem('user_email', response.data.result.email);
-//             console.log(response.data.message);
-//         })
-//         .catch(error => {
-//             console.error(error);
-//             console.error('Could not get user details');
-//             return false;
-//         });
-//
-//     return true;
-// }
-
 export function logoutCurrentUser() {
   // Clear all user cookies
   //   cookie.remove('perch_api_key');
@@ -140,6 +114,18 @@ export function logoutCurrentUser() {
         .catch(error => {
             console.error(error);
             console.error('Could not logout');
+            return false;
+        });
+}
+
+export function passwordResetEmail(email) {
+    return axios.post('password/email', {email})
+        .then(response=> {
+            console.log(response.data);
+            return response.data;
+        })
+        .catch(error=> {
+            console.error(error);
             return false;
         });
 }
@@ -774,8 +760,9 @@ export function getTag(tag_id) {
 // type - should be either "student", "faculty", or "lab"
 // id - based on type, should be the id of that object
 export function uploadPic(type, id, data) {
-    data.append('type', type);
-    data.append('id', id);
+    data.set('type', type);
+    data.set('id', id);
+    console.log(data);
     return axios.post('api/pics', data)
         .then(response => {
             console.log(response.data.message);

@@ -7,7 +7,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom';
 import axios from 'axios'
-import {getAllUsers} from './helpers'
+import {getAllUsers, passwordResetEmail} from './helpers'
 
 // Makes get request to server for all users on site
 class Users extends React.Component {
@@ -27,6 +27,10 @@ class Users extends React.Component {
         });
     }
 
+    resetPass() {
+        passwordResetEmail('akshayro@umich.edu');
+    }
+
 
     render() {
         return(
@@ -35,6 +39,7 @@ class Users extends React.Component {
                 <ul>
                     {this.state.users}
                 </ul>
+                <button onClick={this.resetPass}>Reset</button>
             </div>
         )
     }

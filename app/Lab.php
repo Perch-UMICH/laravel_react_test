@@ -23,4 +23,9 @@ class Lab extends Model
     public function faculties() {
         return $this->belongsToMany('App\Faculty', 'faculty_lab');
     }
+
+    public function positions()
+    {
+        return $this->hasMany('App\Comment');
+    }
 }

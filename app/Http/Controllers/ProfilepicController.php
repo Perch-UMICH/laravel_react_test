@@ -37,7 +37,7 @@ class ProfilepicController extends Controller
      */
     public function store(Request $request)
     {
-        $path = $request->file('photo')->store('images');
+        $path = $request->file('image')->store('images');
         $type = $request->get('type');
         if ($type == 'student') {
             $student_id = $request->get('id');
@@ -47,7 +47,7 @@ class ProfilepicController extends Controller
             }
             $student->profilepic_path = $path;
             $student->save();
-            return $this->outputJSON($student, 'Added profile pic');
+            return $this->outputJSON($student, 'Added student profile pic');
         }
         else if ($type == 'faculty') {
             $faculty_id = $request->get('id');
@@ -57,7 +57,7 @@ class ProfilepicController extends Controller
             }
             $faculty->profilepic_path = $path;
             $faculty->save();
-            return $this->outputJSON($faculty, 'Added profile pic');
+            return $this->outputJSON($faculty, 'Added faculty profile pic');
         }
         else if ($type == 'lab') {
             $lab_id = $request->get('id');
@@ -67,7 +67,7 @@ class ProfilepicController extends Controller
             }
             $lab->labpic_path = $path;
             $lab->save();
-            return $this->outputJSON($lab, 'Added profile pic');
+            return $this->outputJSON($lab, 'Added lab profile pic');
         }
         else {
             return $this->outputJSON(null, 'Error: type is invalid');
