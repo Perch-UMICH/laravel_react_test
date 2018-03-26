@@ -690,12 +690,60 @@ export function addTagsToLab(lab_id, tag_ids) {
 }
 
 export function removeTagsFromLab(lab_id, tag_ids) {
-    console.log('Removings tag from lab');
+    console.log('Removing tag from lab');
 
     let payload = {
         tag_ids: tag_ids
     };
     return axios.delete('api/labs/' + lab_id + '/tags', payload)
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+
+export function getLabPreferences(lab_id) {
+    console.log('Getting lab preferences');
+    return axios.get('api/labs/' + lab_id + '/preferences')
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+export function addPreferencesToLab(lab_id, preference_ids) {
+    console.log('Adding preferences to lab');
+
+    let payload = {
+        tag_ids: preference_ids
+    };
+    return axios.post('api/labs/' + lab_id + '/preferences', payload)
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+export function removePreferencesFromLab(lab_id, preference_ids) {
+    console.log('Removing preferences from lab');
+
+    let payload = {
+        tag_ids: preference_ids
+    };
+    return axios.delete('api/labs/' + lab_id + '/preferences', payload)
         .then(response => {
             console.log(response.data.message);
             return response.data.result;

@@ -91,10 +91,13 @@ Route::get('labs/{lab}/skills', 'LabController@skills');
 Route::post('labs/{lab}/skills', 'LabController@add_skill');
 Route::delete('labs/{lab}/skills', 'LabController@remove_skill');
 
-
 Route::get('labs/{lab}/tags', 'LabController@tags');
 Route::post('labs/{lab}/tags', 'LabController@add_tag');
 Route::delete('labs/{lab}/tags', 'LabController@remove_tag');
+
+Route::get('labs/{lab}/preferences', 'LabController@preferences');
+Route::post('labs/{lab}/preferences', 'LabController@add_preference');
+Route::delete('labs/{lab}/preferences', 'LabController@remove_preference');
 
 // Skills:
 Route::get('skills', 'SkillController@index');

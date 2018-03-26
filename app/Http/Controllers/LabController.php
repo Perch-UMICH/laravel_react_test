@@ -111,7 +111,6 @@ class LabController extends Controller
     public function destroy(Lab $lab)
     {
         $lab->delete();
-
         return $this->outputJSON(null, 'Lab page deleted');
     }
 
@@ -135,43 +134,78 @@ class LabController extends Controller
         return $this->outputJSON($tags,"Tags from lab retrieved");
     }
 
+    public function preferences(Lab $lab) {
+        $preferences = $lab->preferences()->wherePivot('lab_id', $lab->id)->get();
+        return $this->outputJSON($preferences,"Preferences from lab retrieved");
+    }
+
     public function add_skill(Request $request, Lab $lab) {
         $input = $request->all();
-        $lab->skills()->attach([$input['skill_id']]);
+        $ids = $input['skill_ids'];
+        $lab->skills()->attach($ids);
+        return $this->outputJSON(null,"Added skills");
     }
 
     public function add_tag(Request $request, Lab $lab) {
         $input = $request->all();
-        $lab->tags()->attach([$input['tag_id']]);
+        $ids = $input['tag_ids'];
+        $lab->tags()->attach($ids);
+        return $this->outputJSON(null,"Added tags");
     }
 
     public function add_student(Request $request, Lab $lab) {
         $input = $request->all();
-        $lab->students()->attach([$input['student_id']]);
+        $ids = $input['student_ids'];
+        $lab->students()->attach($ids);
+        return $this->outputJSON(null,"Added students");
     }
 
     public function add_faculty(Request $request, Lab $lab) {
         $input = $request->all();
-        $lab->faculties()->attach([$input['faculty_id']]);
+        $ids = $input['faculty_ids'];
+        $lab->faculties()->attach($ids);
+        return $this->outputJSON(null,"Added faculty");
+    }
+
+    public function add_preference(Request $request, Lab $lab) {
+        $input = $request->all();
+        $ids = $input['preference_ids'];
+        $lab->preferences()->attach($ids);
+        return $this->outputJSON(null,"Added preferences");
     }
 
     public function remove_skill(Request $request, Lab $lab) {
         $input = $request->all();
-        $lab->skills()->detach([$input['skill_id']]);
+        $ids = $input['skill_ids'];
+        $lab->skills()->detach($ids);
+        return $this->outputJSON(null,"Removed skills");
     }
 
     public function remove_tag(Request $request, Lab $lab) {
         $input = $request->all();
-        $lab->tags()->detach([$input['tag_id']]);
+        $ids = $input['tag_ids'];
+        $lab->tags()->detach($ids);
+        return $this->outputJSON(null,"Removed tags");
     }
 
     public function remove_student(Request $request, Lab $lab) {
         $input = $request->all();
-        $lab->students()->detach([$input['student_id']]);
+        $ids = $input['student_ids'];
+        $lab->students()->detach($ids);
+        return $this->outputJSON(null,"Removed students");
     }
 
     public function remove_faculty(Request $request, Lab $lab) {
         $input = $request->all();
-        $lab->faculties()->detach([$input['faculty_id']]);
+        $ids = $input['faculty_ids'];
+        $lab->faculties()->detach($ids);
+        return $this->outputJSON(null,"Removed faculty");
+    }
+
+    public function remove_preference(Request $request, Lab $lab) {
+        $input = $request->all();
+        $ids = $input['preference_ids'];
+        $lab->preferences()->detach($ids);
+        return $this->outputJSON(null,"Removed preferences");
     }
 }

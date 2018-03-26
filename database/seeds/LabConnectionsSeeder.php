@@ -20,6 +20,7 @@ class LabConnectionsSeeder extends Seeder
         $this->labStudentSeeder();
         $this->labTagsTableSeeder();
         $this->labSkillsTableSeeder();
+        $this->labPreferencesTableSeeder();
     }
 
     /**
@@ -78,16 +79,19 @@ class LabConnectionsSeeder extends Seeder
 
     public function labPreferencesTableSeeder() {
         $preference = new LabPreference();
-        $preference->title = 'No';
-        $preference->description = 'Seniors';
+        $preference->type = 'No';
+        $preference->title = 'Seniors';
+        $preference->save();
 
         $preference = new LabPreference();
-        $preference->title = 'No';
-        $preference->description = 'Life';
+        $preference->type = 'No';
+        $preference->title = 'Life';
+        $preference->save();
 
         $preference = new LabPreference();
-        $preference->title = 'Yes';
-        $preference->description = 'Credit';
+        $preference->type = 'Yes';
+        $preference->title = 'Credit';
+        $preference->save();
 
         $lab = Lab::find(1);
         $lab->preferences()->sync([1,2]);
