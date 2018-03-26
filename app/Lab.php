@@ -24,8 +24,12 @@ class Lab extends Model
         return $this->belongsToMany('App\Faculty', 'faculty_lab');
     }
 
-    public function positions()
-    {
-        return $this->hasMany('App\Comment');
+    public function preferences() {
+        return $this->belongsToMany('App\LabPreference', 'faculty_lab');
     }
+
+//    public function positions()
+//    {
+//        return $this->hasMany('App\Comment');
+//    }
 }

@@ -22,6 +22,4 @@ Route::get('login/google/callback', 'Auth\LoginController@handleProviderCallback
 
 Route::get('/home', 'HomeController@index')->name('home');
 
-Route::get('/student',function(){
-    return "ok";
-});
+//Route::get('users', 'UserController@index');

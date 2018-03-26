@@ -605,7 +605,8 @@ if (false) {
 /* harmony export (immutable) */ __webpack_exports__["r"] = registerUser;
 /* harmony export (immutable) */ __webpack_exports__["o"] = loginUser;
 /* harmony export (immutable) */ __webpack_exports__["p"] = logoutCurrentUser;
-/* harmony export (immutable) */ __webpack_exports__["q"] = passwordResetEmail;
+/* unused harmony export sendPasswordResetEmail */
+/* unused harmony export resetPassword */
 /* harmony export (immutable) */ __webpack_exports__["d"] = getAllUsers;
 /* unused harmony export deleteUser */
 /* harmony export (immutable) */ __webpack_exports__["c"] = getAllStudents;
@@ -763,8 +764,18 @@ function logoutCurrentUser() {
     });
 }
 
-function passwordResetEmail(email) {
+function sendPasswordResetEmail(email) {
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('password/email', { email: email }).then(function (response) {
+        console.log(response.data);
+        return response.data;
+    }).catch(function (error) {
+        console.error(error);
+        return false;
+    });
+}
+
+function resetPassword(email, password, password_confirmation) {
+    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('password/request', { email: email, password: password, password_confirmation: password_confirmation }).then(function (response) {
         console.log(response.data);
         return response.data;
     }).catch(function (error) {
@@ -60636,7 +60647,7 @@ var Users = function (_React$Component) {
     }, {
         key: 'resetPass',
         value: function resetPass() {
-            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["q" /* passwordResetEmail */])('akshayro@umich.edu');
+            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["passwordResetEmail"])('akshayro@umich.edu');
         }
     }, {
         key: 'render',

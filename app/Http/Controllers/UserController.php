@@ -49,6 +49,11 @@ class UserController extends Controller
         $user = $request->user();
         $user->token()->revoke();
         $user->token()->delete();
+        $this->guard()->logout();
+
+        $request->session()->flush();
+        $request->session()->regenerate();
+
         return $this->outputJSON(null,"Successfully Logged Out");
     }
 

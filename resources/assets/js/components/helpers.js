@@ -9,7 +9,7 @@ import { cookie } from 'react-cookie'
 import FormData from 'form-data'
 
 axios.defaults.headers.common = {};
-//axios.defaults.baseURL = 'http://perch-api.us-east-1.elasticbeanstalk.com';
+axios.defaults.baseURL = 'http://perch-api.us-east-1.elasticbeanstalk.com';
 axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
 // Authentication
@@ -118,7 +118,7 @@ export function logoutCurrentUser() {
         });
 }
 
-export function passwordResetEmail(email) {
+export function sendPasswordResetEmail(email) {
     return axios.post('password/email', {email})
         .then(response=> {
             console.log(response.data);
@@ -129,6 +129,19 @@ export function passwordResetEmail(email) {
             return false;
         });
 }
+
+export function resetPassword(email, password, password_confirmation) {
+    return axios.post('password/request', {email, password, password_confirmation})
+        .then(response=> {
+            console.log(response.data);
+            return response.data;
+        })
+        .catch(error=> {
+            console.error(error);
+            return false;
+        });
+}
+
 
 // USERS
 // Base user on website

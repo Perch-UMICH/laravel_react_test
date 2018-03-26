@@ -4,6 +4,7 @@ use App\Tag;
 use App\Lab;
 use App\Skill;
 use App\Student;
+use App\LabPreference;
 use Illuminate\Database\Seeder;
 
 class LabConnectionsSeeder extends Seeder
@@ -73,6 +74,26 @@ class LabConnectionsSeeder extends Seeder
 
         $lab = Lab::find(2);
         $lab->skills()->sync([1,2,3]);
+    }
+
+    public function labPreferencesTableSeeder() {
+        $preference = new LabPreference();
+        $preference->title = 'No';
+        $preference->description = 'Seniors';
+
+        $preference = new LabPreference();
+        $preference->title = 'No';
+        $preference->description = 'Life';
+
+        $preference = new LabPreference();
+        $preference->title = 'Yes';
+        $preference->description = 'Credit';
+
+        $lab = Lab::find(1);
+        $lab->preferences()->sync([1,2]);
+
+        $lab = Lab::find(2);
+        $lab->preferences()->sync([2,3]);
     }
 
 }
