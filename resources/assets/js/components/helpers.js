@@ -754,6 +754,22 @@ export function removePreferencesFromLab(lab_id, preference_ids) {
         })
 }
 
+
+export function getLabPositions(lab_id) {
+    console.log('Getting lab positions');
+    return axios.get('api/labs/' + lab_id + '/positions')
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+// TODO other positions functions
+
 // Skills
 // Laboratory skills
 // Required:
@@ -815,6 +831,19 @@ export function getTag(tag_id) {
             return [];
         })
 }
+
+// Positions
+// Open projects/positions in a lab
+// Required:
+//  title - (string)
+//  description -(text)
+// Optional:
+//  time_commitment - (string) short description of time commitment (e.g. 10-12 hours/week)
+//  open_slots - (int) total open slots for applicants
+//  filled_slots - (int) # of open slots that have been filled
+//  open - (bool) whether positions is current accepting applicants
+
+// TODO
 
 // data should be of type FormData
 // see: https://stackoverflow.com/questions/39663961/how-do-you-send-images-to-node-js-with-axios
