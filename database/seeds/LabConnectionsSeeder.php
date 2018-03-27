@@ -5,6 +5,7 @@ use App\Lab;
 use App\Skill;
 use App\Student;
 use App\LabPreference;
+use App\Position;
 use Illuminate\Database\Seeder;
 
 class LabConnectionsSeeder extends Seeder
@@ -21,6 +22,7 @@ class LabConnectionsSeeder extends Seeder
         $this->labTagsTableSeeder();
         $this->labSkillsTableSeeder();
         $this->labPreferencesTableSeeder();
+        $this->labPositionsTableSeeder();
     }
 
     /**
@@ -98,6 +100,29 @@ class LabConnectionsSeeder extends Seeder
 
         $lab = Lab::find(2);
         $lab->preferences()->sync([2,3]);
+    }
+
+    public function labPositionsTableSeeder() {
+        $pos = new Position();
+        $pos->title = 'Computational drug discovery';
+        $pos->description = 'Design novel drug combination therapies using computational approaches.';
+        $pos->time_commitment = '10-12 hours/week';
+        $pos->open_slots = 2;
+        $pos->filled_slots = 0;
+        $pos->open = true;
+
+        $lab = Lab::find(2);
+        $lab->positions()->save($pos);
+
+        $pos = new Position();
+        $pos->title = 'Nanosatellite modeling and design';
+        $pos->description = 'Develop novel small satellite missions built on fundamental advancements in spacecraft technology.';
+        $pos->time_commitment = '8-10 hours/week';
+        $pos->open_slots = 3;
+        $pos->filled_slots = 0;
+        $pos->open = true;
+
+        $lab->positions()->save($pos);
     }
 
 }

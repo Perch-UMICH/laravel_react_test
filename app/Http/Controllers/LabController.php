@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Lab;
+use App\Position;
 use Illuminate\Http\Request;
 
 class LabController extends Controller
@@ -21,7 +22,8 @@ class LabController extends Controller
         foreach( $labs as $lab ) {
             $skills = $lab->skills()->wherePivot('lab_id', $lab->id)->get();
             $tags = $lab->tags()->wherePivot('lab_id', $lab->id)->get();
-            $lab_data[$lab->id] = ['data' => $lab, 'skills' => $skills, 'tags' => $tags];
+            $positions = $lab->positions()->get();
+            $lab_data[$lab->id] = ['data' => $lab, 'skills' => $skills, 'tags' => $tags, 'positions' => $positions];
         }
         return $this->outputJSON($lab_data,"Labs retrieved");
     }
@@ -114,6 +116,10 @@ class LabController extends Controller
         return $this->outputJSON(null, 'Lab page deleted');
     }
 
+    // Lab associations
+
+    // Retrieve
+
     public function students(Lab $lab) {
         $students = $lab->students()->wherePivot('lab_id', $lab->id)->get();
         return $this->outputJSON($students,"Students from lab retrieved");
@@ -138,6 +144,13 @@ class LabController extends Controller
         $preferences = $lab->preferences()->wherePivot('lab_id', $lab->id)->get();
         return $this->outputJSON($preferences,"Preferences from lab retrieved");
     }
+
+    public function positions(Lab $lab) {
+        $positions = $lab->positions()->get();
+        return $this->outputJSON($positions,"Positions from lab retrieved");
+    }
+
+    // Add
 
     public function add_skill(Request $request, Lab $lab) {
         $input = $request->all();
@@ -173,6 +186,16 @@ class LabController extends Controller
         $lab->preferences()->attach($ids);
         return $this->outputJSON(null,"Added preferences");
     }
+
+    public function add_position(Request $request, Lab $lab) {
+        $input = $request->all();
+        $ids = $input['position_ids'];
+        $positions = Position::findMany($ids);
+        $lab->positions()->saveMany($positions);
+        return $this->outputJSON(null,"Added positions");
+    }
+
+    // Remove
 
     public function remove_skill(Request $request, Lab $lab) {
         $input = $request->all();

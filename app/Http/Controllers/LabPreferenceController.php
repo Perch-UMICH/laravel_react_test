@@ -95,6 +95,5 @@ class LabPreferenceController extends Controller
     {
         $labPreference->delete();
         return $this->outputJSON(null, 'Lab Preference deleted');
-
     }
 }

@@ -99,6 +99,9 @@ Route::get('labs/{lab}/preferences', 'LabController@preferences');
 Route::post('labs/{lab}/preferences', 'LabController@add_preference');
 Route::delete('labs/{lab}/preferences', 'LabController@remove_preference');
 
+Route::get('labs/{lab}/positions', 'LabController@positions');
+Route::post('labs/{lab}/positions', 'LabController@add_position');
+
 // Skills:
 Route::get('skills', 'SkillController@index');
 Route::get('skills/{skill}', 'SkillController@show');
@@ -109,6 +112,16 @@ Route::get('skills/{skill}', 'SkillController@show');
 Route::get('tags', 'TagController@index');
 Route::get('tags/{tag}', 'TagController@show');
 
+// Positions
+Route::get('positions', 'PositionController@index');
+Route::post('positions','PositionController@store'); // Create a student
+Route::get('positions/{position}', 'PositionController@show');
+Route::put('positions/{position}','PositionController@update'); // Update a student
+Route::delete('positions/{position}', 'PositionController@destroy'); // Delete a student
+
 // Profile pics
 Route::post('pics', 'ProfilepicController@store');
+
+// Search
+Route::post('search', 'SearchController@get_search_data');
 

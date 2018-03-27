@@ -2,7 +2,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom';
 import axios from 'axios'
-import {getAllLabs, getLab, getLabSkills, getLabTags} from './helpers'
+import {getAllLabs, getLab, getLabSkills, getLabTags, getLabPreferences} from './helpers'
 
 
 class Labs extends React.Component {
@@ -14,7 +14,8 @@ class Labs extends React.Component {
             labs: [],
             lab: [],
             skills: [],
-            tags: []
+            tags: [],
+            prefs: []
         }
     }
 
@@ -35,6 +36,10 @@ class Labs extends React.Component {
 
         getLabTags(2).then(function (resp) {
             comp.setState({tags: JSON.stringify(resp)});
+        });
+
+        getLabPreferences(1).then(function (resp) {
+            comp.setState({prefs: JSON.stringify(resp)});
         });
 
     }
@@ -61,6 +66,10 @@ class Labs extends React.Component {
                 <h3>Tags of lab with id 2</h3>
                 <ul>
                     {this.state.tags}
+                </ul>
+                <h3>Prefs of lab with id 1</h3>
+                <ul>
+                    {this.state.prefs}
                 </ul>
             </div>
         )

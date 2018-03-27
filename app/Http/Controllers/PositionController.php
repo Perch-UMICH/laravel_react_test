@@ -14,7 +14,8 @@ class PositionController extends Controller
      */
     public function index()
     {
-        //
+        $positions = Position::all();
+        return $this->outputJSON($positions, 'Lab Positions retrieved');
     }
 
     /**
@@ -35,7 +36,11 @@ class PositionController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $input = $request->all();
+        $position = new Position($input);
+        $position->save();
+
+        return $this->outputJSON($position, 'Lab Position created');
     }
 
     /**
@@ -46,7 +51,7 @@ class PositionController extends Controller
      */
     public function show(Position $position)
     {
-        //
+        return $this->outputJSON($position, 'Lab Position retrieved');
     }
 
     /**
@@ -69,7 +74,11 @@ class PositionController extends Controller
      */
     public function update(Request $request, Position $position)
     {
-        //
+        $input = $request->all();
+        $input = array_filter($input);
+        $position->update($input);
+        $position->save();
+        return $this->outputJSON($position, 'Lab Position updated');
     }
 
     /**
@@ -80,6 +89,7 @@ class PositionController extends Controller
      */
     public function destroy(Position $position)
     {
-        //
+        $position->delete();
+        return $this->outputJSON(null, 'Lab Position deleted');
     }
 }

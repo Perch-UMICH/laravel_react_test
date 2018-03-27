@@ -16,15 +16,15 @@ class CreatePositionsTable extends Migration
         Schema::create('positions', function (Blueprint $table) {
             $table->increments('id');
 
-            $table->integer('lab_id')->unsigned()->unique()->index();
+            $table->integer('lab_id')->unsigned()->index();
             $table->foreign('lab_id')->references('id')->on('labs')->onDelete('cascade');
 
             $table->string('title')->nullable();
             $table->text('description')->nullable();
-            $table->string('timeCommitment')->nullable();
+            $table->string('time_commitment')->nullable();
 
-            $table->integer('openSlots')->nullable();
-            $table->integer('filledSlots')->nullable();
+            $table->integer('open_slots')->nullable();
+            $table->integer('filled_slots')->nullable();
             $table->boolean('open')->nullable();
 
             $table->timestamps();

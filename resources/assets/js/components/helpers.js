@@ -835,3 +835,18 @@ export function uploadPic(type, id, data) {
         })
 }
 
+
+// Returns all data necessary for student lab search
+// student_id - id of the student who's searching
+export function getSearchData(student_id) {
+    console.log('Retrieving search data');
+    return axios.post('api/search', {student_id})
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
