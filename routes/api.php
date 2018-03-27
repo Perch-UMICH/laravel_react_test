@@ -106,8 +106,8 @@ Route::get('skills/{skill}', 'SkillController@show');
 //Route::put('skills/{skill}', 'SkillController@update');
 
 // Tags
-Route::get('tags', 'SkillController@index');
-Route::get('tags/{tag}', 'SkillController@show');
+Route::get('tags', 'TagController@index');
+Route::get('tags/{tag}', 'TagController@show');
 
 // Profile pics
 Route::post('pics', 'ProfilepicController@store');
