@@ -165,6 +165,18 @@ export function getAllUsers() {
         })
 }
 
+export function getUser(user_id) {
+    console.log('Getting user');
+    return axios.get('api/users/' + user_id)
+        .then(response => {
+            return response.data
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
 export function deleteUser(user_id) {
     console.log('Deleting user');
     return axios.delete('api/users/' + user_id)
@@ -176,6 +188,8 @@ export function deleteUser(user_id) {
             return [];
         })
 }
+
+
 // Students
 // Student profile
 // Required:
@@ -768,7 +782,37 @@ export function getLabPositions(lab_id) {
         })
 }
 
-// TODO other positions functions
+export function createPosition(lab_id, title, description, time_commitment, open_slots, filled_slots, open) {
+    console.log('Creating lab positions');
+
+    return axios.post('api/labs/' + lab_id + '/positions', [title, description, time_commitment, open_slots, filled_slots, open])
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+export function deletePosition(lab_id, position_ids) {
+    console.log('Deleting lab positions');
+
+    let payload = {
+        position_ids: position_ids
+    };
+
+    return axios.post('api/labs/' + lab_id + '/positions', payload)
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
 
 // Skills
 // Laboratory skills

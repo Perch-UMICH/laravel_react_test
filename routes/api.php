@@ -37,6 +37,7 @@ Route::group(['middleware' => 'auth:api'], function(){
 // Users:
 Route::get('users', 'UserController@index');
 Route::post('users/isStudent', 'UserController@isStudent'); // Check if user_id is a student
+Route::get('users/{user}', 'UserController@show');
 Route::put('users/{user}', 'UserController@update');
 Route::delete('users/{user}', 'UserController@delete');
 
@@ -100,7 +101,8 @@ Route::post('labs/{lab}/preferences', 'LabController@add_preference');
 Route::delete('labs/{lab}/preferences', 'LabController@remove_preference');
 
 Route::get('labs/{lab}/positions', 'LabController@positions');
-Route::post('labs/{lab}/positions', 'LabController@add_position');
+Route::post('labs/{lab}/positions', 'LabController@create_and_add_position');
+Route::delete('labs/{lab}/positions', 'LabController@remove_and_delete_positions');
 
 // Skills:
 Route::get('skills', 'SkillController@index');

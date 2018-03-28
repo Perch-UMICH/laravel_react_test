@@ -187,12 +187,13 @@ class LabController extends Controller
         return $this->outputJSON(null,"Added preferences");
     }
 
-    public function add_position(Request $request, Lab $lab) {
+    public function create_and_add_position(Request $request, Lab $lab) {
         $input = $request->all();
-        $ids = $input['position_ids'];
-        $positions = Position::findMany($ids);
-        $lab->positions()->saveMany($positions);
-        return $this->outputJSON(null,"Added positions");
+        $position = new Position($input);
+        $position->save();
+
+        $lab->positions()->save($position);
+        return $this->outputJSON($position,"Created position " . $position->title . " and added to lab " . $lab->name);
     }
 
     // Remove
@@ -201,34 +202,42 @@ class LabController extends Controller
         $input = $request->all();
         $ids = $input['skill_ids'];
         $lab->skills()->detach($ids);
-        return $this->outputJSON(null,"Removed skills");
+        return $this->outputJSON(null,"Removed skills from lab " . $lab->name);
     }
 
     public function remove_tag(Request $request, Lab $lab) {
         $input = $request->all();
         $ids = $input['tag_ids'];
         $lab->tags()->detach($ids);
-        return $this->outputJSON(null,"Removed tags");
+        return $this->outputJSON(null,"Removed tags from lab " . $lab->name);
     }
 
     public function remove_student(Request $request, Lab $lab) {
         $input = $request->all();
         $ids = $input['student_ids'];
         $lab->students()->detach($ids);
-        return $this->outputJSON(null,"Removed students");
+        return $this->outputJSON(null,"Removed students from lab " . $lab->name);
     }
 
     public function remove_faculty(Request $request, Lab $lab) {
         $input = $request->all();
         $ids = $input['faculty_ids'];
         $lab->faculties()->detach($ids);
-        return $this->outputJSON(null,"Removed faculty");
+        return $this->outputJSON(null,"Removed faculty from lab " . $lab->name);
     }
 
     public function remove_preference(Request $request, Lab $lab) {
         $input = $request->all();
         $ids = $input['preference_ids'];
         $lab->preferences()->detach($ids);
-        return $this->outputJSON(null,"Removed preferences");
+        return $this->outputJSON(null,"Removed preferences from lab " . $lab->name);
+    }
+
+    public function remove_and_delete_positions(Request $request, Lab $lab) {
+        $input = $request->all();
+        $ids = $input['position_ids'];
+        Position::destroy($ids);
+
+        return $this->outputJSON(null,"Removed and deleted positions from lab " . $lab->name);
     }
 }

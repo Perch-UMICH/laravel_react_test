@@ -23,6 +23,11 @@ class UserController extends Controller
         return $this->outputJSON($users, "Users retrieved");
     }
 
+    public function show(User $user)
+    {
+        return $this->outputJSON($user, "User retrieved");
+    }
+
 
     /**
      * login api
