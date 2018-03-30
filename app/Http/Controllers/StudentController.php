@@ -74,10 +74,15 @@ class StudentController extends Controller
         if ($student->exists()) {
             return $this->outputJSON($student->get(), 'Error: this user already has a student profile');
         }
-        $student = new Student($input);
-
         $user = User::find($input['user_id']);
+        if ($user == null) {
+            return $this->outputJSON(null, 'Error: user_id is invalid');
+        }
+
+        $student = new Student($input);
+        $user->is_student = true;
         $user->student()->save($student);
+        $user->save();
 
         return $this->outputJSON($student, 'Student profile created');
     }

@@ -122,4 +122,32 @@ class UserController extends Controller
         $isStudent = $user->is_student;
         return $this->outputJSON($isStudent,"Checked if student");
     }
+
+    // Profiles
+
+    public function get_student_profile(User $user) {
+        if ($user == null) {
+            return $this->outputJSON(null,"Error: invalid user_id");
+        }
+        $student = $user->student;
+        if (count($student)) {
+            return $this->outputJSON($student,"Retrieved student profile of user " . $user->email);
+        }
+        else {
+            return $this->outputJSON(null,"Error: " . $user->email . " does not have a student profile");
+        }
+    }
+
+    public function get_faculty_profile(User $user) {
+        if ($user == null) {
+            return $this->outputJSON(null,"Error: invalid user_id");
+        }
+        $faculty = $user->faculty;
+        if (count($faculty)) {
+            return $this->outputJSON($faculty,"Retrieved faculty profile of user " . $user->email);
+        }
+        else {
+            return $this->outputJSON(null,"Error: " . $user->email . " does not have a faculty profile");
+        }
+    }
 }

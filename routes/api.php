@@ -41,6 +41,9 @@ Route::get('users/{user}', 'UserController@show');
 Route::put('users/{user}', 'UserController@update');
 Route::delete('users/{user}', 'UserController@delete');
 
+Route::get('users/{user}/student', 'UserController@get_student_profile');
+Route::get('users/{user}/faculty', 'UserController@get_faculty_profile');
+
 // Students (note: {student} means student_id):
 Route::get('students', 'StudentController@index'); // Get all students
 Route::post('students','StudentController@store'); // Create a student

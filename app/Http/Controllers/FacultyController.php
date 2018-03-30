@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Faculty;
 use Illuminate\Http\Request;
+use App\User;
 
 class FacultyController extends Controller
 {
@@ -40,20 +41,18 @@ class FacultyController extends Controller
         $input = array_filter($input);
 
         $faculty = Faculty::where('user_id', $request['user_id']);
-        if ($faculty) {
-            return $this->outputJSON($faculty, 'Error: this user already has a faculty profile');
+        if ($faculty->exists()) {
+            return $this->outputJSON($faculty->get(), 'Error: this user already has a faculty profile');
+        }
+        $user = User::find($input['user_id']);
+        if ($user == null) {
+            return $this->outputJSON(null, 'Error: user_id is invalid');
         }
 
-
-        $faculty = new Faculty([
-            'first_name' => $request->get('first_name'),
-            'last_name' => $request->get('last_name'),
-            'title' => $request->get('title'),
-            'email' => $request->get('email'),
-        ]);
-
-        $user = User::find($input['user_id']);
+        $faculty = new Faculty($input);
         $user->faculty()->save($faculty);
+        $user->is_faculty = true;
+        $user->save();
 
         return $this->outputJSON($faculty, 'Faculty profile created');
     }
