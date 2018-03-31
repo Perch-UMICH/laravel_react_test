@@ -53,17 +53,17 @@ Route::delete('students/{student}', 'StudentController@destroy'); // Delete a st
 
 Route::get('students/{student}/tags', 'StudentController@tags'); // Get a student's tags
 Route::post('students/{student}/tags', 'StudentController@add_tag');
-Route::delete('students/{student}/tags', 'StudentController@remove_tag');
+Route::put('students/{student}/tags', 'StudentController@remove_tag');
 
 
 Route::get('students/{student}/skills', 'StudentController@skills'); // Get student's skills
 Route::post('students/{student}/skills', 'StudentController@add_skill');
-Route::delete('students/{student}/skills', 'StudentController@remove_skill');
+Route::put('students/{student}/skills', 'StudentController@remove_skill');
 
 
 Route::get('students/{student}/labs', 'StudentController@labs'); // Get student's skills
 Route::post('students/{student}/labs', 'StudentController@add_lab');
-Route::delete('students/{student}/labs', 'StudentController@remove_skill');
+Route::put('students/{student}/labs', 'StudentController@remove_skill');
 
 //Faculty:
 Route::get('faculties', 'FacultyController@index'); // Get all faculty
@@ -74,7 +74,7 @@ Route::delete('faculties/{faculty}', 'FacultyController@destroy');
 
 Route::get('faculties/{faculty}/labs', 'FacultyController@labs');
 Route::post('faculties/{faculty}/labs', 'FacultyController@add_lab');
-Route::delete('faculties/{faculty}/labs', 'FacultyController@remove_lab');
+Route::put('faculties/{faculty}/labs', 'FacultyController@remove_lab');
 
 // Labs
 Route::get('labs', 'LabController@index');
@@ -85,27 +85,27 @@ Route::delete('labs/{lab}', 'LabController@destroy');
 
 Route::get('labs/{lab}/students', 'LabController@students');
 Route::post('labs/{lab}/students', 'LabController@add_students');
-Route::delete('labs/{lab}/students', 'LabController@remove_student');
+Route::put('labs/{lab}/students', 'LabController@remove_student');
 
 Route::get('labs/{lab}/faculties', 'LabController@faculties');
 Route::post('labs/{lab}/faculties', 'LabController@add_faculty');
-Route::delete('labs/{lab}/faculties', 'LabController@remove_faculty');
+Route::put('labs/{lab}/faculties', 'LabController@remove_faculty');
 
 Route::get('labs/{lab}/skills', 'LabController@skills');
 Route::post('labs/{lab}/skills', 'LabController@add_skill');
-Route::delete('labs/{lab}/skills', 'LabController@remove_skill');
+Route::put('labs/{lab}/skills', 'LabController@remove_skill');
 
 Route::get('labs/{lab}/tags', 'LabController@tags');
 Route::post('labs/{lab}/tags', 'LabController@add_tag');
-Route::delete('labs/{lab}/tags', 'LabController@remove_tag');
+Route::put('labs/{lab}/tags', 'LabController@remove_tag');
 
 Route::get('labs/{lab}/preferences', 'LabController@preferences');
 Route::post('labs/{lab}/preferences', 'LabController@add_preference');
-Route::delete('labs/{lab}/preferences', 'LabController@remove_preference');
+Route::put('labs/{lab}/preferences', 'LabController@remove_preference');
 
 Route::get('labs/{lab}/positions', 'LabController@positions');
 Route::post('labs/{lab}/positions', 'LabController@create_and_add_position');
-Route::delete('labs/{lab}/positions', 'LabController@remove_and_delete_positions');
+Route::put('labs/{lab}/positions', 'LabController@remove_and_delete_positions');
 
 // Skills:
 Route::get('skills', 'SkillController@index');

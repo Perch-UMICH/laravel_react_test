@@ -600,56 +600,63 @@ if (false) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (immutable) */ __webpack_exports__["o"] = isLoggedIn;
+/* harmony export (immutable) */ __webpack_exports__["p"] = isLoggedIn;
 /* unused harmony export verifyLogin */
-/* harmony export (immutable) */ __webpack_exports__["s"] = registerUser;
-/* harmony export (immutable) */ __webpack_exports__["p"] = loginUser;
-/* harmony export (immutable) */ __webpack_exports__["q"] = logoutCurrentUser;
+/* harmony export (immutable) */ __webpack_exports__["t"] = registerUser;
+/* harmony export (immutable) */ __webpack_exports__["q"] = loginUser;
+/* harmony export (immutable) */ __webpack_exports__["r"] = logoutCurrentUser;
 /* unused harmony export sendPasswordResetEmail */
 /* unused harmony export resetPassword */
-/* harmony export (immutable) */ __webpack_exports__["d"] = getAllUsers;
+/* harmony export (immutable) */ __webpack_exports__["e"] = getAllUsers;
+/* unused harmony export getUser */
 /* unused harmony export deleteUser */
-/* harmony export (immutable) */ __webpack_exports__["c"] = getAllStudents;
-/* harmony export (immutable) */ __webpack_exports__["l"] = getStudent;
+/* unused harmony export getStudentFromUser */
+/* unused harmony export getFacultyFromUser */
+/* harmony export (immutable) */ __webpack_exports__["d"] = getAllStudents;
+/* harmony export (immutable) */ __webpack_exports__["m"] = getStudent;
 /* unused harmony export createStudent */
-/* harmony export (immutable) */ __webpack_exports__["t"] = updateStudent;
+/* harmony export (immutable) */ __webpack_exports__["v"] = updateStudent;
 /* unused harmony export deleteStudent */
-/* harmony export (immutable) */ __webpack_exports__["m"] = getStudentSkills;
+/* harmony export (immutable) */ __webpack_exports__["n"] = getStudentSkills;
 /* unused harmony export addSkillsToStudent */
 /* unused harmony export removeSkillsFromStudent */
-/* harmony export (immutable) */ __webpack_exports__["n"] = getStudentTags;
-/* unused harmony export addTagsToStudent */
-/* unused harmony export removeTagsFromStudent */
+/* harmony export (immutable) */ __webpack_exports__["o"] = getStudentTags;
+/* harmony export (immutable) */ __webpack_exports__["a"] = addTagsToStudent;
+/* harmony export (immutable) */ __webpack_exports__["u"] = removeTagsFromStudent;
 /* unused harmony export getStudentFavLabs */
 /* unused harmony export addFavLabsToStudent */
 /* unused harmony export removeFavLabsFromStudent */
-/* harmony export (immutable) */ __webpack_exports__["a"] = getAllFaculties;
-/* harmony export (immutable) */ __webpack_exports__["f"] = getFaculty;
+/* harmony export (immutable) */ __webpack_exports__["b"] = getAllFaculties;
+/* harmony export (immutable) */ __webpack_exports__["g"] = getFaculty;
 /* unused harmony export createFaculty */
 /* unused harmony export updateFaculty */
 /* unused harmony export deleteFaculty */
-/* harmony export (immutable) */ __webpack_exports__["g"] = getFacultyLabs;
+/* harmony export (immutable) */ __webpack_exports__["h"] = getFacultyLabs;
 /* unused harmony export addLabToFaculty */
 /* unused harmony export removeLabFromFaculty */
-/* harmony export (immutable) */ __webpack_exports__["b"] = getAllLabs;
-/* harmony export (immutable) */ __webpack_exports__["h"] = getLab;
+/* harmony export (immutable) */ __webpack_exports__["c"] = getAllLabs;
+/* harmony export (immutable) */ __webpack_exports__["i"] = getLab;
 /* unused harmony export createLab */
 /* unused harmony export updateLab */
 /* unused harmony export deleteLab */
-/* harmony export (immutable) */ __webpack_exports__["j"] = getLabSkills;
+/* harmony export (immutable) */ __webpack_exports__["k"] = getLabSkills;
 /* unused harmony export addSkillsToLab */
 /* unused harmony export removeSkillsFromLab */
-/* harmony export (immutable) */ __webpack_exports__["k"] = getLabTags;
+/* harmony export (immutable) */ __webpack_exports__["l"] = getLabTags;
 /* unused harmony export addTagsToLab */
 /* unused harmony export removeTagsFromLab */
-/* harmony export (immutable) */ __webpack_exports__["i"] = getLabPreferences;
+/* harmony export (immutable) */ __webpack_exports__["j"] = getLabPreferences;
 /* unused harmony export addPreferencesToLab */
 /* unused harmony export removePreferencesFromLab */
+/* unused harmony export getLabPositions */
+/* unused harmony export createPosition */
+/* unused harmony export deletePosition */
 /* unused harmony export getAllSkills */
 /* unused harmony export getSkill */
 /* unused harmony export getAllTags */
 /* unused harmony export getTag */
 /* unused harmony export uploadPic */
+/* unused harmony export getSearchData */
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react_router_dom__ = __webpack_require__(14);
@@ -807,6 +814,16 @@ function getAllUsers() {
     });
 }
 
+function getUser(user_id) {
+    console.log('Getting user');
+    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('api/users/' + user_id).then(function (response) {
+        return response.data;
+    }).catch(function (error) {
+        console.log(error);
+        return [];
+    });
+}
+
 function deleteUser(user_id) {
     console.log('Deleting user');
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.delete('api/users/' + user_id).then(function (response) {
@@ -816,6 +833,27 @@ function deleteUser(user_id) {
         return [];
     });
 }
+
+function getStudentFromUser(user_id) {
+    console.log('Getting student');
+    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('api/users/' + user_id + '/student').then(function (response) {
+        return response.data;
+    }).catch(function (error) {
+        console.log(error);
+        return [];
+    });
+}
+
+function getFacultyFromUser(user_id) {
+    console.log('Getting faculty');
+    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('api/users/' + user_id + '/faculty').then(function (response) {
+        return response.data;
+    }).catch(function (error) {
+        console.log(error);
+        return [];
+    });
+}
+
 // Students
 // Student profile
 // Required:
@@ -920,12 +958,13 @@ function addSkillsToStudent(student_id, skill_ids) {
 }
 
 function removeSkillsFromStudent(student_id, skill_ids) {
-    console.log('Removing skill from student');
+    console.log('Removing skills from student');
 
     var payload = {
-        skill_ids: skill_ids
+        skill_ids: skill_ids,
+        _method: 'PUT'
     };
-    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.delete('api/students/' + student_id + '/skills', payload).then(function (response) {
+    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/students/' + student_id + '/skills', payload).then(function (response) {
         console.log(response.data.message);
         return response.data.result;
     }).catch(function (error) {
@@ -946,7 +985,7 @@ function getStudentTags(student_id) {
 }
 
 function addTagsToStudent(student_id, tag_ids) {
-    console.log('Adding tag to student');
+    console.log('Adding tags to student');
 
     var payload = {
         tag_ids: tag_ids
@@ -961,12 +1000,13 @@ function addTagsToStudent(student_id, tag_ids) {
 }
 
 function removeTagsFromStudent(student_id, tag_ids) {
-    console.log('Removing tag from student');
+    console.log('Removing tags from student');
 
     var payload = {
-        tag_ids: tag_ids
+        tag_ids: tag_ids,
+        _method: 'PUT'
     };
-    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.delete('api/students/' + student_id + '/tags', payload).then(function (response) {
+    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/students/' + student_id + '/tags', payload).then(function (response) {
         console.log(response.data.message);
         return response.data.result;
     }).catch(function (error) {
@@ -1005,9 +1045,10 @@ function removeFavLabsFromStudent(student_id, lab_ids) {
     console.log('Removing favorite lab from student');
 
     var payload = {
-        tag_ids: lab_ids
+        tag_ids: lab_ids,
+        _method: 'PUT'
     };
-    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.delete('api/students/' + student_id + '/labs', payload).then(function (response) {
+    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/students/' + student_id + '/labs', payload).then(function (response) {
         console.log(response.data.message);
         return response.data.result;
     }).catch(function (error) {
@@ -1108,7 +1149,8 @@ function addLabToFaculty(faculty_id, lab_id) {
 
 function removeLabFromFaculty(faculty_id, lab_id) {
     console.log('Removing lab from faculty');
-    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.delete('api/faculties/' + faculty_id + '/labs', { lab_id: lab_id }).then(function (response) {
+    var _method = 'PUT';
+    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/faculties/' + faculty_id + '/labs', { lab_id: lab_id, _method: _method }).then(function (response) {
         console.log(response.data.message);
         return response.data.result;
     }).catch(function (error) {
@@ -1222,9 +1264,10 @@ function removeSkillsFromLab(lab_id, skill_ids) {
     console.log('Removing skills from lab');
 
     var payload = {
-        skill_ids: skill_ids
+        skill_ids: skill_ids,
+        _method: 'PUT'
     };
-    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.delete('api/labs/' + lab_id + '/skills', payload).then(function (response) {
+    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/labs/' + lab_id + '/skills', payload).then(function (response) {
         console.log(response.data.message);
         return response.data.result;
     }).catch(function (error) {
@@ -1263,9 +1306,10 @@ function removeTagsFromLab(lab_id, tag_ids) {
     console.log('Removing tag from lab');
 
     var payload = {
-        tag_ids: tag_ids
+        tag_ids: tag_ids,
+        _method: 'PUT'
     };
-    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.delete('api/labs/' + lab_id + '/tags', payload).then(function (response) {
+    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/labs/' + lab_id + '/tags', payload).then(function (response) {
         console.log(response.data.message);
         return response.data.result;
     }).catch(function (error) {
@@ -1304,9 +1348,50 @@ function removePreferencesFromLab(lab_id, preference_ids) {
     console.log('Removing preferences from lab');
 
     var payload = {
-        tag_ids: preference_ids
+        tag_ids: preference_ids,
+        _method: 'PUT'
     };
-    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.delete('api/labs/' + lab_id + '/preferences', payload).then(function (response) {
+    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/labs/' + lab_id + '/preferences', payload).then(function (response) {
+        console.log(response.data.message);
+        return response.data.result;
+    }).catch(function (error) {
+        console.log(error);
+        return [];
+    });
+}
+
+function getLabPositions(lab_id) {
+    console.log('Getting lab positions');
+    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('api/labs/' + lab_id + '/positions').then(function (response) {
+        console.log(response.data.message);
+        return response.data.result;
+    }).catch(function (error) {
+        console.log(error);
+        return [];
+    });
+}
+
+function createPosition(lab_id, title, description, time_commitment, open_slots, filled_slots, open) {
+    console.log('Creating lab positions');
+
+    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/labs/' + lab_id + '/positions', [title, description, time_commitment, open_slots, filled_slots, open]).then(function (response) {
+        console.log(response.data.message);
+        return response.data.result;
+    }).catch(function (error) {
+        console.log(error);
+        return [];
+    });
+}
+
+function deletePosition(lab_id, position_ids) {
+    console.log('Deleting lab positions');
+
+    var payload = {
+        position_ids: position_ids,
+        _method: 'PUT'
+    };
+
+    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/labs/' + lab_id + '/positions', payload).then(function (response) {
         console.log(response.data.message);
         return response.data.result;
     }).catch(function (error) {
@@ -1369,6 +1454,19 @@ function getTag(tag_id) {
     });
 }
 
+// Positions
+// Open projects/positions in a lab
+// Required:
+//  title - (string)
+//  description -(text)
+// Optional:
+//  time_commitment - (string) short description of time commitment (e.g. 10-12 hours/week)
+//  open_slots - (int) total open slots for applicants
+//  filled_slots - (int) # of open slots that have been filled
+//  open - (bool) whether positions is current accepting applicants
+
+// TODO
+
 // data should be of type FormData
 // see: https://stackoverflow.com/questions/39663961/how-do-you-send-images-to-node-js-with-axios
 // type - should be either "student", "faculty", or "lab"
@@ -1378,6 +1476,19 @@ function uploadPic(type, id, data) {
     data.set('id', id);
     console.log(data);
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/pics', data).then(function (response) {
+        console.log(response.data.message);
+        return response.data.result;
+    }).catch(function (error) {
+        console.log(error);
+        return [];
+    });
+}
+
+// Returns all data necessary for student lab search
+// student_id - id of the student who's searching
+function getSearchData(student_id) {
+    console.log('Retrieving search data');
+    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/search', { student_id: student_id }).then(function (response) {
         console.log(response.data.message);
         return response.data.result;
     }).catch(function (error) {
@@ -59511,23 +59622,23 @@ var Labs = function (_React$Component) {
         value: function componentDidMount() {
             var comp = this;
 
-            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["b" /* getAllLabs */])().then(function (resp) {
+            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["c" /* getAllLabs */])().then(function (resp) {
                 comp.setState({ labs: JSON.stringify(resp) });
             });
 
-            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["h" /* getLab */])(2).then(function (resp) {
+            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["i" /* getLab */])(2).then(function (resp) {
                 comp.setState({ lab: JSON.stringify(resp) });
             });
 
-            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["j" /* getLabSkills */])(1).then(function (resp) {
+            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["k" /* getLabSkills */])(1).then(function (resp) {
                 comp.setState({ skills: JSON.stringify(resp) });
             });
 
-            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["k" /* getLabTags */])(2).then(function (resp) {
+            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["l" /* getLabTags */])(2).then(function (resp) {
                 comp.setState({ tags: JSON.stringify(resp) });
             });
 
-            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["i" /* getLabPreferences */])(1).then(function (resp) {
+            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["j" /* getLabPreferences */])(1).then(function (resp) {
                 comp.setState({ prefs: JSON.stringify(resp) });
             });
         }
@@ -60176,15 +60287,15 @@ var Faculties = function (_React$Component) {
         value: function componentDidMount() {
             var comp = this;
 
-            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["a" /* getAllFaculties */])().then(function (resp) {
+            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["b" /* getAllFaculties */])().then(function (resp) {
                 comp.setState({ faculties: JSON.stringify(resp) });
             });
 
-            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["f" /* getFaculty */])(2).then(function (resp) {
+            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["g" /* getFaculty */])(2).then(function (resp) {
                 comp.setState({ faculty: JSON.stringify(resp) });
             });
 
-            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["g" /* getFacultyLabs */])(1).then(function (resp) {
+            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["h" /* getFacultyLabs */])(1).then(function (resp) {
                 comp.setState({ labs: JSON.stringify(resp) });
             });
         }
@@ -60352,19 +60463,19 @@ var Students = function (_React$Component) {
         value: function componentDidMount() {
             var comp = this;
 
-            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["c" /* getAllStudents */])().then(function (resp) {
+            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["d" /* getAllStudents */])().then(function (resp) {
                 comp.setState({ students: JSON.stringify(resp) });
             });
 
-            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["l" /* getStudent */])(2).then(function (resp) {
+            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["m" /* getStudent */])(2).then(function (resp) {
                 comp.setState({ student: JSON.stringify(resp) });
             });
 
-            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["m" /* getStudentSkills */])(1).then(function (resp) {
+            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["n" /* getStudentSkills */])(1).then(function (resp) {
                 comp.setState({ skills: JSON.stringify(resp) });
             });
 
-            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["n" /* getStudentTags */])(2).then(function (resp) {
+            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["o" /* getStudentTags */])(1).then(function (resp) {
                 comp.setState({ tags: JSON.stringify(resp) });
             });
         }
@@ -60374,7 +60485,21 @@ var Students = function (_React$Component) {
     }, {
         key: 'update',
         value: function update() {
-            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["t" /* updateStudent */])(1, 'test', 'test', null, null, null, null, null, null, null).then(function (resp) {
+            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["v" /* updateStudent */])(1, 'test', 'test', null, null, null, null, null, null, null).then(function (resp) {
+                console.log(resp);
+            });
+        }
+    }, {
+        key: 'add_tags',
+        value: function add_tags() {
+            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["a" /* addTagsToStudent */])(1, [5, 6]).then(function (resp) {
+                console.log(resp);
+            });
+        }
+    }, {
+        key: 'remove_tags',
+        value: function remove_tags() {
+            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["u" /* removeTagsFromStudent */])(1, [5, 6]).then(function (resp) {
                 console.log(resp);
             });
         }
@@ -60417,7 +60542,7 @@ var Students = function (_React$Component) {
                 __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                     'h3',
                     null,
-                    'Tags of student with id 2'
+                    'Tags of student with id 1'
                 ),
                 __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                     'ul',
@@ -60428,6 +60553,16 @@ var Students = function (_React$Component) {
                     'button',
                     { onClick: this.update },
                     'Update'
+                ),
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'button',
+                    { onClick: this.add_tags },
+                    'Add Tags'
+                ),
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'button',
+                    { onClick: this.remove_tags },
+                    'Remove Tags'
                 )
             );
         }
@@ -60504,7 +60639,7 @@ var Register = function (_React$Component) {
                 password_confirmation = _state.password_confirmation;
 
 
-            var no_err = Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["s" /* registerUser */])(name, email, password, password_confirmation);
+            var no_err = Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["t" /* registerUser */])(name, email, password, password_confirmation);
             if (no_err) {
                 this.refs.name.value = "";
                 this.refs.password.value = "";
@@ -60543,7 +60678,7 @@ var Register = function (_React$Component) {
                     ),
                     __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                         'button',
-                        { onClick: __WEBPACK_IMPORTED_MODULE_3__helpers__["q" /* logoutCurrentUser */].bind(this) },
+                        { onClick: __WEBPACK_IMPORTED_MODULE_3__helpers__["r" /* logoutCurrentUser */].bind(this) },
                         'Logout'
                     )
                 );
@@ -60699,7 +60834,7 @@ var Users = function (_React$Component) {
         key: 'componentDidMount',
         value: function componentDidMount() {
             var comp = this;
-            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["d" /* getAllUsers */])().then(function (resp) {
+            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["e" /* getAllUsers */])().then(function (resp) {
                 comp.setState({ users: JSON.stringify(resp) });
             });
         }
@@ -60883,7 +61018,7 @@ var Login = function (_React$Component) {
     _createClass(Login, [{
         key: 'componentDidMount',
         value: function componentDidMount() {
-            this.setState({ logged_in: Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["o" /* isLoggedIn */])() });
+            this.setState({ logged_in: Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["p" /* isLoggedIn */])() });
             this.setState({ username: Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["getCurrentUsername"])() });
         }
     }, {
@@ -60895,7 +61030,7 @@ var Login = function (_React$Component) {
                 password = _state.password;
 
 
-            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["p" /* loginUser */])(email, password);
+            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["q" /* loginUser */])(email, password);
             this.forceUpdate();
         }
     }, {
@@ -60925,7 +61060,7 @@ var Login = function (_React$Component) {
                     ),
                     __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                         'button',
-                        { onClick: __WEBPACK_IMPORTED_MODULE_3__helpers__["q" /* logoutCurrentUser */].bind(this) },
+                        { onClick: __WEBPACK_IMPORTED_MODULE_3__helpers__["r" /* logoutCurrentUser */].bind(this) },
                         'Logout'
                     )
                 );
@@ -61115,7 +61250,7 @@ var Header = function (_React$Component) {
 /* 128 */
 /***/ (function(module, exports) {
 
-throw new Error("Module build failed: ModuleBuildError: Module build failed: Error: ENOENT: no such file or directory, scandir '/home/vagrant/projects/react_test/node_modules/node-sass/vendor'\n    at Error (native)\n    at Object.fs.readdirSync (fs.js:952:18)\n    at Object.getInstalledBinaries (/home/vagrant/projects/react_test/node_modules/node-sass/lib/extensions.js:128:13)\n    at foundBinariesList (/home/vagrant/projects/react_test/node_modules/node-sass/lib/errors.js:20:15)\n    at foundBinaries (/home/vagrant/projects/react_test/node_modules/node-sass/lib/errors.js:15:5)\n    at Object.module.exports.missingBinary (/home/vagrant/projects/react_test/node_modules/node-sass/lib/errors.js:45:5)\n    at module.exports (/home/vagrant/projects/react_test/node_modules/node-sass/lib/binding.js:15:30)\n    at Object.<anonymous> (/home/vagrant/projects/react_test/node_modules/node-sass/lib/index.js:14:35)\n    at Module._compile (module.js:570:32)\n    at Object.Module._extensions..js (module.js:579:10)\n    at Module.load (module.js:487:32)\n    at tryModuleLoad (module.js:446:12)\n    at Function.Module._load (module.js:438:3)\n    at Module.require (module.js:497:17)\n    at require (internal/module.js:20:19)\n    at Object.<anonymous> (/home/vagrant/projects/react_test/node_modules/sass-loader/lib/loader.js:3:14)\n    at Module._compile (module.js:570:32)\n    at Object.Module._extensions..js (module.js:579:10)\n    at Module.load (module.js:487:32)\n    at tryModuleLoad (module.js:446:12)\n    at Function.Module._load (module.js:438:3)\n    at Module.require (module.js:497:17)\n    at require (internal/module.js:20:19)\n    at loadLoader (/home/vagrant/projects/react_test/node_modules/loader-runner/lib/loadLoader.js:13:17)\n    at iteratePitchingLoaders (/home/vagrant/projects/react_test/node_modules/loader-runner/lib/LoaderRunner.js:169:2)\n    at iteratePitchingLoaders (/home/vagrant/projects/react_test/node_modules/loader-runner/lib/LoaderRunner.js:165:10)\n    at /home/vagrant/projects/react_test/node_modules/loader-runner/lib/LoaderRunner.js:173:18\n    at loadLoader (/home/vagrant/projects/react_test/node_modules/loader-runner/lib/loadLoader.js:36:3)\n    at iteratePitchingLoaders (/home/vagrant/projects/react_test/node_modules/loader-runner/lib/LoaderRunner.js:169:2)\n    at iteratePitchingLoaders (/home/vagrant/projects/react_test/node_modules/loader-runner/lib/LoaderRunner.js:165:10)\n    at runLoaders (/home/vagrant/projects/react_test/node_modules/webpack/lib/NormalModule.js:195:19)\n    at /home/vagrant/projects/react_test/node_modules/loader-runner/lib/LoaderRunner.js:364:11\n    at /home/vagrant/projects/react_test/node_modules/loader-runner/lib/LoaderRunner.js:170:18\n    at loadLoader (/home/vagrant/projects/react_test/node_modules/loader-runner/lib/loadLoader.js:27:11)\n    at iteratePitchingLoaders (/home/vagrant/projects/react_test/node_modules/loader-runner/lib/LoaderRunner.js:169:2)\n    at iteratePitchingLoaders (/home/vagrant/projects/react_test/node_modules/loader-runner/lib/LoaderRunner.js:165:10)\n    at /home/vagrant/projects/react_test/node_modules/loader-runner/lib/LoaderRunner.js:173:18\n    at loadLoader (/home/vagrant/projects/react_test/node_modules/loader-runner/lib/loadLoader.js:36:3)\n    at iteratePitchingLoaders (/home/vagrant/projects/react_test/node_modules/loader-runner/lib/LoaderRunner.js:169:2)\n    at iteratePitchingLoaders (/home/vagrant/projects/react_test/node_modules/loader-runner/lib/LoaderRunner.js:165:10)\n    at /home/vagrant/projects/react_test/node_modules/loader-runner/lib/LoaderRunner.js:173:18\n    at loadLoader (/home/vagrant/projects/react_test/node_modules/loader-runner/lib/loadLoader.js:36:3)\n    at iteratePitchingLoaders (/home/vagrant/projects/react_test/node_modules/loader-runner/lib/LoaderRunner.js:169:2)\n    at iteratePitchingLoaders (/home/vagrant/projects/react_test/node_modules/loader-runner/lib/LoaderRunner.js:165:10)\n    at /home/vagrant/projects/react_test/node_modules/loader-runner/lib/LoaderRunner.js:173:18\n    at loadLoader (/home/vagrant/projects/react_test/node_modules/loader-runner/lib/loadLoader.js:36:3)\n    at iteratePitchingLoaders (/home/vagrant/projects/react_test/node_modules/loader-runner/lib/LoaderRunner.js:169:2)\n    at runLoaders (/home/vagrant/projects/react_test/node_modules/loader-runner/lib/LoaderRunner.js:362:2)\n    at NormalModule.doBuild (/home/vagrant/projects/react_test/node_modules/webpack/lib/NormalModule.js:182:3)\n    at NormalModule.build (/home/vagrant/projects/react_test/node_modules/webpack/lib/NormalModule.js:275:15)\n    at Compilation.buildModule (/home/vagrant/projects/react_test/node_modules/webpack/lib/Compilation.js:151:10)\n    at moduleFactory.create (/home/vagrant/projects/react_test/node_modules/webpack/lib/Compilation.js:454:10)\n    at factory (/home/vagrant/projects/react_test/node_modules/webpack/lib/NormalModuleFactory.js:243:5)\n    at applyPluginsAsyncWaterfall (/home/vagrant/projects/react_test/node_modules/webpack/lib/NormalModuleFactory.js:94:13)\n    at /home/vagrant/projects/react_test/node_modules/tapable/lib/Tapable.js:268:11\n    at NormalModuleFactory.params.normalModuleFactory.plugin (/home/vagrant/projects/react_test/node_modules/webpack/lib/CompatibilityPlugin.js:52:5)\n    at NormalModuleFactory.applyPluginsAsyncWaterfall (/home/vagrant/projects/react_test/node_modules/tapable/lib/Tapable.js:272:13)\n    at resolver (/home/vagrant/projects/react_test/node_modules/webpack/lib/NormalModuleFactory.js:69:10)\n    at process.nextTick (/home/vagrant/projects/react_test/node_modules/webpack/lib/NormalModuleFactory.js:196:7)\n    at _combinedTickCallback (internal/process/next_tick.js:73:7)\n    at process._tickCallback (internal/process/next_tick.js:104:9)");
+throw new Error("Module build failed: ModuleBuildError: Module build failed: Error: ENOENT: no such file or directory, scandir '/home/vagrant/projects/react_test/node_modules/node-sass/vendor'\n    at Error (native)\n    at Object.fs.readdirSync (fs.js:952:18)\n    at Object.getInstalledBinaries (/home/vagrant/projects/react_test/node_modules/node-sass/lib/extensions.js:128:13)\n    at foundBinariesList (/home/vagrant/projects/react_test/node_modules/node-sass/lib/errors.js:20:15)\n    at foundBinaries (/home/vagrant/projects/react_test/node_modules/node-sass/lib/errors.js:15:5)\n    at Object.module.exports.missingBinary (/home/vagrant/projects/react_test/node_modules/node-sass/lib/errors.js:45:5)\n    at module.exports (/home/vagrant/projects/react_test/node_modules/node-sass/lib/binding.js:15:30)\n    at Object.<anonymous> (/home/vagrant/projects/react_test/node_modules/node-sass/lib/index.js:14:35)\n    at Module._compile (module.js:570:32)\n    at Object.Module._extensions..js (module.js:579:10)\n    at Module.load (module.js:487:32)\n    at tryModuleLoad (module.js:446:12)\n    at Function.Module._load (module.js:438:3)\n    at Module.require (module.js:497:17)\n    at require (internal/module.js:20:19)\n    at Object.<anonymous> (/home/vagrant/projects/react_test/node_modules/sass-loader/lib/loader.js:3:14)\n    at Module._compile (module.js:570:32)\n    at Object.Module._extensions..js (module.js:579:10)\n    at Module.load (module.js:487:32)\n    at tryModuleLoad (module.js:446:12)\n    at Function.Module._load (module.js:438:3)\n    at Module.require (module.js:497:17)\n    at require (internal/module.js:20:19)\n    at loadLoader (/home/vagrant/projects/react_test/node_modules/loader-runner/lib/loadLoader.js:13:17)\n    at iteratePitchingLoaders (/home/vagrant/projects/react_test/node_modules/loader-runner/lib/LoaderRunner.js:169:2)\n    at iteratePitchingLoaders (/home/vagrant/projects/react_test/node_modules/loader-runner/lib/LoaderRunner.js:165:10)\n    at /home/vagrant/projects/react_test/node_modules/loader-runner/lib/LoaderRunner.js:173:18\n    at loadLoader (/home/vagrant/projects/react_test/node_modules/loader-runner/lib/loadLoader.js:36:3)\n    at iteratePitchingLoaders (/home/vagrant/projects/react_test/node_modules/loader-runner/lib/LoaderRunner.js:169:2)\n    at iteratePitchingLoaders (/home/vagrant/projects/react_test/node_modules/loader-runner/lib/LoaderRunner.js:165:10)\n    at runLoaders (/home/vagrant/projects/react_test/node_modules/webpack/lib/NormalModule.js:195:19)\n    at /home/vagrant/projects/react_test/node_modules/loader-runner/lib/LoaderRunner.js:364:11\n    at /home/vagrant/projects/react_test/node_modules/loader-runner/lib/LoaderRunner.js:170:18\n    at loadLoader (/home/vagrant/projects/react_test/node_modules/loader-runner/lib/loadLoader.js:27:11)\n    at iteratePitchingLoaders (/home/vagrant/projects/react_test/node_modules/loader-runner/lib/LoaderRunner.js:169:2)\n    at iteratePitchingLoaders (/home/vagrant/projects/react_test/node_modules/loader-runner/lib/LoaderRunner.js:165:10)\n    at /home/vagrant/projects/react_test/node_modules/loader-runner/lib/LoaderRunner.js:173:18\n    at loadLoader (/home/vagrant/projects/react_test/node_modules/loader-runner/lib/loadLoader.js:36:3)\n    at iteratePitchingLoaders (/home/vagrant/projects/react_test/node_modules/loader-runner/lib/LoaderRunner.js:169:2)\n    at iteratePitchingLoaders (/home/vagrant/projects/react_test/node_modules/loader-runner/lib/LoaderRunner.js:165:10)\n    at /home/vagrant/projects/react_test/node_modules/loader-runner/lib/LoaderRunner.js:173:18\n    at loadLoader (/home/vagrant/projects/react_test/node_modules/loader-runner/lib/loadLoader.js:36:3)\n    at iteratePitchingLoaders (/home/vagrant/projects/react_test/node_modules/loader-runner/lib/LoaderRunner.js:169:2)\n    at iteratePitchingLoaders (/home/vagrant/projects/react_test/node_modules/loader-runner/lib/LoaderRunner.js:165:10)\n    at /home/vagrant/projects/react_test/node_modules/loader-runner/lib/LoaderRunner.js:173:18\n    at loadLoader (/home/vagrant/projects/react_test/node_modules/loader-runner/lib/loadLoader.js:36:3)\n    at iteratePitchingLoaders (/home/vagrant/projects/react_test/node_modules/loader-runner/lib/LoaderRunner.js:169:2)\n    at runLoaders (/home/vagrant/projects/react_test/node_modules/loader-runner/lib/LoaderRunner.js:362:2)\n    at NormalModule.doBuild (/home/vagrant/projects/react_test/node_modules/webpack/lib/NormalModule.js:182:3)\n    at NormalModule.build (/home/vagrant/projects/react_test/node_modules/webpack/lib/NormalModule.js:275:15)\n    at Compilation.buildModule (/home/vagrant/projects/react_test/node_modules/webpack/lib/Compilation.js:151:10)\n    at moduleFactory.create (/home/vagrant/projects/react_test/node_modules/webpack/lib/Compilation.js:454:10)\n    at factory (/home/vagrant/projects/react_test/node_modules/webpack/lib/NormalModuleFactory.js:243:5)\n    at applyPluginsAsyncWaterfall (/home/vagrant/projects/react_test/node_modules/webpack/lib/NormalModuleFactory.js:94:13)\n    at /home/vagrant/projects/react_test/node_modules/tapable/lib/Tapable.js:268:11\n    at NormalModuleFactory.params.normalModuleFactory.plugin (/home/vagrant/projects/react_test/node_modules/webpack/lib/CompatibilityPlugin.js:52:5)\n    at NormalModuleFactory.applyPluginsAsyncWaterfall (/home/vagrant/projects/react_test/node_modules/tapable/lib/Tapable.js:272:13)\n    at resolver (/home/vagrant/projects/react_test/node_modules/webpack/lib/NormalModuleFactory.js:69:10)\n    at process.nextTick (/home/vagrant/projects/react_test/node_modules/webpack/lib/NormalModuleFactory.js:196:7)\n    at _combinedTickCallback (internal/process/next_tick.js:73:7)");
 
 /***/ })
 /******/ ]);

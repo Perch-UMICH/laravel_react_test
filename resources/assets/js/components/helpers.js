@@ -333,12 +333,13 @@ export function addSkillsToStudent(student_id, skill_ids) {
 }
 
 export function removeSkillsFromStudent(student_id, skill_ids) {
-    console.log('Removing skill from student');
+    console.log('Removing skills from student');
 
     let payload = {
-        skill_ids: skill_ids
+        skill_ids: skill_ids,
+        _method: 'PUT'
     };
-    return axios.delete('api/students/' + student_id + '/skills', payload)
+    return axios.post('api/students/' + student_id + '/skills', payload)
         .then(response => {
             console.log(response.data.message);
             return response.data.result;
@@ -364,7 +365,7 @@ export function getStudentTags(student_id) {
 }
 
 export function addTagsToStudent(student_id, tag_ids) {
-    console.log('Adding tag to student');
+    console.log('Adding tags to student');
 
     let payload = {
         tag_ids: tag_ids
@@ -381,12 +382,13 @@ export function addTagsToStudent(student_id, tag_ids) {
 }
 
 export function removeTagsFromStudent(student_id, tag_ids) {
-    console.log('Removing tag from student');
+    console.log('Removing tags from student');
 
     let payload = {
-        tag_ids: tag_ids
+        tag_ids: tag_ids,
+        _method: 'PUT'
     };
-    return axios.delete('api/students/' + student_id + '/tags', payload)
+    return axios.post('api/students/' + student_id + '/tags', payload)
         .then(response => {
             console.log(response.data.message);
             return response.data.result;
@@ -432,9 +434,10 @@ export function removeFavLabsFromStudent(student_id, lab_ids) {
     console.log('Removing favorite lab from student');
 
     let payload = {
-        tag_ids: lab_ids
+        tag_ids: lab_ids,
+        _method: 'PUT'
     };
-    return axios.delete('api/students/' + student_id + '/labs', payload)
+    return axios.post('api/students/' + student_id + '/labs', payload)
         .then(response => {
             console.log(response.data.message);
             return response.data.result;
@@ -552,7 +555,8 @@ export function addLabToFaculty(faculty_id, lab_id) {
 
 export function removeLabFromFaculty(faculty_id, lab_id) {
     console.log('Removing lab from faculty');
-    return axios.delete('api/faculties/' + faculty_id + '/labs', {lab_id})
+    let _method = 'PUT';
+    return axios.post('api/faculties/' + faculty_id + '/labs', {lab_id, _method})
         .then(response => {
             console.log(response.data.message);
             return response.data.result;
@@ -683,9 +687,10 @@ export function removeSkillsFromLab(lab_id, skill_ids) {
     console.log('Removing skills from lab');
 
     let payload = {
-        skill_ids: skill_ids
+        skill_ids: skill_ids,
+        _method: 'PUT'
     };
-    return axios.delete('api/labs/' + lab_id + '/skills', payload)
+    return axios.post('api/labs/' + lab_id + '/skills', payload)
         .then(response => {
             console.log(response.data.message);
             return response.data.result;
@@ -731,9 +736,10 @@ export function removeTagsFromLab(lab_id, tag_ids) {
     console.log('Removing tag from lab');
 
     let payload = {
-        tag_ids: tag_ids
+        tag_ids: tag_ids,
+        _method: 'PUT'
     };
-    return axios.delete('api/labs/' + lab_id + '/tags', payload)
+    return axios.post('api/labs/' + lab_id + '/tags', payload)
         .then(response => {
             console.log(response.data.message);
             return response.data.result;
@@ -779,9 +785,10 @@ export function removePreferencesFromLab(lab_id, preference_ids) {
     console.log('Removing preferences from lab');
 
     let payload = {
-        tag_ids: preference_ids
+        tag_ids: preference_ids,
+        _method: 'PUT'
     };
-    return axios.delete('api/labs/' + lab_id + '/preferences', payload)
+    return axios.post('api/labs/' + lab_id + '/preferences', payload)
         .then(response => {
             console.log(response.data.message);
             return response.data.result;
@@ -824,7 +831,8 @@ export function deletePosition(lab_id, position_ids) {
     console.log('Deleting lab positions');
 
     let payload = {
-        position_ids: position_ids
+        position_ids: position_ids,
+        _method: 'PUT'
     };
 
     return axios.post('api/labs/' + lab_id + '/positions', payload)

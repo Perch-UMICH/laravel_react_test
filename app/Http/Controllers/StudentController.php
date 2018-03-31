@@ -140,28 +140,28 @@ class StudentController extends Controller
     public function add_skill(Request $request, Student $student) {
         $input = $request->all();
         $ids = $input['skill_ids'];
-        $student->tags()->attach($ids);
+        $student->tags()->syncWithoutDetaching($ids);
         return $this->outputJSON(null,"Added skills");
     }
 
     public function add_tag(Request $request, Student $student) {
         $input = $request->all();
         $ids = $input['tag_ids'];
-        $student->tags()->attach($ids);
+        $student->tags()->syncWithoutDetaching($ids);
         return $this->outputJSON(null,"Added tags");
     }
 
     public function add_lab(Request $request, Student $student) {
         $input = $request->all();
         $ids = $input['lab_ids'];
-        $student->tags()->attach($ids);
+        $student->tags()->syncWithoutDetaching($ids);
         return $this->outputJSON(null,"Added labs");
     }
 
     public function remove_skill(Request $request, Student $student) {
         $input = $request->all();
         $ids = $input['skill_ids'];
-        $student->tags()->detach($ids);
+        $student->tags()->syncWithoutDetaching($ids);
         return $this->outputJSON(null,"Removed skills");
     }
 
