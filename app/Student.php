@@ -27,4 +27,8 @@ class Student extends Model
     public function labs() {
         return $this->belongsToMany('App\Lab', 'lab_student');
     }
+
+    public function applications() {
+        return $this->hasMany('App\Application');
+    }
 }
