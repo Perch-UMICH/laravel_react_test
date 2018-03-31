@@ -116,7 +116,7 @@ class FacultyController extends Controller
 
     public function add_lab(Request $request, Faculty $faculty) {
         $input = $request->all();
-        $faculty->labs()->attach([$input['lab_id']]);
+        $faculty->labs()->syncWithoutDetaching([$input['lab_id']]);
     }
 
     public function remove_lab(Request $request, Faculty $faculty) {
