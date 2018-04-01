@@ -40,10 +40,20 @@ class UserController extends Controller
         $user = User::where('email', $input['email'])->first();
 
         if($user == null) {
-            return $this->outputJSON(null,"Incorrect Email Address",404);
+            return $this->outputJSON(null,"Invalid Email Address",404);
         } elseif (Auth::attempt(['email' => $input['email'], 'password' => $input['password']])) {
+            // Create token
             $token['token'] = $user->createToken('token')->accessToken;
-            return $this->outputJSON([$user, $token],"Logged In Successfully");
+            // Get user type if it exists
+            if ($user->is_student) {
+                return $this->outputJSON([$user, $user->student, $token],"Student Logged In Successfully");
+            }
+            else if ($user->is_faculty) {
+                return $this->outputJSON([$user, $user->faculty, $token],"Faculty Logged In Successfully");
+            }
+            else {
+                return $this->outputJSON([$user, $token],"Logged In Successfully. User has no type.");
+            }
         } else {
             return $this->outputJSON(null,"Incorrect Password",404);
         }

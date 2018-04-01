@@ -71,7 +71,7 @@ class StudentController extends Controller
         $input = array_filter($input);
 
         $student = Student::where('user_id', $input['user_id']);
-        if ($student->exists()) {
+        if ($student != null) {
             return $this->outputJSON($student->get(), 'Error: this user already has a student profile');
         }
         $user = User::find($input['user_id']);
