@@ -28,9 +28,9 @@ class CreateLabsTable extends Migration
             // lab qualifications
             $table->float('gpa')->nullable(); // required gpa to apply
             $table->integer('weeklyCommitment')->nullable(); // weekly time commitment
+            $table->integer('num_open_spots')->nullable();
 
             $table->string('labpic_path')->nullable();
-
 
             $table->timestamps();
         });

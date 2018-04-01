@@ -31,7 +31,7 @@ class Students extends React.Component {
             comp.setState({student: JSON.stringify(resp)});
         });
 
-        getStudentSkills(1).then(function (resp) {
+        getStudentSkills(10000).then(function (resp) {
             comp.setState({skills: JSON.stringify(resp)});
         });
 
