@@ -53,15 +53,17 @@ Route::delete('students/{student}', 'StudentController@destroy'); // Delete a st
 
 Route::get('students/{student}/tags', 'StudentController@tags'); // Get a student's tags
 Route::post('students/{student}/tags', 'StudentController@add_tag');
+Route::post('students/{student}/tags/sync', 'StudentController@sync_tags'); // sync -> delete all and replace with only input
 Route::put('students/{student}/tags', 'StudentController@remove_tag');
 
 
 Route::get('students/{student}/skills', 'StudentController@skills'); // Get student's skills
 Route::post('students/{student}/skills', 'StudentController@add_skill');
+Route::post('students/{student}/skills/sync', 'StudentController@sync_skills');
 Route::put('students/{student}/skills', 'StudentController@remove_skill');
 
 
-Route::get('students/{student}/labs', 'StudentController@labs'); // Get student's skills
+Route::get('students/{student}/labs', 'StudentController@labs');
 Route::post('students/{student}/labs', 'StudentController@add_lab');
 Route::put('students/{student}/labs', 'StudentController@remove_skill');
 
@@ -93,10 +95,12 @@ Route::put('labs/{lab}/faculties', 'LabController@remove_faculty');
 
 Route::get('labs/{lab}/skills', 'LabController@skills');
 Route::post('labs/{lab}/skills', 'LabController@add_skill');
+Route::post('labs/{lab}/skills/sync', 'LabController@sync_skills');
 Route::put('labs/{lab}/skills', 'LabController@remove_skill');
 
 Route::get('labs/{lab}/tags', 'LabController@tags');
 Route::post('labs/{lab}/tags', 'LabController@add_tag');
+Route::post('labs/{lab}/tags/sync', 'LabController@sync_tags');
 Route::put('labs/{lab}/tags', 'LabController@remove_tag');
 
 Route::get('labs/{lab}/preferences', 'LabController@preferences');

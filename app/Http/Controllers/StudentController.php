@@ -140,8 +140,15 @@ class StudentController extends Controller
     public function add_skill(Request $request, Student $student) {
         $input = $request->all();
         $ids = $input['skill_ids'];
-        $student->tags()->syncWithoutDetaching($ids);
+        $student->skills()->syncWithoutDetaching($ids);
         return $this->outputJSON(null,"Added skills");
+    }
+
+    public function sync_skills(Request $request, Student $student) {
+        $input = $request->all();
+        $ids = $input['skill_ids'];
+        $student->skills()->sync($ids);
+        return $this->outputJSON(null,"Synced skills");
     }
 
     public function add_tag(Request $request, Student $student) {
@@ -151,17 +158,31 @@ class StudentController extends Controller
         return $this->outputJSON(null,"Added tags");
     }
 
+    public function sync_tags(Request $request, Student $student) {
+        $input = $request->all();
+        $ids = $input['tag_ids'];
+        $student->tags()->sync($ids);
+        return $this->outputJSON(null,"Synced tags");
+    }
+
     public function add_lab(Request $request, Student $student) {
         $input = $request->all();
         $ids = $input['lab_ids'];
-        $student->tags()->syncWithoutDetaching($ids);
+        $student->labs()->syncWithoutDetaching($ids);
         return $this->outputJSON(null,"Added labs");
+    }
+
+    public function sync_labs(Request $request, Student $student) {
+        $input = $request->all();
+        $ids = $input['lab_ids'];
+        $student->labs()->sync($ids);
+        return $this->outputJSON(null,"Synced labs");
     }
 
     public function remove_skill(Request $request, Student $student) {
         $input = $request->all();
         $ids = $input['skill_ids'];
-        $student->tags()->syncWithoutDetaching($ids);
+        $student->skills()->detach($ids);
         return $this->outputJSON(null,"Removed skills");
     }
 
@@ -175,7 +196,7 @@ class StudentController extends Controller
     public function remove_lab(Request $request, Student $student) {
         $input = $request->all();
         $ids = $input['lab_ids'];
-        $student->tags()->detach($ids);
+        $student->labs()->detach($ids);
         return $this->outputJSON(null,"Removed labs");
     }
 

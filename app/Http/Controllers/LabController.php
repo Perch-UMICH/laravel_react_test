@@ -159,11 +159,25 @@ class LabController extends Controller
         return $this->outputJSON(null,"Added skills");
     }
 
+    public function sync_skills(Request $request, Lab $lab) {
+        $input = $request->all();
+        $ids = $input['skill_ids'];
+        $lab->skills()->sync($ids);
+        return $this->outputJSON(null,"Synced skills");
+    }
+
     public function add_tag(Request $request, Lab $lab) {
         $input = $request->all();
         $ids = $input['tag_ids'];
         $lab->tags()->syncWithoutDetaching($ids);
         return $this->outputJSON(null,"Added tags");
+    }
+
+    public function sync_tags(Request $request, Lab $lab) {
+        $input = $request->all();
+        $ids = $input['tag_ids'];
+        $lab->tags()->sync($ids);
+        return $this->outputJSON(null,"Synced tags");
     }
 
     public function add_student(Request $request, Lab $lab) {

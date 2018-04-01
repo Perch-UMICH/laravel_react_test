@@ -332,6 +332,23 @@ export function addSkillsToStudent(student_id, skill_ids) {
         })
 }
 
+export function syncSkillsToStudent(student_id, skill_ids) {
+    console.log('Syncing skills to student');
+
+    let payload = {
+        skill_ids: skill_ids
+    };
+    return axios.post('api/students/' + student_id + '/skills/sync', payload)
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
 export function removeSkillsFromStudent(student_id, skill_ids) {
     console.log('Removing skills from student');
 
@@ -371,6 +388,23 @@ export function addTagsToStudent(student_id, tag_ids) {
         tag_ids: tag_ids
     };
     return axios.post('api/students/' + student_id + '/tags', payload)
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+export function syncTagsToStudent(student_id, tag_ids) {
+    console.log('Syncing tags to student');
+
+    let payload = {
+        tag_ids: tag_ids
+    };
+    return axios.post('api/students/' + student_id + '/tags/sync', payload)
         .then(response => {
             console.log(response.data.message);
             return response.data.result;
@@ -683,6 +717,23 @@ export function addSkillsToLab(lab_id, skill_ids) {
         })
 }
 
+export function syncSkillsToLab(lab_id, skill_ids) {
+    console.log('Syncing skills to lab');
+
+    let payload = {
+        skill_ids: skill_ids
+    };
+    return axios.post('api/labs/' + lab_id + '/skills/sync', payload)
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
 export function removeSkillsFromLab(lab_id, skill_ids) {
     console.log('Removing skills from lab');
 
@@ -722,6 +773,23 @@ export function addTagsToLab(lab_id, tag_ids) {
         tag_ids: tag_ids
     };
     return axios.post('api/labs/' + lab_id + '/tags', payload)
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+export function syncTagsToLab(lab_id, tag_ids) {
+    console.log('Syncing tags to lab');
+
+    let payload = {
+        tag_ids: tag_ids
+    };
+    return axios.post('api/labs/' + lab_id + '/tags/sync', payload)
         .then(response => {
             console.log(response.data.message);
             return response.data.result;
