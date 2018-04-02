@@ -82,7 +82,7 @@ Route::put('faculties/{faculty}/labs', 'FacultyController@remove_lab');
 
 // New getters
 Route::post('labs/all', 'LabController@get_all_labs');
-Route::post('labs/{lab}', 'LabController@get_labs');
+Route::post('labs/{lab}', 'LabController@get_lab');
 
 Route::get('labs', 'LabController@index'); // Get all faculty
 Route::get('labs/{lab}', 'LabController@show');

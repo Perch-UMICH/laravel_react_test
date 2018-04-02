@@ -127,13 +127,13 @@ class LabController extends Controller
         if ($input['skilltag_data']) {
             $skills = $lab->skills()->wherePivot('lab_id', $lab->id)->get();
             $tags = $lab->tags()->wherePivot('lab_id', $lab->id)->get();
-            $lab_data[$lab->id]->put('skills', $skills);
-            $lab_data[$lab->id]->put('tags', $tags);
+            $lab_data->put('skills', $skills);
+            $lab_data->put('tags', $tags);
 
         }
         if ($input['position_data']) {
             $positions = $lab->positions()->get();
-            $lab_data[$lab->id]->put('positions', $positions);
+            $lab_data->put('positions', $positions);
         }
         if ($input['application_data']) {
             $applications = $lab->applications()->get();
@@ -142,21 +142,21 @@ class LabController extends Controller
                 $qs = $app->questions()->get();
                 $application_data[$app->id] = ['data' => $app, 'questions' => $qs];
             }
-            $lab_data[$lab->id]->put('applications', $application_data);
+            $lab_data->put('applications', $application_data);
 
         }
         if ($input['student_data']) {
             $students = $lab->students()->wherePivot('lab_id', $lab->id)->get();
-            $lab_data[$lab->id]->put('students', $students);
+            $lab_data->put('students', $students);
 
         }
         if ($input['faculty_data']) {
             $faculties = $lab->faculties()->wherePivot('lab_id', $lab->id)->get();
-            $lab_data[$lab->id]->put('faculties', $faculties);
+            $lab_data->put('faculties', $faculties);
         }
         if ($input['preferences_data']) {
             $preferences = $lab->preferences()->wherePivot('lab_id', $lab->id)->get();
-            $lab_data[$lab->id]->put('preferences', $preferences);
+            $lab_data->put('preferences', $preferences);
         }
 
         return $this->outputJSON($lab_data, 'Lab data retrieved');
