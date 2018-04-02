@@ -6,6 +6,8 @@ use App\Skill;
 use App\Student;
 use App\LabPreference;
 use App\Position;
+use App\Application;
+use App\AppQuestion;
 use Illuminate\Database\Seeder;
 
 class LabConnectionsSeeder extends Seeder
@@ -23,6 +25,7 @@ class LabConnectionsSeeder extends Seeder
         $this->labSkillsTableSeeder();
         $this->labPreferencesTableSeeder();
         $this->labPositionsTableSeeder();
+        $this->labApplicationsTableSeeder();
     }
 
     /**
@@ -108,8 +111,6 @@ class LabConnectionsSeeder extends Seeder
         $pos->description = 'Design novel drug combination therapies using computational approaches.';
         $pos->time_commitment = '10-12 hours/week';
         $pos->open_slots = 2;
-        $pos->filled_slots = 0;
-        $pos->open = true;
 
         $lab = Lab::find(2);
         $lab->positions()->save($pos);
@@ -119,10 +120,42 @@ class LabConnectionsSeeder extends Seeder
         $pos->description = 'Develop novel small satellite missions built on fundamental advancements in spacecraft technology.';
         $pos->time_commitment = '8-10 hours/week';
         $pos->open_slots = 3;
-        $pos->filled_slots = 0;
-        $pos->open = true;
 
         $lab->positions()->save($pos);
+    }
+
+    public function labApplicationsTableSeeder() {
+        // App with generic and lab owned questions
+        $app = new Application();
+
+        $lab = Lab::find(2);
+        $lab->applications()->save($app);
+
+        $app->save();
+
+        $q = new AppQuestion();
+        $q->question = 'Lab specific question 1';
+        $q->save();
+
+        $lab->questions()->save($q);
+        $app->questions()->attach([$q->id]);
+
+        $q = new AppQuestion();
+        $q->question = 'Lab specific question 2';
+        $q->save();
+
+        $lab->questions()->save($q);
+        $app->questions()->attach([$q->id]);
+
+        $q = new AppQuestion();
+        $q->question = 'Generic question 1';
+        $q->lab_id = null;
+        $q->save();
+
+        $app->questions()->attach([$q->id]);
+
+        $pos = Position::find(1);
+        $pos->application()->save($app);
     }
 
 }

@@ -24,8 +24,6 @@ class CreatePositionsTable extends Migration
             $table->string('time_commitment')->nullable();
 
             $table->integer('open_slots')->nullable();
-            $table->integer('filled_slots')->nullable();
-            $table->boolean('open')->nullable();
 
             $table->timestamps();
         });

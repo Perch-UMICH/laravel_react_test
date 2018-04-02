@@ -6,7 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Lab extends Model
 {
-    protected $fillable = ['name', 'department', 'location', 'description', 'bio', 'publications', 'url', 'gpa', 'weeklyCommitment'];
+    protected $fillable = ['name', 'department', 'location', 'description', 'bio', 'publications',
+        'url', 'gpa', 'weeklyCommitment'];
 
     public function skills() {
         return $this->belongsToMany('App\Skill', 'lab_skill');
@@ -34,5 +35,9 @@ class Lab extends Model
 
     public function applications() {
         return $this->hasMany('App\Application');
+    }
+
+    public function questions() {
+        return $this->hasMany('App\AppQuestion');
     }
 }

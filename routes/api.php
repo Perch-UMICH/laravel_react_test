@@ -78,9 +78,15 @@ Route::get('faculties/{faculty}/labs', 'FacultyController@labs');
 Route::post('faculties/{faculty}/labs', 'FacultyController@add_lab');
 Route::put('faculties/{faculty}/labs', 'FacultyController@remove_lab');
 
-// Labs
-Route::get('labs', 'LabController@index');
+// LABS
+
+// New getters
+Route::post('labs/all', 'LabController@get_all_labs');
+Route::post('labs/{lab}', 'LabController@get_labs');
+
+Route::get('labs', 'LabController@index'); // Get all faculty
 Route::get('labs/{lab}', 'LabController@show');
+
 Route::post('labs', 'LabController@store');
 Route::put('labs/{lab}', 'LabController@update');
 Route::delete('labs/{lab}', 'LabController@destroy');
@@ -107,9 +113,28 @@ Route::get('labs/{lab}/preferences', 'LabController@preferences');
 Route::post('labs/{lab}/preferences', 'LabController@add_preference');
 Route::put('labs/{lab}/preferences', 'LabController@remove_preference');
 
+// Positions
 Route::get('labs/{lab}/positions', 'LabController@positions');
-Route::post('labs/{lab}/positions', 'LabController@create_and_add_position');
-Route::put('labs/{lab}/positions', 'LabController@remove_and_delete_positions');
+Route::post('labs/{lab}/positions', 'LabController@create_position');
+Route::put('labs/{lab}/positions', 'LabController@delete_positions');
+
+Route::get('positions/{position}', 'PositionController@show');
+Route::put('positions/{position}','PositionController@update');
+
+// Applications
+Route::get('labs/{lab}/applications', 'LabController@applications');
+Route::post('labs/{lab}/applications', 'LabController@create_application');
+Route::put('applications/{application}','ApplicationController@update');
+Route::put('labs/{lab}/applications', 'LabController@delete_applications');
+
+Route::get('applications/{application}/questions', 'ApplicationController@get_app_questions');
+Route::post('applications/{application}/questions/create', 'ApplicationController@create_question');
+Route::post('applications/{application}/questions/associate', 'ApplicationController@add_existing_question');
+Route::put('questions/{question}', 'ApplicationController@update_question');
+Route::post('applications/{application}/questions/dissociate', 'ApplicationController@remove_questions');
+Route::post('applications/{application}/questions/delete', 'ApplicationController@delete_questions');
+
+Route::get('questions', 'ApplicationController@get_public_questions');
 
 // Skills:
 Route::get('skills', 'SkillController@index');
@@ -121,15 +146,14 @@ Route::get('skills/{skill}', 'SkillController@show');
 Route::get('tags', 'TagController@index');
 Route::get('tags/{tag}', 'TagController@show');
 
-// Positions
-Route::get('positions', 'PositionController@index');
-Route::post('positions','PositionController@store'); // Create a student
-Route::get('positions/{position}', 'PositionController@show');
-Route::put('positions/{position}','PositionController@update'); // Update a student
-Route::delete('positions/{position}', 'PositionController@destroy'); // Delete a student
+
 
 // Profile pics
 Route::post('pics', 'ProfilepicController@store');
+
+// Feedback
+Route::get('feedback', 'FeedbackController@index');
+Route::post('feedback', 'FeedbackController@store');
 
 // Search
 Route::post('search', 'SearchController@get_search_data');

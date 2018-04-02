@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateApplicationsTable extends Migration
+class CreateAppQuestionsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,16 +13,16 @@ class CreateApplicationsTable extends Migration
      */
     public function up()
     {
-        Schema::create('applications', function (Blueprint $table) {
+        Schema::create('app_questions', function (Blueprint $table) {
             $table->increments('id');
 
-            // Lab association
-            $table->integer('lab_id')->unsigned()->index();
+            // Which lab owns the question
+            // If null, this is a public question available to all
+            $table->integer('lab_id')->unsigned()->index()->nullable();
             $table->foreign('lab_id')->references('id')->on('labs')->onDelete('cascade');
 
-            // Optional: associate with specific position; will be "generic" if not
-            $table->integer('position_id')->unsigned()->index()->nullable();
-            $table->foreign('position_id')->references('id')->on('positions')->onDelete('cascade');
+            // Question
+            $table->string('question');
 
             $table->timestamps();
         });
@@ -35,6 +35,6 @@ class CreateApplicationsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('applications');
+        Schema::dropIfExists('app_questions');
     }
 }

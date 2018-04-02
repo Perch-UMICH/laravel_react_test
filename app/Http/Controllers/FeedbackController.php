@@ -14,7 +14,8 @@ class FeedbackController extends Controller
      */
     public function index()
     {
-        //
+        $feedback = Feedback::all();
+        return $this->outputJSON($feedback, 'Feedback retrieved');
     }
 
     /**
@@ -35,7 +36,13 @@ class FeedbackController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $input = $request->all();
+        $input = array_filter($input);
+
+        $feedback = new Feedback($input);
+        $feedback->save();
+
+        return $this->outputJSON($feedback, 'Feedback submitted');
     }
 
     /**

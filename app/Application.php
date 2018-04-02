@@ -6,19 +6,23 @@ use Illuminate\Database\Eloquent\Model;
 
 class Application extends Model
 {
-    public function student() {
-        return $this->hasOne('App\Student');
+
+    // Must be associated with one lab
+    public function lab()
+    {
+        return $this->belongsTo('App\Lab');
     }
 
-    public function lab() {
-        return $this->hasOne('App\Lab');
+    // May be associated with one position
+    public function position()
+    {
+        return $this->belongsTo('App\Position');
     }
 
-    public function questions() {
-        return $this->hasMany('App\ApplicationQuestion');
+    // May have many questions, by pivot table
+    public function questions()
+    {
+        return $this->belongsToMany('App\AppQuestion');
     }
 
-    public function status() {
-        return $this->hasOne('App\ApplicationStatus');
-    }
 }

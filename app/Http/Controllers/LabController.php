@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Lab;
 use App\Position;
+use App\Application;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 
 class LabController extends Controller
 {
@@ -16,9 +18,7 @@ class LabController extends Controller
     public function index()
     {
         $labs = Lab::all();
-
         $lab_data = [];
-
         foreach( $labs as $lab ) {
             $skills = $lab->skills()->wherePivot('lab_id', $lab->id)->get();
             $tags = $lab->tags()->wherePivot('lab_id', $lab->id)->get();
@@ -28,14 +28,56 @@ class LabController extends Controller
         return $this->outputJSON($lab_data,"Labs retrieved");
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+    public function get_all_labs(Request $request) {
+        $input = $request->all();
+        //$input = array_filter($input);
+        // skilltag_data, preferences_data, position_data, application_data, student_data, faculty_data
+
+        $labs = Lab::all();
+
+        $lab_data = [];
+
+        foreach( $labs as $lab ) {
+            $lab_data[$lab->id] = Collection::make();
+            $lab_data[$lab->id]->put('data', $lab);
+
+            if ($input['skilltag_data']) {
+                $skills = $lab->skills()->wherePivot('lab_id', $lab->id)->get();
+                $tags = $lab->tags()->wherePivot('lab_id', $lab->id)->get();
+                $lab_data[$lab->id]->put('skills', $skills);
+                $lab_data[$lab->id]->put('tags', $tags);
+
+            }
+            if ($input['position_data']) {
+                $positions = $lab->positions()->get();
+                $lab_data[$lab->id]->put('positions', $positions);
+            }
+            if ($input['application_data']) {
+                $applications = $lab->applications()->get();
+                $application_data = [];
+                foreach ($applications as $app) {
+                    $qs = $app->questions()->get();
+                    $application_data[$app->id] = ['data' => $app, 'questions' => $qs];
+                }
+                $lab_data[$lab->id]->put('applications', $application_data);
+
+            }
+            if ($input['student_data']) {
+                $students = $lab->students()->wherePivot('lab_id', $lab->id)->get();
+                $lab_data[$lab->id]->put('students', $students);
+
+            }
+            if ($input['faculty_data']) {
+                $faculties = $lab->faculties()->wherePivot('lab_id', $lab->id)->get();
+                $lab_data[$lab->id]->put('faculties', $faculties);
+            }
+            if ($input['preferences_data']) {
+                $preferences = $lab->preferences()->wherePivot('lab_id', $lab->id)->get();
+                $lab_data[$lab->id]->put('preferences', $preferences);
+            }
+        }
+
+        return $this->outputJSON($lab_data, 'All lab data retrieved');
     }
 
     /**
@@ -70,22 +112,56 @@ class LabController extends Controller
     {
         $skills = $lab->skills()->wherePivot('lab_id', $lab->id)->get();
         $tags = $lab->tags()->wherePivot('lab_id', $lab->id)->get();
-
         $lab_data = ['data' => $lab, 'skills' => $skills, 'tags' => $tags];
-
         return $this->outputJSON($lab_data,"Lab retrieved");
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Lab  $lab
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Lab $lab)
-    {
-        //
+    public function get_lab(Lab $lab, Request $request) {
+        $input = $request->all();
+        //$input = array_filter($input);
+        // skilltag_data, preferences_data, position_data, application_data, student_data, faculty_data
+
+        $lab_data = Collection::make();
+        $lab_data->put('data', $lab);
+
+        if ($input['skilltag_data']) {
+            $skills = $lab->skills()->wherePivot('lab_id', $lab->id)->get();
+            $tags = $lab->tags()->wherePivot('lab_id', $lab->id)->get();
+            $lab_data[$lab->id]->put('skills', $skills);
+            $lab_data[$lab->id]->put('tags', $tags);
+
+        }
+        if ($input['position_data']) {
+            $positions = $lab->positions()->get();
+            $lab_data[$lab->id]->put('positions', $positions);
+        }
+        if ($input['application_data']) {
+            $applications = $lab->applications()->get();
+            $application_data = [];
+            foreach ($applications as $app) {
+                $qs = $app->questions()->get();
+                $application_data[$app->id] = ['data' => $app, 'questions' => $qs];
+            }
+            $lab_data[$lab->id]->put('applications', $application_data);
+
+        }
+        if ($input['student_data']) {
+            $students = $lab->students()->wherePivot('lab_id', $lab->id)->get();
+            $lab_data[$lab->id]->put('students', $students);
+
+        }
+        if ($input['faculty_data']) {
+            $faculties = $lab->faculties()->wherePivot('lab_id', $lab->id)->get();
+            $lab_data[$lab->id]->put('faculties', $faculties);
+        }
+        if ($input['preferences_data']) {
+            $preferences = $lab->preferences()->wherePivot('lab_id', $lab->id)->get();
+            $lab_data[$lab->id]->put('preferences', $preferences);
+        }
+
+        return $this->outputJSON($lab_data, 'Lab data retrieved');
     }
+
 
     /**
      * Update the specified resource in storage.
@@ -150,6 +226,16 @@ class LabController extends Controller
         return $this->outputJSON($positions,"Positions from lab retrieved");
     }
 
+    public function applications(Lab $lab) {
+        $applications = $lab->applications()->get();
+        $application_data = [];
+        foreach($applications as $app) {
+            $qs = $app->questions()->get();
+            $application_data[$app->id] = ['data' => $app, 'questions' => $qs];
+        }
+        return $this->outputJSON($application_data,"Applications from lab retrieved");
+    }
+
     // Add
 
     public function add_skill(Request $request, Lab $lab) {
@@ -201,7 +287,7 @@ class LabController extends Controller
         return $this->outputJSON(null,"Added preferences");
     }
 
-    public function create_and_add_position(Request $request, Lab $lab) {
+    public function create_position(Request $request, Lab $lab) {
         $input = $request->all();
         $position = new Position($input);
         $position->save();
@@ -209,6 +295,16 @@ class LabController extends Controller
         $lab->positions()->save($position);
         return $this->outputJSON($position,"Created position " . $position->title . " and added to lab " . $lab->name);
     }
+
+    public function create_application(Request $request, Lab $lab) {
+        $input = $request->all();
+        $application = new Application($input);
+        $application->save();
+
+        $lab->positions()->save($application);
+        return $this->outputJSON($application,"Created application and added to lab " . $lab->name);
+    }
+
 
     // Remove
 
@@ -247,11 +343,19 @@ class LabController extends Controller
         return $this->outputJSON(null,"Removed preferences from lab " . $lab->name);
     }
 
-    public function remove_and_delete_positions(Request $request, Lab $lab) {
+    public function delete_positions(Request $request, Lab $lab) {
         $input = $request->all();
         $ids = $input['position_ids'];
         Position::destroy($ids);
 
-        return $this->outputJSON(null,"Removed and deleted positions from lab " . $lab->name);
+        return $this->outputJSON(null,"Deleted positions from lab " . $lab->name);
+    }
+
+    public function delete_applications(Request $request, Lab $lab) {
+        $input = $request->all();
+        $ids = $input['application_ids'];
+        Application::destroy($ids);
+
+        return $this->outputJSON(null,"Deleted applications from lab " . $lab->name);
     }
 }
