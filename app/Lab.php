@@ -33,10 +33,6 @@ class Lab extends Model
         return $this->hasMany('App\Position');
     }
 
-    public function applications() {
-        return $this->hasMany('App\Application');
-    }
-
     public function questions() {
         return $this->hasMany('App\AppQuestion');
     }

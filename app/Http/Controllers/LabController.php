@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\AppQuestion;
 use App\Lab;
 use App\Position;
 use App\Application;
@@ -226,15 +227,15 @@ class LabController extends Controller
         return $this->outputJSON($positions,"Positions from lab retrieved");
     }
 
-    public function applications(Lab $lab) {
-        $applications = $lab->applications()->get();
-        $application_data = [];
-        foreach($applications as $app) {
-            $qs = $app->questions()->get();
-            $application_data[$app->id] = ['data' => $app, 'questions' => $qs];
-        }
-        return $this->outputJSON($application_data,"Applications from lab retrieved");
-    }
+//    public function applications(Lab $lab) {
+//        $applications = $lab->applications()->get();
+//        $application_data = [];
+//        foreach($applications as $app) {
+//            $qs = $app->questions()->get();
+//            $application_data[$app->id] = ['data' => $app, 'questions' => $qs];
+//        }
+//        return $this->outputJSON($application_data,"Applications from lab retrieved");
+//    }
 
     // Add
 
@@ -296,14 +297,24 @@ class LabController extends Controller
         return $this->outputJSON($position,"Created position " . $position->title . " and added to lab " . $lab->name);
     }
 
-    public function create_application(Request $request, Lab $lab) {
-        $input = $request->all();
-        $application = new Application($input);
-        $application->save();
-
-        $lab->positions()->save($application);
-        return $this->outputJSON($application,"Created application and added to lab " . $lab->name);
-    }
+//    public function create_application(Request $request, Lab $lab) {
+//        $input = $request->all();
+//        $application = new Application($input);
+//        $application->save();
+//
+//        $questions = $input['questions'];
+//        foreach ($questions as $q) {
+//            $question = new AppQuestion();
+//            $question->question = $q;
+//            $application->questions()->save($question);
+//        }
+//
+//        $pos = $application->position;
+//        $pos->applications()->save($application);
+//        $pos->save();
+//
+//        return $this->outputJSON($application,"Created application and added to position " . $pos->title);
+//    }
 
 
     // Remove
@@ -351,11 +362,11 @@ class LabController extends Controller
         return $this->outputJSON(null,"Deleted positions from lab " . $lab->name);
     }
 
-    public function delete_applications(Request $request, Lab $lab) {
-        $input = $request->all();
-        $ids = $input['application_ids'];
-        Application::destroy($ids);
-
-        return $this->outputJSON(null,"Deleted applications from lab " . $lab->name);
-    }
+//    public function delete_applications(Request $request, Lab $lab) {
+//        $input = $request->all();
+//        $ids = $input['application_ids'];
+//        Application::destroy($ids);
+//
+//        return $this->outputJSON(null,"Deleted applications from lab " . $lab->name);
+//    }
 }

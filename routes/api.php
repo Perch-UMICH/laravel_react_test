@@ -109,32 +109,27 @@ Route::post('labs/{lab}/tags', 'LabController@add_tag');
 Route::post('labs/{lab}/tags/sync', 'LabController@sync_tags');
 Route::put('labs/{lab}/tags', 'LabController@remove_tag');
 
+Route::get('preferences', 'LabPreferenceController@index');
 Route::get('labs/{lab}/preferences', 'LabController@preferences');
 Route::post('labs/{lab}/preferences', 'LabController@add_preference');
 Route::put('labs/{lab}/preferences', 'LabController@remove_preference');
 
 // Positions
-Route::get('labs/{lab}/positions', 'LabController@positions');
-Route::post('labs/{lab}/positions', 'LabController@create_position');
-Route::put('labs/{lab}/positions', 'LabController@delete_positions');
+Route::get('labs/{lab}/positions', 'LabController@positions'); // get all from lab
+Route::post('labs/{lab}/positions', 'LabController@create_position'); // create for lab
+Route::put('labs/{lab}/positions', 'LabController@delete_positions'); // delete (also deletes application)
 
-Route::get('positions/{position}', 'PositionController@show');
-Route::put('positions/{position}','PositionController@update');
+Route::get('positions/{position}', 'PositionController@show'); // get individual
+Route::put('positions/{position}','PositionController@update'); // update
 
 // Applications
-Route::get('labs/{lab}/applications', 'LabController@applications');
-Route::post('labs/{lab}/applications', 'LabController@create_application');
-Route::put('applications/{application}','ApplicationController@update');
-Route::put('labs/{lab}/applications', 'LabController@delete_applications');
+Route::get('positions/{position}/application', 'PositionController@application'); // get from position
+Route::post('positions/{position}/application', 'PositionController@create_application'); // create for position
+Route::put('positions/{position}/application', 'PositionController@update_application'); // update (app and questions)
 
-Route::get('applications/{application}/questions', 'ApplicationController@get_app_questions');
-Route::post('applications/{application}/questions/create', 'ApplicationController@create_question');
-Route::post('applications/{application}/questions/associate', 'ApplicationController@add_existing_question');
-Route::put('questions/{question}', 'ApplicationController@update_question');
-Route::post('applications/{application}/questions/dissociate', 'ApplicationController@remove_questions');
-Route::post('applications/{application}/questions/delete', 'ApplicationController@delete_questions');
+Route::get('questions', 'ApplicationController@get_public_questions'); // get public questions
 
-Route::get('questions', 'ApplicationController@get_public_questions');
+// Response
 
 // Skills:
 Route::get('skills', 'SkillController@index');

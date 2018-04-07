@@ -23,6 +23,7 @@ class UsersTableSeeder extends Seeder
         $student->email = 'akshayro@umich.edu';
         $student->password = bcrypt('password');
         $student->is_student = true;
+        $student->is_faculty = false;
         $student->save();
 
         // Create student profile object for student
@@ -42,6 +43,7 @@ class UsersTableSeeder extends Seeder
         $student->email = 'test@perch.com';
         $student->password = bcrypt('test');
         $student->is_student = true;
+        $student->is_faculty = false;
         $student->save();
 
         $profile = new Student();
@@ -59,6 +61,7 @@ class UsersTableSeeder extends Seeder
         $prof->email = 'anishii@umich.edu';
         $prof->password = bcrypt('password');
         $prof->is_student = false;
+        $prof->is_faculty = true;
         $prof->save();
 
         $profile = new Faculty();
@@ -76,6 +79,7 @@ class UsersTableSeeder extends Seeder
         $prof->email = 'faculty@perch.com';
         $prof->password = bcrypt('test');
         $prof->is_student = false;
+        $prof->is_faculty = true;
         $prof->save();
 
         $profile = new Faculty();

@@ -46,10 +46,10 @@ class UserController extends Controller
             $token['token'] = $user->createToken('token')->accessToken;
             // Get user type if it exists
             if ($user->is_student) {
-                return $this->outputJSON([$user, $user->student, $token],"Student Logged In Successfully");
+                return $this->outputJSON([$user->student, $token],"Student Logged In Successfully");
             }
             else if ($user->is_faculty) {
-                return $this->outputJSON([$user, $user->faculty, $token],"Faculty Logged In Successfully");
+                return $this->outputJSON([$user->faculty, $token],"Faculty Logged In Successfully");
             }
             else {
                 return $this->outputJSON([$user, $token],"Logged In Successfully. User has no type.");

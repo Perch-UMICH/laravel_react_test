@@ -40,9 +40,10 @@ class FacultyController extends Controller
         $input = $request->all();
         $input = array_filter($input);
 
-        $faculty = Faculty::where('user_id', $request['user_id']);
-        if ($faculty != null) {
-            return $this->outputJSON($faculty->get(), 'Error: this user already has a faculty profile');
+        $faculty = Faculty::where('user_id', $request['user_id'])->count();
+        if ($faculty > 0) {
+            $faculty = Faculty::where('user_id', $request['user_id'])->get();
+            return $this->outputJSON($faculty, 'Error: this user already has a faculty profile');
         }
         $user = User::find($input['user_id']);
         if ($user == null) {

@@ -14,7 +14,7 @@ axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
 // Authentication
 export function isLoggedIn() {
-    if(localStorage.getItem('token') == null) {
+    if(sessionStorage.getItem('token') == null) {
         console.log('Not logged in');
         return false;
     }
@@ -26,7 +26,7 @@ export function verifyLogin() {
     return axios.post('api/verify',
         {
             headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem('token'),
+                'Authorization': 'Bearer ' + sessionStorage.getItem('token'),
             }
         }
     )
@@ -65,8 +65,8 @@ export function loginUser(email, password) {
     // cookie.remove('perch_api_key');
     // cookie.remove('perch_user_id');
 
-    localStorage.removeItem('token');
-    localStorage.removeItem('user_id');
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('user_id');
 
     // Login
     console.log('logging in ' + email);
@@ -78,16 +78,16 @@ export function loginUser(email, password) {
         .then(response => {
             // cookie.set('perch_api_key', response.data.result.token, {path: "/"});
             // cookie.set('perch_user_id', response.data.result.id, {path: "/"});
-            localStorage.setItem('token', response.data.result[2].token);
-            localStorage.setItem('user_id', response.data.result[0].id);
+            sessionStorage.setItem('token', response.data.result[2].token);
+            sessionStorage.setItem('user_id', response.data.result[0].id);
             if (response.data.result[0].is_student) {
                 // Save student id
-                localStorage.setItem('student_id', response.data.result[1].id);
-                localStorage.setItem('faculty_id', null);
+                sessionStorage.setItem('student_id', response.data.result[1].id);
+                sessionStorage.setItem('faculty_id', null);
             }
             else if (response.data.result[0].is_faculty) {
-                localStorage.setItem('student_id', null);
-                localStorage.setItem('faculty_id', response.data.result[1].id);
+                sessionStorage.setItem('student_id', null);
+                sessionStorage.setItem('faculty_id', response.data.result[1].id);
             }
             console.log('Successfully logged in');
             return response.data
@@ -103,13 +103,13 @@ export function logoutCurrentUser() {
   // Clear all user cookies
   //   cookie.remove('perch_api_key');
   //   cookie.remove('perch_user_id');
-    localStorage.removeItem('token');
-    localStorage.removeItem('user_id');
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('user_id');
 
     return axios.post('api/logout',
         {
             headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem('token'),
+                'Authorization': 'Bearer ' + sessionStorage.getItem('token'),
             }
         }
     )
@@ -149,6 +149,14 @@ export function resetPassword(email, password, password_confirmation) {
             console.error(error);
             return false;
         });
+}
+
+export function getCurrentUserId() {
+    return sessionStorage.getItem('user_id');
+}
+
+export function getCurrentStudentId() {
+    return sessionStorage.getItem('student_id`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            ');
 }
 
 
@@ -909,9 +917,7 @@ export function removePreferencesFromLab(lab_id, preference_ids) {
 
 // Skills
 // Laboratory skills
-// Required:
     // name - (string)
-// Optional:
     // description - (string)
 export function getAllSkills() {
     console.log('Getting all skills');
@@ -940,9 +946,7 @@ export function getSkill(skill_id) {
 
 // Tags
 // Academic subjects/disciplines, areas of study, etc.
-// Required:
     // name - (string)
-// Optional:
     // description - (string)
 export function getAllTags() {
     console.log('Getting all tags');
@@ -969,15 +973,29 @@ export function getTag(tag_id) {
         })
 }
 
+// Preferences
+// Lab preferences for applicants
+    // type - (string)
+    // title - (string)
+export function getAllPreferences() {
+    console.log('Getting all preferences');
+    return axios.get('api/preferences')
+        .then(response => {
+            return response.data
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
 // Positions
 // Open projects/positions in a lab
-// Required:
-//  lab_id - (int) id of lab to associate with
-//  title - (string)
-//  description -(text)
-// Optional:
-//  time_commitment - (string) short description of time commitment (e.g. 10-12 hours/week)
-//  open_slots - (int) total open slots for applicants
+    //  lab_id - (int) id of lab to associate with
+    //  title - (string)
+    //  description -(text)
+    //  time_commitment - (string) short description of time commitment (e.g. 10-12 hours/week)
+    //  open_slots - (int) total open slots for applicants
 
 
 export function getAllLabPositions(lab_id) {
@@ -1055,8 +1073,59 @@ export function deleteLabPosition(lab_id, position_ids) {
 }
 
 // Applications
+// Application of questions attached to an open lab position
+    //
 
-// TODO
+export function getPositionApplication(position_id) {
+    console.log('Getting application');
+
+    return axios.get('api/positions/' + position_id + '/application')
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+export function createApplication(position_id, questions) {
+    console.log('Creating application');
+
+    let payload = {
+        questions: questions
+    };
+
+    return axios.post('api/positions/' + position_id + '/application', payload)
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+export function updateApplication(position_id, questions) {
+    console.log('Creating application');
+
+    let payload = {
+        _method: 'PUT',
+        questions: questions
+    };
+
+    return axios.post('api/positions/' + position_id + '/application', payload)
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
 
 // Feedback
 // User feedback

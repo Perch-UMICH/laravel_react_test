@@ -7,12 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 class Application extends Model
 {
 
-    // Must be associated with one lab
-    public function lab()
-    {
-        return $this->belongsTo('App\Lab');
-    }
-
     // May be associated with one position
     public function position()
     {
@@ -22,7 +16,7 @@ class Application extends Model
     // May have many questions, by pivot table
     public function questions()
     {
-        return $this->belongsToMany('App\AppQuestion');
+        return $this->hasMany('App\AppQuestion');
     }
 
 }

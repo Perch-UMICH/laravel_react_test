@@ -21,8 +21,13 @@ class CreateAppQuestionsTable extends Migration
             $table->integer('lab_id')->unsigned()->index()->nullable();
             $table->foreign('lab_id')->references('id')->on('labs')->onDelete('cascade');
 
+            // Should also be null if public
+            $table->integer('application_id')->unsigned()->index()->nullable();
+            $table->foreign('application_id')->references('id')->on('applications');
+
             // Question
             $table->string('question');
+            $table->integer('number');
 
             $table->timestamps();
         });

@@ -8,11 +8,11 @@ class AppQuestion extends Model
 {
     protected $fillable = ['question', 'lab_id'];
 
-    public function applications() {
-        return $this->belongsToMany('App\Application');
+    public function application() {
+        return $this->belongsTo('App\Application');
     }
 
-    public function labs() {
+    public function lab() {
         return $this->belongsTo('App\Lab');
     }
 

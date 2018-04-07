@@ -8,7 +8,7 @@ class Position extends Model
 {
     protected $fillable = ['title', 'description', 'time_commitment', 'open_slots'];
 
-    public function labs()
+    public function lab()
     {
         return $this->belongsTo('App\Lab');
     }
