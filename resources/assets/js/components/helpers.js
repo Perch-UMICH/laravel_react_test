@@ -991,6 +991,112 @@ export function removePreferencesFromLab(lab_id, preference_ids) {
         })
 }
 
+//Route::get('labs/{lab}/students', 'LabController@students');
+export function getLabStudents(lab_id) {
+    console.log('Getting lab students');
+    return axios.get('api/labs/' + lab_id + '/students')
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+//Route::post('labs/{lab}/students', 'LabController@add_students');
+export function addStudentsToLab(lab_id, students_ids, roles) {
+    console.log('Adding students to lab');
+
+    let payload = {
+        students_ids: students_ids,
+        roles: roles,
+    };
+    return axios.post('api/labs/' + lab_id + '/students', payload)
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+//Route::put('labs/{lab}/students', 'LabController@remove_student');
+export function removeStudentsFromLab(lab_id, students_ids) {
+    console.log('Removing students from lab');
+
+    let payload = {
+        students_ids: students_ids,
+        _method: 'PUT'
+    };
+    return axios.post('api/labs/' + lab_id + '/students', payload)
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+//Route::get('labs/{lab}/faculties', 'LabController@faculties');
+export function getLabFaculties(lab_id) {
+    console.log('Getting lab faculties');
+    return axios.get('api/labs/' + lab_id + '/faculties')
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+//Route::post('labs/{lab}/faculties', 'LabController@add_faculty');
+export function addFacultiesToLab(lab_id, faculties_ids, roles) {
+    console.log('Adding faculties to lab');
+
+    let payload = {
+        faculties_ids: faculties_ids,
+        roles: roles,
+    };
+    return axios.post('api/labs/' + lab_id + '/faculties', payload)
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+//Route::put('labs/{lab}/faculties', 'LabController@remove_faculty');
+export function removeFacultiesFromLab(lab_id, faculties_ids) {
+    console.log('Removing faculties from lab');
+
+    let payload = {
+        faculties_ids: faculties_ids,
+        _method: 'PUT'
+    };
+    return axios.post('api/labs/' + lab_id + '/faculties', payload)
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+
+
 // Skills
 // Laboratory skills
     // name - (string)
