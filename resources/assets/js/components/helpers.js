@@ -160,15 +160,15 @@ export function getCurrentStudentId() {
 }
 
 export function isStudent() {
-    return sessionStorage.getItem(‘student_id’) != ‘null’
+    return sessionStorage.getItem('student_id') != null;
 }
 
 export function isLab() {
-    return sessionStorage.getItem(‘faculty_id’) != ‘null’
+    return sessionStorage.getItem('faculty_id') != null;
 }
 
 export function getCurrentLabId() {
-    return sessionStorage.getItem(‘faculty_id’);
+    return sessionStorage.getItem('faculty_id');
 }
 
 
