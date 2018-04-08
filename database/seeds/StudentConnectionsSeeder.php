@@ -3,6 +3,7 @@
 use App\Skill;
 use App\Student;
 use App\Tag;
+use App\SchoolCourse;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -17,6 +18,7 @@ class StudentConnectionsSeeder extends Seeder
     {
         $this->studentSkillsSeeder();
         $this->studentTagsSeeder();
+        $this->studentClassesSeeder();
     }
 
     /**
@@ -41,6 +43,23 @@ class StudentConnectionsSeeder extends Seeder
 
         $student = Student::find(2);
         $student->tags()->sync([3,4]);
+    }
+
+    public function studentClassesSeeder() {
+        $class = new SchoolCourse();
+        $class->title = 'EECS 281';
+        $class->save();
+
+        $class = new SchoolCourse();
+        $class->title = 'MCDB 423';
+        $class->save();
+        $class->skills()->sync([2,4]);
+
+        $student = Student::find(1);
+        $student->school_courses()->sync([1]);
+
+        $student = Student::find(2);
+        $student->school_courses()->sync([2]);
     }
 
 }

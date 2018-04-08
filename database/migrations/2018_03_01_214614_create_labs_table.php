@@ -15,9 +15,9 @@ class CreateLabsTable extends Migration
     {
         Schema::create('labs', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name')->index();
-            $table->string('department')->index();
-            $table->text('description');
+            $table->string('name')->index()->nullable();
+            $table->string('department')->index()->nullable();
+            $table->text('description')->nullable();
 
             $table->text('publications')->nullable();
             $table->string('url')->nullable();

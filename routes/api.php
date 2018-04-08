@@ -67,6 +67,10 @@ Route::get('students/{student}/labs', 'StudentController@labs');
 Route::post('students/{student}/labs', 'StudentController@add_lab');
 Route::put('students/{student}/labs', 'StudentController@remove_skill');
 
+Route::get('students/{student}/courses/school', 'StudentController@school_courses');
+Route::post('students/{student}/courses/school', 'StudentController@add_school_courses');
+Route::put('students/{student}/courses/school', 'StudentController@remove_school_courses');
+
 //Faculty:
 Route::get('faculties', 'FacultyController@index'); // Get all faculty
 Route::get('faculties/{faculty}', 'FacultyController@show');
@@ -141,7 +145,8 @@ Route::get('skills/{skill}', 'SkillController@show');
 Route::get('tags', 'TagController@index');
 Route::get('tags/{tag}', 'TagController@show');
 
-
+// School Courses
+Route::get('courses/school', 'SchoolCourseController@index');
 
 // Profile pics
 Route::post('pics', 'ProfilepicController@store');

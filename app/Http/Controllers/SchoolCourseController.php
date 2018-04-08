@@ -14,7 +14,8 @@ class SchoolCourseController extends Controller
      */
     public function index()
     {
-        //
+        $courses = SchoolCourse::all();
+        return $this->outputJSON($courses,"School courses retrieved");
     }
 
     /**

@@ -36,6 +36,6 @@ class Student extends Model
 
     public function school_courses()
     {
-        return $this->belongsToMany('App\SchoolCourse');
+        return $this->belongsToMany('App\SchoolCourse', 'school_course_student');
     }
 }

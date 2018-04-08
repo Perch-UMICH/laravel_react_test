@@ -500,6 +500,54 @@ export function removeFavLabsFromStudent(student_id, lab_ids) {
         })
 }
 
+
+export function getStudentSchoolCourses(student_id) {
+    console.log('Getting student school courses');
+    return axios.get('api/students/' + student_id + '/courses/school')
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+export function addSchoolCoursesToStudent(student_id, course_ids) {
+    console.log('Adding school courses to student');
+
+    let payload = {
+        course_ids: course_ids
+    };
+    return axios.post('api/students/' + student_id + '/courses/school', payload)
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+export function addSchoolCoursesToStudent(student_id, course_ids) {
+    console.log('Adding school courses to student');
+
+    let payload = {
+        course_ids: course_ids
+    };
+    return axios.post('api/students/' + student_id + '/courses/school', payload)
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
 // Faculties
 // Faculty profile
 // Required:
@@ -540,7 +588,7 @@ export function getFaculty(faculty_id) {
 
 export function createFaculty(user_id, first_name, last_name, title, email) {
     console.log('Creating faculty');
-    return axios.post('api/faculties/', [user_id, first_name, last_name, title, email])
+    return axios.post('api/faculties', [user_id, first_name, last_name, title, email])
         .then(response => {
             console.log(response.data.message);
             return response.data.result;
@@ -696,7 +744,7 @@ export function getLabData(lab_id, skilltag_data, preferences_data, position_dat
 
 export function createLab(faculty_id, name, department, location, description, publications, url, gpa, weeklyCommitment, contact_phone, contact_email) {
     console.log('Creating lab');
-    return axios.post('api/labs/', [faculty_id, name, department, location, description, publications, url, gpa, weeklyCommitment, contact_phone, contact_email])
+    return axios.post('api/labs', {faculty_id, name, department, location, description, publications, url, gpa, weeklyCommitment, contact_phone, contact_email})
         .then(response => {
             console.log(response.data.message);
             return response.data.result;
@@ -980,6 +1028,23 @@ export function getTag(tag_id) {
 export function getAllPreferences() {
     console.log('Getting all preferences');
     return axios.get('api/preferences')
+        .then(response => {
+            return response.data
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+
+// School Courses
+// University courses
+    // title - (string)
+    // description - (string)
+export function getAllSchoolCourses() {
+    console.log('Getting all school courses');
+    return axios.get('api/courses/school')
         .then(response => {
             return response.data
         })

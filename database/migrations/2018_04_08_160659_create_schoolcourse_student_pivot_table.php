@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateSchoolCourseStudentPivotTable extends Migration
+class CreateSchoolcourseStudentPivotTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,14 +12,14 @@ class CreateSchoolCourseStudentPivotTable extends Migration
      */
     public function up()
     {
-        Schema::create('schoolcourse_student', function (Blueprint $table) {
-            $table->integer('schoolcourse_id')->unsigned()->index();
+        Schema::create('school_course_student', function (Blueprint $table) {
+            $table->integer('school_course_id')->unsigned()->index();
             $table->integer('student_id')->unsigned()->index();
-            $table->primary(['schoolcourse_id', 'student_id']);
+            $table->primary(['school_course_id', 'student_id']);
         });
 
-        Schema::table('schoolcourse_student', function (Blueprint $table) {
-            $table->foreign('schoolcourse_id')->references('id')->on('school_courses')->onDelete('cascade');
+        Schema::table('school_course_student', function (Blueprint $table) {
+            $table->foreign('school_course_id')->references('id')->on('school_courses')->onDelete('cascade');
             $table->foreign('student_id')->references('id')->on('students')->onDelete('cascade');
         });
     }
@@ -31,6 +31,6 @@ class CreateSchoolCourseStudentPivotTable extends Migration
      */
     public function down()
     {
-        Schema::drop('schoolcourse_student');
+        Schema::drop('school_course_student');
     }
 }

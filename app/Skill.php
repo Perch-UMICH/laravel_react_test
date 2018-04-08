@@ -14,4 +14,8 @@ class Skill extends Model
         return $this->belongsToMany('App\Lab', 'lab_skill');
     }
 
+    public function school_courses() {
+        return $this->belongsToMany('App\SchoolCourse', 'school_course_skill');
+    }
+
 }
