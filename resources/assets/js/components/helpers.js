@@ -159,6 +159,18 @@ export function getCurrentStudentId() {
     return sessionStorage.getItem('student_id');
 }
 
+export function isStudent() {
+    return sessionStorage.getItem('student_id') != null;
+}
+
+export function isLab() {
+    return sessionStorage.getItem('faculty_id') != null;
+}
+
+export function getCurrentLabId() {
+    return sessionStorage.getItem('faculty_id');
+}
+
 
 // USERS
 // Base user on website
@@ -197,6 +209,21 @@ export function getUser(user_id) {
 export function deleteUser(user_id) {
     console.log('Deleting user');
     return axios.delete('api/users/' + user_id)
+        .then(response => {
+            return response.data
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+export function updateUser(user_id, name, email, password, is_student, is_faculty) {
+    console.log('Updating user');
+
+    let _method = 'PUT';
+
+    return axios.post('api/users/' + user_id, {_method, name, email, password, is_student, is_faculty})
         .then(response => {
             return response.data
         })
@@ -531,10 +558,11 @@ export function addSchoolCoursesToStudent(student_id, course_ids) {
         })
 }
 
-export function addSchoolCoursesToStudent(student_id, course_ids) {
-    console.log('Adding school courses to student');
+export function removeSchoolCoursesFromStudent(student_id, course_ids) {
+    console.log('Removing school courses from student');
 
     let payload = {
+        _method: 'PUT',
         course_ids: course_ids
     };
     return axios.post('api/students/' + student_id + '/courses/school', payload)

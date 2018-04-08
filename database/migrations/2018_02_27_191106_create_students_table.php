@@ -27,11 +27,15 @@ class CreateStudentsTable extends Migration
             $table->text('bio')->nullable();
             $table->string('major')->nullable();
             $table->double('gpa')->nullable();
-            $table->string('linkedin_user')->nullable();
+
+            $table->string('linkedin_link')->nullable();
+            $table->string('website_link')->nullable();
+
             $table->integer('belongs_to_lab_id')->nullable();
             $table->text('faculty_endorsements')->nullable();
 
             $table->string('profilepic_path')->nullable();
+            $table->string('resume_path')->nullable();
 
             $table->timestamps();
 
