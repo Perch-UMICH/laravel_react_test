@@ -531,10 +531,11 @@ export function addSchoolCoursesToStudent(student_id, course_ids) {
         })
 }
 
-export function addSchoolCoursesToStudent(student_id, course_ids) {
-    console.log('Adding school courses to student');
+export function removeSchoolCoursesFromStudent(student_id, course_ids) {
+    console.log('Removing school courses from student');
 
     let payload = {
+        _method: 'PUT',
         course_ids: course_ids
     };
     return axios.post('api/students/' + student_id + '/courses/school', payload)
