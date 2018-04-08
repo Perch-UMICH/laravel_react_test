@@ -291,9 +291,9 @@ class LabController extends Controller
     public function create_position(Request $request, Lab $lab) {
         $input = $request->all();
         $position = new Position($input);
+        $lab->positions()->save($position);
         $position->save();
 
-        $lab->positions()->save($position);
         return $this->outputJSON($position,"Created position " . $position->title . " and added to lab " . $lab->name);
     }
 
