@@ -19,7 +19,9 @@ class LabConnectionsSeeder extends Seeder
      */
     public function run()
     {
-        $this->labFacultiesSeeder();
+        //$this->labFacultiesSeeder();
+        $this->labRolesSeeder();
+        $this->labMembersSeeder();
         $this->labStudentSeeder();
         $this->labTagsTableSeeder();
         $this->labSkillsTableSeeder();
@@ -28,16 +30,28 @@ class LabConnectionsSeeder extends Seeder
     }
 
     /**
-     * Seeds lab_faculties table
+     * Seeds labroles
      */
-    public function labFacultiesSeeder() {
-        //DB::table('faculty_lab')->delete();
+    public function labRolesSeeder() {
+        DB::table('labroles')->delete();
+        DB::table('labroles')->insert([
+            ['role' => 'PI'],
+            ['role' => 'Graduate'],
+            ['role' => 'Undergraduate'],
+            ['role' => 'Alumni']
+        ]);
+    }
 
+    /**
+     * Seeds lab_user table
+     */
+    public function labMembersSeeder() {
         $lab = Lab::find(1);
-        $lab->faculties()->sync([1]);
+        $lab->members()->sync([3 => ['role' => 1], 2 => ['role' => 3]]);
 
         $lab = Lab::find(2);
-        $lab->faculties()->sync([2]);
+        $lab->members()->sync([4 => ['role' => 1], 2 => ['role' => 3]]);
+
     }
 
     /**
