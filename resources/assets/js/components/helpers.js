@@ -103,8 +103,6 @@ export function logoutCurrentUser() {
   // Clear all user cookies
   //   cookie.remove('perch_api_key');
   //   cookie.remove('perch_user_id');
-    sessionStorage.removeItem('token');
-    sessionStorage.removeItem('user_id');
 
     return axios.post('api/logout',
         {
@@ -118,6 +116,8 @@ export function logoutCurrentUser() {
             // cookie.remove('perch_user_id');
 
             console.log(response.data.message);
+            sessionStorage.removeItem('token');
+            sessionStorage.removeItem('user_id');
             return true;
         })
         .catch(error => {
@@ -156,7 +156,7 @@ export function getCurrentUserId() {
 }
 
 export function getCurrentStudentId() {
-    return sessionStorage.getItem('student_id`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            ');
+    return sessionStorage.getItem('student_id');
 }
 
 
@@ -1074,7 +1074,8 @@ export function deleteLabPosition(lab_id, position_ids) {
 
 // Applications
 // Application of questions attached to an open lab position
-    //
+    // position_id - (integer)
+    // questions - (array of strings)
 
 export function getPositionApplication(position_id) {
     console.log('Getting application');
