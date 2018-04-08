@@ -33,4 +33,9 @@ class Student extends Model
     public function applications() {
         return $this->hasMany('App\Application');
     }
+
+    public function school_courses()
+    {
+        return $this->belongsToMany('App\SchoolCourse');
+    }
 }

@@ -36,4 +36,5 @@ class Lab extends Model
     public function questions() {
         return $this->hasMany('App\AppQuestion');
     }
+
 }
