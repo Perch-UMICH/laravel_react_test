@@ -37,5 +37,9 @@ class User extends Authenticatable
         return $this->hasOne('App\Faculty');
     }
 
+    public function labs() {
+        return $this->belongsToMany('App\Lab', 'lab_user','user_id', 'lab_id');
+    }
+
 
 }

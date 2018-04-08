@@ -21,8 +21,8 @@ class Lab extends Model
         return $this->belongsToMany('App\Student', 'lab_student');
     }
 
-    public function faculties() {
-        return $this->belongsToMany('App\Faculty', 'faculty_lab');
+    public function members() {
+        return $this->belongsToMany('App\User', 'lab_user');
     }
 
     public function preferences() {

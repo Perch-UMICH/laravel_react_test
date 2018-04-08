@@ -14,7 +14,4 @@ class Faculty extends Model
         return $this->belongsTo('App\User');
     }
 
-    public function labs() {
-        return $this->belongsToMany('App\Lab', 'faculty_lab');
-    }
 }

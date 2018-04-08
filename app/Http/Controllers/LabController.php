@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\AppQuestion;
+use App\Faculty;
 use App\Lab;
 use App\Position;
 use App\Application;
+use App\Student;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
@@ -64,12 +67,20 @@ class LabController extends Controller
 
             }
             if ($input['student_data']) {
-                $students = $lab->students()->wherePivot('lab_id', $lab->id)->get();
+                $members = $lab->members()->wherePivot('lab_id', $lab->id)->get();
+                $students = [];
+                foreach ($members as $member) {
+                    if ($member->is_student) $students[] = $member->student;
+                }
                 $lab_data[$lab->id]->put('students', $students);
 
             }
             if ($input['faculty_data']) {
-                $faculties = $lab->faculties()->wherePivot('lab_id', $lab->id)->get();
+                $members = $lab->members()->wherePivot('lab_id', $lab->id)->get();
+                $faculties = [];
+                foreach ($members as $member) {
+                    if ($member->is_faculty) $faculties[] = $member->faculty;
+                }
                 $lab_data[$lab->id]->put('faculties', $faculties);
             }
             if ($input['preferences_data']) {
@@ -147,12 +158,20 @@ class LabController extends Controller
 
         }
         if ($input['student_data']) {
-            $students = $lab->students()->wherePivot('lab_id', $lab->id)->get();
+            $members = $lab->members()->wherePivot('lab_id', $lab->id)->get();
+            $students = [];
+            foreach ($members as $member) {
+                if ($member->is_student) $students[] = $member->student;
+            }
             $lab_data->put('students', $students);
 
         }
         if ($input['faculty_data']) {
-            $faculties = $lab->faculties()->wherePivot('lab_id', $lab->id)->get();
+            $members = $lab->members()->wherePivot('lab_id', $lab->id)->get();
+            $faculties = [];
+            foreach ($members as $member) {
+                if ($member->is_faculty) $faculties[] = $member->faculty;
+            }
             $lab_data->put('faculties', $faculties);
         }
         if ($input['preferences_data']) {
@@ -198,12 +217,20 @@ class LabController extends Controller
     // Retrieve
 
     public function students(Lab $lab) {
-        $students = $lab->students()->wherePivot('lab_id', $lab->id)->get();
+        $members = $lab->members()->wherePivot('lab_id', $lab->id)->get();
+        $students = [];
+        foreach ($members as $member) {
+            if ($member->is_student) $students[] = $member->student;
+        }
         return $this->outputJSON($students,"Students from lab retrieved");
     }
 
     public function faculties(Lab $lab) {
-        $faculties = $lab->faculties()->wherePivot('lab_id', $lab->id)->get();
+        $members = $lab->members()->wherePivot('lab_id', $lab->id)->get();
+        $faculties = [];
+        foreach ($members as $member) {
+            if ($member->is_faculty) $faculties[] = $member->faculty;
+        }
         return $this->outputJSON($faculties,"Faculties from lab retrieved");
     }
 
@@ -267,17 +294,43 @@ class LabController extends Controller
         return $this->outputJSON(null,"Synced tags");
     }
 
-    public function add_student(Request $request, Lab $lab) {
+    public function add_students(Request $request, Lab $lab) {
+        // extract requests
         $input = $request->all();
-        $ids = $input['student_ids'];
-        $lab->students()->syncWithoutDetaching($ids);
+        $student_ids = $input['student_ids'];
+        $roles = $input['roles'];
+        // array for sync
+        $ids = [];
+        // find user id from student id
+        for ($i = 0; $i < count($student_ids); $i++) {
+            $id = $student_ids[$i];
+            $role = $roles[$i];
+            $student = Student::where('id', $id)->first();
+            // if exist, add to id
+            if ($student) {
+                $userid = $student->User->id;
+                $ids[$userid] = ['role' => $role];
+            }
+        }
+        $lab->members()->syncWithoutDetaching($ids);
         return $this->outputJSON(null,"Added students");
     }
 
-    public function add_faculty(Request $request, Lab $lab) {
+    public function add_faculties(Request $request, Lab $lab) {
         $input = $request->all();
-        $ids = $input['faculty_ids'];
-        $lab->faculties()->syncWithoutDetaching($ids);
+        $faculty_ids = $input['faculty_ids'];
+        $roles = $input['roles'];
+        $ids = [];
+        for ($i = 0; $i < count($faculty_ids); $i++) {
+            $id = $faculty_ids[$i];
+            $role = $roles[$i];
+            $faculty = Faculty::where('id',$id)->first();
+            if ($faculty) {
+                $userid = $faculty->User->id;
+                $ids[$userid] = ['role' => $role];
+            }
+        }
+        $lab->members()->syncWithoutDetaching($ids);
         return $this->outputJSON(null,"Added faculty");
     }
 
@@ -335,15 +388,33 @@ class LabController extends Controller
 
     public function remove_student(Request $request, Lab $lab) {
         $input = $request->all();
-        $ids = $input['student_ids'];
-        $lab->students()->detach($ids);
+        $student_ids = $input['student_ids'];
+        $ids = [];
+        foreach($student_ids as $id) {
+            $student = Student::find($id)->first();
+            if ($student) {
+                $userid = $student->User->id;
+                $ids[] = $userid;
+            }
+        }
+        $lab->members()->detach($ids);
         return $this->outputJSON(null,"Removed students from lab " . $lab->name);
     }
 
     public function remove_faculty(Request $request, Lab $lab) {
+        // parse request
         $input = $request->all();
-        $ids = $input['faculty_ids'];
-        $lab->faculties()->detach($ids);
+        $faculty_ids = $input['faculty_ids'];
+        // array for detach
+        $ids = [];
+        foreach($faculty_ids as $id) {
+            $faculty = Faculty::where('id',$id)->first();
+            if ($faculty) {
+                $userid = $faculty->User->id;
+                $ids[] = $userid;
+            }
+        }
+        $lab->members()->detach($ids);
         return $this->outputJSON(null,"Removed faculty from lab " . $lab->name);
     }
 
