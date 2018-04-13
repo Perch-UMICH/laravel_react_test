@@ -46,10 +46,10 @@ class UserController extends Controller
             $token['token'] = $user->createToken('token')->accessToken;
             // Get user type if it exists
             if ($user->is_student) {
-                return $this->outputJSON([$user->student, $token],"Student Logged In Successfully");
+                return $this->outputJSON([$user, $user->student, $token],"Student Logged In Successfully");
             }
             else if ($user->is_faculty) {
-                return $this->outputJSON([$user->faculty, $token],"Faculty Logged In Successfully");
+                return $this->outputJSON([$user, $user->faculty, $token],"Faculty Logged In Successfully");
             }
             else {
                 return $this->outputJSON([$user, $token],"Logged In Successfully. User has no type.");
@@ -159,5 +159,20 @@ class UserController extends Controller
         else {
             return $this->outputJSON(null,"Error: " . $user->email . " does not have a faculty profile");
         }
+    }
+
+    // Labs
+
+    public function get_labs(User $user)
+    {
+        $count = 0;
+        $labs = [];
+        foreach ($user->labs as $lab) {
+            $role = $lab->pivot->role;
+            $labs[$count] = ['lab' => $lab, 'role' => $role];
+            $count++;
+        }
+        return $this->outputJSON($labs,"User's labs retrieved");
+
     }
 }

@@ -60,11 +60,11 @@ class LabConnectionsSeeder extends Seeder
     public function labStudentSeeder() {
         //DB::table('lab_students')->delete();
 
-        $lab = Lab::find(1);
-        $lab->students()->sync([1]);
-
-        $lab = Lab::find(2);
-        $lab->students()->sync([2]);
+//        $lab = Lab::find(1);
+//        $lab->students()->sync([1]);
+//
+//        $lab = Lab::find(2);
+//        $lab->students()->sync([2]);
     }
 
     /**

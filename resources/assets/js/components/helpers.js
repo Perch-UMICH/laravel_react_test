@@ -257,6 +257,20 @@ export function getFacultyFromUser(user_id) {
         })
 }
 
+// Get all labs that this user is a member of, along with their role id
+export function getUserLabs(user_id) {
+    console.log('Getting user labs');
+
+    return axios.get('api/users/' + user_id + '/labs')
+        .then(response => {
+            return response.data
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
 
 // Students
 // Student profile
@@ -655,46 +669,6 @@ export function deleteFaculty(faculty_id) {
 }
 
 
-export function getFacultyLabs(faculty_id) {
-    console.log('Getting faculty labs');
-    return axios.get('api/faculties/' + faculty_id + '/labs')
-        .then(response => {
-            console.log(response.data.message);
-            return response.data.result;
-        })
-        .catch(function (error) {
-            console.log(error);
-            return [];
-        })
-}
-
-export function addLabToFaculty(faculty_id, lab_id) {
-    console.log('Adding lab to faculty');
-    return axios.post('api/faculties/' + faculty_id + '/labs', {lab_id})
-        .then(response => {
-            console.log(response.data.message);
-            return response.data.result;
-        })
-        .catch(function (error) {
-            console.log(error);
-            return [];
-        })
-}
-
-export function removeLabFromFaculty(faculty_id, lab_id) {
-    console.log('Removing lab from faculty');
-    let _method = 'PUT';
-    return axios.post('api/faculties/' + faculty_id + '/labs', {lab_id, _method})
-        .then(response => {
-            console.log(response.data.message);
-            return response.data.result;
-        })
-        .catch(function (error) {
-            console.log(error);
-            return [];
-        })
-}
-
 // Labs
 // Lab page
 // Required:
@@ -991,13 +965,15 @@ export function removePreferencesFromLab(lab_id, preference_ids) {
         })
 }
 
-//Route::get('labs/{lab}/students', 'LabController@students');
-export function getLabStudents(lab_id) {
-    console.log('Getting lab students');
-    return axios.get('api/labs/' + lab_id + '/students')
+
+// Lab members
+// Note: members are users
+
+export function getLabMembers(lab_id) {
+    console.log('Getting lab members');
+    return axios.get('api/labs/' + lab_id + '/members')
         .then(response => {
-            console.log(response.data.message);
-            return response.data.result;
+            return response.data
         })
         .catch(function (error) {
             console.log(error);
@@ -1005,18 +981,18 @@ export function getLabStudents(lab_id) {
         })
 }
 
-//Route::post('labs/{lab}/students', 'LabController@add_students');
-export function addStudentsToLab(lab_id, students_ids, roles) {
-    console.log('Adding students to lab');
+// Order of role_ids should correspond with order of user_ids (same size)
+export function addMembersToLab(lab_id, user_ids, role_ids) {
+    console.log('Adding members to lab');
 
     let payload = {
-        students_ids: students_ids,
-        roles: roles,
+        user_ids: user_ids,
+        role_ids: role_ids
     };
-    return axios.post('api/labs/' + lab_id + '/students', payload)
+
+    return axios.post('api/labs/' + lab_id + '/members', payload)
         .then(response => {
-            console.log(response.data.message);
-            return response.data.result;
+            return response.data
         })
         .catch(function (error) {
             console.log(error);
@@ -1024,70 +1000,17 @@ export function addStudentsToLab(lab_id, students_ids, roles) {
         })
 }
 
-//Route::put('labs/{lab}/students', 'LabController@remove_student');
-export function removeStudentsFromLab(lab_id, students_ids) {
-    console.log('Removing students from lab');
+export function removeMembersFromLab(lab_id, user_ids) {
+    console.log('Removing members from lab');
 
     let payload = {
-        students_ids: students_ids,
-        _method: 'PUT'
+        _method: 'PUT',
+        user_ids: user_ids
     };
-    return axios.post('api/labs/' + lab_id + '/students', payload)
+
+    return axios.post('api/labs/' + lab_id + '/members', payload)
         .then(response => {
-            console.log(response.data.message);
-            return response.data.result;
-        })
-        .catch(function (error) {
-            console.log(error);
-            return [];
-        })
-}
-
-//Route::get('labs/{lab}/faculties', 'LabController@faculties');
-export function getLabFaculties(lab_id) {
-    console.log('Getting lab faculties');
-    return axios.get('api/labs/' + lab_id + '/faculties')
-        .then(response => {
-            console.log(response.data.message);
-            return response.data.result;
-        })
-        .catch(function (error) {
-            console.log(error);
-            return [];
-        })
-}
-
-//Route::post('labs/{lab}/faculties', 'LabController@add_faculty');
-export function addFacultiesToLab(lab_id, faculties_ids, roles) {
-    console.log('Adding faculties to lab');
-
-    let payload = {
-        faculties_ids: faculties_ids,
-        roles: roles,
-    };
-    return axios.post('api/labs/' + lab_id + '/faculties', payload)
-        .then(response => {
-            console.log(response.data.message);
-            return response.data.result;
-        })
-        .catch(function (error) {
-            console.log(error);
-            return [];
-        })
-}
-
-//Route::put('labs/{lab}/faculties', 'LabController@remove_faculty');
-export function removeFacultiesFromLab(lab_id, faculties_ids) {
-    console.log('Removing faculties from lab');
-
-    let payload = {
-        faculties_ids: faculties_ids,
-        _method: 'PUT'
-    };
-    return axios.post('api/labs/' + lab_id + '/faculties', payload)
-        .then(response => {
-            console.log(response.data.message);
-            return response.data.result;
+            return response.data
         })
         .catch(function (error) {
             console.log(error);

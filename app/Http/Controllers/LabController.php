@@ -216,22 +216,35 @@ class LabController extends Controller
 
     // Retrieve
 
-    public function students(Lab $lab) {
-        $members = $lab->members()->wherePivot('lab_id', $lab->id)->get();
-        $students = [];
-        foreach ($members as $member) {
-            if ($member->is_student) $students[] = $member->student;
-        }
-        return $this->outputJSON($students,"Students from lab retrieved");
-    }
+//    public function students(Lab $lab) {
+//        $members = $lab->members()->wherePivot('lab_id', $lab->id)->get();
+//        $students = [];
+//        foreach ($members as $member) {
+//            if ($member->is_student) $students[] = $member->student;
+//        }
+//        return $this->outputJSON($students,"Students from lab retrieved");
+//    }
+//
+//    public function faculties(Lab $lab) {
+//        $members = $lab->members()->wherePivot('lab_id', $lab->id)->get();
+//        $faculties = [];
+//        foreach ($members as $member) {
+//            if ($member->is_faculty) $faculties[] = $member->faculty;
+//        }
+//        return $this->outputJSON($faculties,"Faculties from lab retrieved");
+//    }
 
-    public function faculties(Lab $lab) {
-        $members = $lab->members()->wherePivot('lab_id', $lab->id)->get();
+    public function members(Lab $lab) {
+        $members = $lab->members;
+
+        $students = [];
         $faculties = [];
         foreach ($members as $member) {
-            if ($member->is_faculty) $faculties[] = $member->faculty;
+            if ($member->is_faculty) $faculties[] = ['data' => $member->faculty, 'role' => $member->pivot->role];
+            if ($member->is_student) $students[] = ['data' => $member->student, 'role' => $member->pivot->role];
         }
-        return $this->outputJSON($faculties,"Faculties from lab retrieved");
+
+        return $this->outputJSON(['students' => $students, 'faculty' => $faculties],"Members from lab retrieved");
     }
 
     public function skills(Lab $lab) {
@@ -294,44 +307,17 @@ class LabController extends Controller
         return $this->outputJSON(null,"Synced tags");
     }
 
-    public function add_students(Request $request, Lab $lab) {
-        // extract requests
+    public function add_members(Request $request, Lab $lab) {
         $input = $request->all();
-        $student_ids = $input['student_ids'];
-        $roles = $input['roles'];
-        // array for sync
-        $ids = [];
-        // find user id from student id
-        for ($i = 0; $i < count($student_ids); $i++) {
-            $id = $student_ids[$i];
-            $role = $roles[$i];
-            $student = Student::where('id', $id)->first();
-            // if exist, add to id
-            if ($student) {
-                $userid = $student->User->id;
-                $ids[$userid] = ['role' => $role];
-            }
-        }
-        $lab->members()->syncWithoutDetaching($ids);
-        return $this->outputJSON(null,"Added students");
-    }
+        $ids = $input['user_ids'];
+        $roles = $input['role_ids'];
 
-    public function add_faculties(Request $request, Lab $lab) {
-        $input = $request->all();
-        $faculty_ids = $input['faculty_ids'];
-        $roles = $input['roles'];
-        $ids = [];
-        for ($i = 0; $i < count($faculty_ids); $i++) {
-            $id = $faculty_ids[$i];
-            $role = $roles[$i];
-            $faculty = Faculty::where('id',$id)->first();
-            if ($faculty) {
-                $userid = $faculty->User->id;
-                $ids[$userid] = ['role' => $role];
-            }
+        if (count($ids) != count($roles)) {
+            return $this->outputJSON(null,"Error: different number of user_ids and roles", 500);
         }
-        $lab->members()->syncWithoutDetaching($ids);
-        return $this->outputJSON(null,"Added faculty");
+
+        $lab->members()->syncWithoutDetaching($ids, ['role' => $roles]);
+        return $this->outputJSON(null,"Added " . count($ids) . " members to lab");
     }
 
     public function add_preference(Request $request, Lab $lab) {
@@ -386,37 +372,14 @@ class LabController extends Controller
         return $this->outputJSON(null,"Removed tags from lab " . $lab->name);
     }
 
-    public function remove_student(Request $request, Lab $lab) {
+    public function remove_members(Request $request, Lab $lab) {
         $input = $request->all();
-        $student_ids = $input['student_ids'];
-        $ids = [];
-        foreach($student_ids as $id) {
-            $student = Student::find($id)->first();
-            if ($student) {
-                $userid = $student->User->id;
-                $ids[] = $userid;
-            }
-        }
+        $ids = $input['user_ids'];
+
         $lab->members()->detach($ids);
-        return $this->outputJSON(null,"Removed students from lab " . $lab->name);
+        return $this->outputJSON(null,"Removed " . count($ids) . " members from lab");
     }
 
-    public function remove_faculty(Request $request, Lab $lab) {
-        // parse request
-        $input = $request->all();
-        $faculty_ids = $input['faculty_ids'];
-        // array for detach
-        $ids = [];
-        foreach($faculty_ids as $id) {
-            $faculty = Faculty::where('id',$id)->first();
-            if ($faculty) {
-                $userid = $faculty->User->id;
-                $ids[] = $userid;
-            }
-        }
-        $lab->members()->detach($ids);
-        return $this->outputJSON(null,"Removed faculty from lab " . $lab->name);
-    }
 
     public function remove_preference(Request $request, Lab $lab) {
         $input = $request->all();

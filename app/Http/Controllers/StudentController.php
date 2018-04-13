@@ -133,11 +133,11 @@ class StudentController extends Controller
         return $this->outputJSON($tags,"Tags retrieved");
     }
 
-    // Get favorited labs of student, based on student_id
-    public function labs(Student $student) {
-        $labs = $student->labs()->wherePivot('student_id', $student->id)->get();
-        return $this->outputJSON($labs,"Labs retrieved");
-    }
+//    // Get favorited labs of student, based on student_id
+//    public function labs(Student $student) {
+//        $labs = $student->labs()->wherePivot('student_id', $student->id)->get();
+//        return $this->outputJSON($labs,"Labs retrieved");
+//    }
 
     public function school_courses(Student $student) {
         $courses = $student->school_courses()->wherePivot('student_id', $student->id)->get();
@@ -172,12 +172,12 @@ class StudentController extends Controller
         return $this->outputJSON(null,"Synced tags");
     }
 
-    public function add_lab(Request $request, Student $student) {
-        $input = $request->all();
-        $ids = $input['lab_ids'];
-        $student->labs()->syncWithoutDetaching($ids);
-        return $this->outputJSON(null,"Added labs");
-    }
+//    public function add_lab(Request $request, Student $student) {
+//        $input = $request->all();
+//        $ids = $input['lab_ids'];
+//        $student->labs()->syncWithoutDetaching($ids);
+//        return $this->outputJSON(null,"Added labs");
+//    }
 
     public function sync_labs(Request $request, Student $student) {
         $input = $request->all();
@@ -207,13 +207,13 @@ class StudentController extends Controller
         return $this->outputJSON(null,"Removed tags");
     }
 
-    public function remove_lab(Request $request, Student $student)
-    {
-        $input = $request->all();
-        $ids = $input['lab_ids'];
-        $student->labs()->detach($ids);
-        return $this->outputJSON(null, "Removed labs");
-    }
+//    public function remove_lab(Request $request, Student $student)
+//    {
+//        $input = $request->all();
+//        $ids = $input['lab_ids'];
+//        $student->labs()->detach($ids);
+//        return $this->outputJSON(null, "Removed labs");
+//    }
 
     public function remove_school_courses(Request $request, Student $student) {
         $input = $request->all();

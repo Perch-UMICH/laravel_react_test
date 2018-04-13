@@ -38,7 +38,7 @@ class User extends Authenticatable
     }
 
     public function labs() {
-        return $this->belongsToMany('App\Lab', 'lab_user','user_id', 'lab_id');
+        return $this->belongsToMany('App\Lab', 'lab_user','user_id', 'lab_id')->withPivot('role');
     }
 
 
