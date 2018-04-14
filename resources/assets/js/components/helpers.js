@@ -127,6 +127,11 @@ export function logoutCurrentUser() {
         });
 }
 
+// Email password reset
+// First call sendPasswordResetEmail
+// User will get a link to /password/reset/{token}
+// On that page, have user input email, password, pass confirmation
+// Then class resetPasswordFromEmail with this info, along with the token in the url
 export function sendPasswordResetEmail(email) {
     return axios.post('password/email', {email})
         .then(response=> {
@@ -139,8 +144,8 @@ export function sendPasswordResetEmail(email) {
         });
 }
 
-export function resetPassword(email, password, password_confirmation) {
-    return axios.post('password/request', {email, password, password_confirmation})
+export function resetPasswordFromEmail(email, password, password_confirmation, token) {
+    return axios.post('password/reset', {email, password, password_confirmation, token})
         .then(response=> {
             console.log(response.data);
             return response.data;
@@ -968,6 +973,10 @@ export function removePreferencesFromLab(lab_id, preference_ids) {
 
 // Lab members
 // Note: members are users
+// Roles:
+//  1: PI - creator of lab; only person who may delete the lab page
+//  2: Admin - admin of lab; may edit lab page, create/accept applications, add/remove members, etc.
+//  3: Member - normal lab member
 
 export function getLabMembers(lab_id) {
     console.log('Getting lab members');

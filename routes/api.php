@@ -34,6 +34,13 @@ Route::group(['middleware' => 'auth:api'], function(){
     Route::post('logout', 'UserController@logout');
 });
 
+Route::post('password/email', 'Auth\ForgotPasswordController@sendResetLink');
+//email [your-email-address]
+//password [new-password]
+//password_confirmation [retype-new-password]
+//token [the-token-you-get-from-previous-one]
+Route::post('password/reset', 'Auth\ResetPasswordController@reset');
+
 // Users:
 Route::get('users', 'UserController@index');
 Route::post('users/isStudent', 'UserController@isStudent'); // Check if user_id is a student
