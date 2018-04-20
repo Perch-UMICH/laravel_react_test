@@ -19,4 +19,8 @@ class AppQuestion extends Model
     public function is_public() {
         return ($this->lab_id == null);
     }
+
+    public function answers() {
+        return $this->hasMany('App\AppQuestionResponse');
+    }
 }

@@ -6,6 +6,7 @@ use App\Position;
 use Illuminate\Http\Request;
 use App\Application;
 use App\AppQuestion;
+use Illuminate\Support\Collection;
 
 class PositionController extends Controller
 {
@@ -91,13 +92,17 @@ class PositionController extends Controller
         $application = new Application();
         $application->save();
 
+        $position->application->delete();
         $position->application()->save($application);
 
         $questions = $input['questions'];
+        $count = 0;
         foreach ($questions as $q) {
             $question = new AppQuestion();
             $question->question = $q;
+            $question->number = $count;
             $application->questions()->save($question);
+            $count++;
         }
 
         return $this->outputJSON($application,"Created application and added to position " . $position->title);
@@ -114,7 +119,7 @@ class PositionController extends Controller
 
         // Add new
         $questions = $input['questions'];
-        $count = 1;
+        $count = 0;
         foreach ($questions as $q) {
             $question = new AppQuestion();
             $question->question = $q;
@@ -128,5 +133,22 @@ class PositionController extends Controller
         $app = ['base' => $application, 'questions' => $questions];
 
         return $this->outputJSON($app,"Updated application");
+    }
+
+    public function app_responses(Position $position)
+    {
+        $responses = $position->application->responses;
+
+        $response_data = [];
+        $count = 0;
+        foreach ($responses as $response) {
+            if ($response->sent) {
+                $response_data[$count] = Collection::make();
+                $response_data[$count]->put('base', $response);
+                $response_data[$count]->put('responses', $response->responses);
+                $count++;
+            }
+        }
+        return $this->outputJSON($response_data, 'Retrieved responses to this application');
     }
 }

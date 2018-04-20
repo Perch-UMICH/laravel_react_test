@@ -46,13 +46,13 @@ class UserController extends Controller
             $token['token'] = $user->createToken('token')->accessToken;
             // Get user type if it exists
             if ($user->is_student) {
-                return $this->outputJSON([$user, $user->student, $token],"Student Logged In Successfully");
+                return $this->outputJSON([$user, $user->student, $token],"Student Logged In Successfully", 200);
             }
             else if ($user->is_faculty) {
-                return $this->outputJSON([$user, $user->faculty, $token],"Faculty Logged In Successfully");
+                return $this->outputJSON([$user, $user->faculty, $token],"Faculty Logged In Successfully", 200);
             }
             else {
-                return $this->outputJSON([$user, $token],"Logged In Successfully. User has no type.");
+                return $this->outputJSON([$user, $token],"Logged In Successfully. User has no type.",200);
             }
         } else {
             return $this->outputJSON(null,"Incorrect Password",404);
@@ -107,10 +107,11 @@ class UserController extends Controller
     }
 
     public function update(Request $request, User $user) {
-        $user->update($request->all());
+        $input = $request->all();
+        $input = array_filter($input);
+        $user->update($input);
         $user->save();
         return $this->outputJSON($user, 'User updated');
-
     }
 
     public function delete(User $user) {

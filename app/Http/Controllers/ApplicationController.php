@@ -6,6 +6,7 @@ use App\Application;;
 use App\AppQuestion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Collection;
 
 class ApplicationController extends Controller
 {
@@ -62,7 +63,7 @@ class ApplicationController extends Controller
 
         // Add new
         $questions = $input['questions'];
-        $count = 1;
+        $count = 0;
         foreach ($questions as $q) {
             $question = new AppQuestion();
             $question->question = $q;
@@ -92,7 +93,7 @@ class ApplicationController extends Controller
     }
 
 
-    public function get_public_questions()
+    public function public_questions()
     {
         $questions = AppQuestion::where('lab_id', null)->all();
 

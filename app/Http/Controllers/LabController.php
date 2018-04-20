@@ -316,7 +316,12 @@ class LabController extends Controller
             return $this->outputJSON(null,"Error: different number of user_ids and roles", 500);
         }
 
-        $lab->members()->syncWithoutDetaching($ids, ['role' => $roles]);
+        $count = 0;
+        foreach ($ids as $id) {
+            $role = $roles[$count];
+            $lab->members()->syncWithoutDetaching([$id =>  ['role' => $role]]);
+            $count++;
+        }
         return $this->outputJSON(null,"Added " . count($ids) . " members to lab");
     }
 

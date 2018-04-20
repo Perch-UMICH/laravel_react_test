@@ -23,7 +23,7 @@ class Lab extends Model
     }
 
     public function members() {
-        return $this->belongsToMany('App\User', 'lab_user')->withPivot('role');
+        return $this->belongsToMany('App\User', 'lab_user')->withPivot('user_id', 'lab_id', 'role');
     }
 
     public function preferences() {

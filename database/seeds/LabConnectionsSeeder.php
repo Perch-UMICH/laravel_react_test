@@ -147,20 +147,20 @@ class LabConnectionsSeeder extends Seeder
         $app->save();
 
         $q = new AppQuestion();
-        $q->question = 'Lab specific question 1';
+        $q->question = 'Lab question 1';
         $q->number = 1;
         $q->save();
         $app->questions()->save($q);
 
         $q = new AppQuestion();
-        $q->question = 'Lab specific question 2';
+        $q->question = 'Lab question 2';
         $q->number = 2;
         $q->save();
 
         $app->questions()->save($q);
 
         $q = new AppQuestion();
-        $q->question = 'Generic question 1';
+        $q->question = 'Lab question 3';
         $q->number = 3;
         $q->save();
 

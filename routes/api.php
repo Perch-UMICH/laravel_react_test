@@ -41,7 +41,7 @@ Route::post('password/email', 'Auth\ForgotPasswordController@sendResetLink');
 //token [the-token-you-get-from-previous-one]
 Route::post('password/reset', 'Auth\ResetPasswordController@reset');
 
-// Users:
+// USERS //
 Route::get('users', 'UserController@index');
 Route::post('users/isStudent', 'UserController@isStudent'); // Check if user_id is a student
 Route::get('users/{user}', 'UserController@show');
@@ -52,7 +52,7 @@ Route::get('users/{user}/student', 'UserController@get_student_profile');
 Route::get('users/{user}/faculty', 'UserController@get_faculty_profile');
 Route::get('users/{user}/labs', 'UserController@get_labs');
 
-// Students (note: {student} means student_id):
+// STUDENTS (note: {student} means student_id): //
 Route::get('students', 'StudentController@index'); // Get all students
 Route::post('students','StudentController@store'); // Create a student
 Route::get('students/{student}', 'StudentController@show'); // Get student
@@ -81,7 +81,7 @@ Route::put('faculties/{faculty}', 'FacultyController@update');
 Route::delete('faculties/{faculty}', 'FacultyController@destroy');
 
 
-// LABS
+// LABS //
 
 // New getters
 Route::post('labs/all', 'LabController@get_all_labs');
@@ -117,7 +117,7 @@ Route::get('labs/{lab}/preferences', 'LabController@preferences');
 Route::post('labs/{lab}/preferences', 'LabController@add_preference');
 Route::put('labs/{lab}/preferences', 'LabController@remove_preference');
 
-// Positions
+// POSITIONS //
 Route::get('labs/{lab}/positions', 'LabController@positions'); // get all from lab
 Route::post('labs/{lab}/positions', 'LabController@create_position'); // create for lab
 Route::put('labs/{lab}/positions', 'LabController@delete_positions'); // delete (also deletes application)
@@ -133,6 +133,16 @@ Route::put('positions/{position}/application', 'PositionController@update_applic
 Route::get('questions', 'ApplicationController@get_public_questions'); // get public questions
 
 // Response
+Route::get('students/{student}/responses', 'StudentController@app_responses'); // Get student responses
+Route::post('students/{student}/responses', 'StudentController@create_app_response'); // Create a response
+Route::post('students/{student}/responses/update', 'StudentController@update_app_response'); // Update a response
+Route::post('students/{student}/responses/submit', 'StudentController@submit_app_response'); // Submit a response
+Route::post('students/{student}/responses/delete', 'StudentController@delete_app_response'); // Delete a response
+
+Route::get('positions/{position}/application/responses', 'PositionController@app_responses'); // Get all responses to an application
+
+
+// METADATA //
 
 // Skills:
 Route::get('skills', 'SkillController@index');
@@ -146,6 +156,8 @@ Route::get('tags/{tag}', 'TagController@show');
 
 // School Courses
 Route::get('courses/school', 'SchoolCourseController@index');
+
+// MISC //
 
 // Profile pics
 Route::post('pics', 'ProfilepicController@store');

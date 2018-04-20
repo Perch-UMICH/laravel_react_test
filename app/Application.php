@@ -13,10 +13,15 @@ class Application extends Model
         return $this->belongsTo('App\Position');
     }
 
-    // May have many questions, by pivot table
+    // May have many questions
     public function questions()
     {
-        return $this->hasMany('App\AppQuestion');
+        return $this->hasMany('App\AppQuestion')->orderBy('number', 'asc');
+    }
+
+    public function responses()
+    {
+        return $this->hasMany('App\ApplicationResponse');
     }
 
 }

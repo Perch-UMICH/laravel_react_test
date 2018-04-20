@@ -78,15 +78,13 @@ export function loginUser(email, password) {
         .then(response => {
             // cookie.set('perch_api_key', response.data.result.token, {path: "/"});
             // cookie.set('perch_user_id', response.data.result.id, {path: "/"});
-            sessionStorage.setItem('token', response.data.result[2].token);
+            sessionStorage.setItem('token', response.data.result[1].token);
             sessionStorage.setItem('user_id', response.data.result[0].id);
             if (response.data.result[0].is_student) {
                 // Save student id
                 sessionStorage.setItem('student_id', response.data.result[1].id);
-                sessionStorage.setItem('faculty_id', null);
             }
             else if (response.data.result[0].is_faculty) {
-                sessionStorage.setItem('student_id', null);
                 sessionStorage.setItem('faculty_id', response.data.result[1].id);
             }
             console.log('Successfully logged in');
@@ -100,26 +98,23 @@ export function loginUser(email, password) {
 }
 
 export function logoutCurrentUser() {
-  // Clear all user cookies
-  //   cookie.remove('perch_api_key');
-  //   cookie.remove('perch_user_id');
+    let oldToken = sessionStorage.getItem('token')
+    sessionStorage.removeItem('faculty_id');
+    sessionStorage.removeItem('student_id');
+    sessionStorage.removeItem('user_id');
+    sessionStorage.removeItem('token');
 
     return axios.post('api/logout',
         {
             headers: {
-                'Authorization': 'Bearer ' + sessionStorage.getItem('token'),
+                'Authorization': 'Bearer ' + oldToken,
             }
         }
-    )
-        .then(response => {
-            // cookie.remove('perch_api_key');
-            // cookie.remove('perch_user_id');
+    ).then(response => {
 
-            console.log(response.data.message);
-            sessionStorage.removeItem('token');
-            sessionStorage.removeItem('user_id');
-            return true;
-        })
+        console.log(response.data.message);
+        return true;
+    })
         .catch(error => {
             console.error(error);
             console.error('Could not logout');
@@ -293,7 +288,6 @@ export function getUserLabs(user_id) {
     // linkedin_user - (string) link to linkedin user profile
     // belongs_to_lab_id - (int, foreign) id of lab on site that student current belongs to
     // faculty_endorsements - (text) names of endorsing professors
-    // classes - (text) relevant classes
 // Associations
     // Users
     // Skills
@@ -325,9 +319,9 @@ export function getStudent(student_id) {
         })
 }
 
-export function createStudent(user_id, first_name, last_name, major, year, gpa, email, bio, past_research, classes, faculty_endorsement_id) {
+export function createStudent(user_id, first_name, last_name, major, year, gpa, email, bio) {
     console.log('Creating student');
-    return axios.post('api/students', {user_id, first_name, last_name, major, year, gpa, email, bio, past_research, classes, faculty_endorsement_id})
+    return axios.post('api/students', {user_id, first_name, last_name, major, year, gpa, email, bio})
         .then(response => {
             console.log(response.data.message);
             return response.data.result;
@@ -338,10 +332,10 @@ export function createStudent(user_id, first_name, last_name, major, year, gpa, 
         })
 }
 
-export function updateStudent(student_id, first_name, last_name, major, year, gpa, email, bio, past_research, classes, faculty_endorsement_id) {
+export function updateStudent(student_id, first_name, last_name, major, year, gpa, email, bio) {
     console.log('Updating student');
     let _method = 'PUT';
-    return axios.post('api/students/' + student_id, {_method, student_id, first_name, last_name, major, year, gpa, email, bio, past_research, classes, faculty_endorsement_id})
+    return axios.post('api/students/' + student_id, {_method, student_id, first_name, last_name, major, year, gpa, email, bio})
         .then(response => {
             console.log(response.data.message);
             return response.data.result;
@@ -1127,7 +1121,7 @@ export function getAllSchoolCourses() {
     //  description -(text)
     //  time_commitment - (string) short description of time commitment (e.g. 10-12 hours/week)
     //  open_slots - (int) total open slots for applicants
-
+// NOTE: Positions must have an application attached to them to make them "live"
 
 export function getAllLabPositions(lab_id) {
     console.log('Getting all lab positions');
@@ -1249,6 +1243,110 @@ export function updateApplication(position_id, questions) {
     };
 
     return axios.post('api/positions/' + position_id + '/application', payload)
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+// Application Responses
+// Response to an application for a position, created by a student
+    // student_id
+    // position_id
+    // answers - (array of strings)
+// NOTE: 'create' allows a student to start an application, but it must be 'submitted' for the lab to see
+
+export function createApplicationResponse(student_id, position_id, answers) {
+    console.log('Creating application response');
+
+    let payload = {
+        student_id: student_id,
+        position_id: position_id,
+        answers: answers
+    };
+
+    return axios.post('api/students/' + student_id + '/responses', payload)
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+export function updateApplicationResponse(student_id, application_response_id, answers) {
+    console.log('Updating application response');
+
+    let payload = {
+        student_id: student_id,
+        position_id: application_response_id,
+        answers: answers
+    };
+
+    return axios.post('api/students/' + student_id + '/responses/update', payload)
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+export function submitApplicationResponse(student_id, application_response_id) {
+    console.log('Submitting application response');
+
+    let payload = {
+        student_id: student_id,
+        position_id: application_response_id
+    };
+
+    return axios.post('api/students/' + student_id + '/responses/update', payload)
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+export function deleteApplicationResponse(student_id, application_response_id) {
+    console.log('Deleting application response');
+
+    let payload = {
+        student_id: student_id,
+        position_id: application_response_id
+    };
+
+    return axios.post('api/students/' + student_id + '/responses/delete', payload)
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+// Gets responses that haven't yet been submitted (in progress)
+export function getStudentPendingResponses(student_id) {
+    console.log('Getting application response');
+
+    let payload = {
+        student_id: student_id
+    };
+
+    return axios.get('api/students/' + student_id + '/responses', payload)
         .then(response => {
             console.log(response.data.message);
             return response.data.result;

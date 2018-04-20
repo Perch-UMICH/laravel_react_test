@@ -10,8 +10,7 @@ use App\Lab;
 class Student extends Model
 {
     protected $fillable = ['first_name', 'last_name', 'major', 'gpa',
-        'bio', 'year', 'email', 'past_research', 'linkedin_user', 'belongs_to_lab_id', 'faculty_endorsements',
-        'classes', 'profilepic_path'];
+        'bio', 'year', 'email', 'linkedin_user', 'belongs_to_lab_id', 'profilepic_path'];
 
     public function user()
     {
@@ -37,5 +36,13 @@ class Student extends Model
     public function school_courses()
     {
         return $this->belongsToMany('App\SchoolCourse', 'school_course_student');
+    }
+
+    public function experiences() {
+        return $this->hasMany('App\Experience');
+    }
+
+    public function responses() {
+        return $this->hasMany('App\ApplicationResponse');
     }
 }
