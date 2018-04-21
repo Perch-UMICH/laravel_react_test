@@ -25,15 +25,10 @@ class Header extends React.Component {
                         <li><Link to='/students'>Students</Link></li>
                         <li><Link to='/faculties'>Faculties</Link></li>
                         <li><Link to='/labs'>Labs</Link></li>
+                        <li><Link to='/positions'>Positions</Link></li>
                         <li><Link to='/register'>Register</Link></li>
                         <li><Link to='/login'>Login</Link></li>
                         {/*<li><a href={'login/google'}><img width={191} height={46} src={'../../images/btn_google_signin_dark_normal_web@2x.png'} /></a></li>*/}
-                        <GoogleLogin
-                            clientId="648140670160-klncvki6qbkr47iteo8995fp4j4elv6g.apps.googleusercontent.com"
-                            buttonText="Login"
-                            onSuccess={this.responseGoogle}
-                            onFailure={this.responseGoogle}
-                        />
                     </ul>
                 </nav>
             </header>

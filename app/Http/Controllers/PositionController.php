@@ -79,6 +79,7 @@ class PositionController extends Controller
     // Applications
     public function application(Position $position) {
         $application = $position->application;
+        if (!$application) return $this->outputJSON(null, 'Error: position has no application associated with it');
         $questions = $application->questions;
 
         $app = ['base' => $application, 'questions' => $questions];
@@ -137,7 +138,9 @@ class PositionController extends Controller
 
     public function app_responses(Position $position)
     {
-        $responses = $position->application->responses;
+        $application = $position->application;
+        if (!$application) return $this->outputJSON(null, 'Error: position has no application associated with it');
+        $responses = $application->responses;
 
         $response_data = [];
         $count = 0;
@@ -145,7 +148,7 @@ class PositionController extends Controller
             if ($response->sent) {
                 $response_data[$count] = Collection::make();
                 $response_data[$count]->put('base', $response);
-                $response_data[$count]->put('responses', $response->responses);
+                $response_data[$count]->put('answers', $response->answers);
                 $count++;
             }
         }

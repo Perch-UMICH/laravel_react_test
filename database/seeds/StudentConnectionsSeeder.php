@@ -96,6 +96,7 @@ class StudentConnectionsSeeder extends Seeder
         $student = Student::find(1);
 
         $resp = new ApplicationResponse();
+        $resp->sent = true;
         $student->responses()->save($resp);
         $app->responses()->save($resp);
         $resp->save();
@@ -105,8 +106,8 @@ class StudentConnectionsSeeder extends Seeder
             $qresp->response = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, 
             sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
             $qresp->save();
-            $resp->responses()->save($qresp);
-            $q->responses()->save($qresp);
+            $resp->answers()->save($qresp);
+            $q->answers()->save($qresp);
         }
     }
 

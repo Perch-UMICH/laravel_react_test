@@ -1357,6 +1357,20 @@ export function getStudentPendingResponses(student_id) {
         })
 }
 
+// Gets ApplicationResponses to a particular position
+export function getLabPositionApplicants(position_id) {
+    console.log('Getting application responses');
+    return axios.get('api/positions/' + position_id + '/application/responses')
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
 // Feedback
 // User feedback
 //  user_id - (int)

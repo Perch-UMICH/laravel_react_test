@@ -10,7 +10,8 @@ import Students from './Students'
 import Register from './Register'
 import Users from './Users'
 import Home from './Home'
-import Login from './Login';
+import Login from './Login'
+import PositionTest from './PositionTest'
 
 const Main = () => (
     <main>
@@ -21,6 +22,7 @@ const Main = () => (
             <Route path='/students' component={Students}/>
             <Route path='/faculties' component={Faculties}/>
             <Route path='/labs' component={Labs}/>
+            <Route path='/positions' component={PositionTest}/>
             <Route path='/register' component={Register}/>
             <Route path='/login' component={Login}/>
         </Switch>
