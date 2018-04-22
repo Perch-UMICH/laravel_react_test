@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Lab extends Model
 {
-    protected $fillable = ['name', 'department', 'location', 'description', 'bio', 'publications',
-        'url', 'gpa', 'weeklyCommitment'];
+    protected $fillable = ['name', 'department', 'location', 'description', 'bio', 'publications','contact_email',
+        'contact_phone','url', 'gpa', 'weeklyCommitment'];
 
     public function skills() {
         return $this->belongsToMany('App\Skill', 'lab_skill');
