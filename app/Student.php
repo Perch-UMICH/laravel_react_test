@@ -10,7 +10,8 @@ use App\Lab;
 class Student extends Model
 {
     protected $fillable = ['first_name', 'last_name', 'major', 'gpa',
-        'bio', 'year', 'email', 'linkedin_user', 'belongs_to_lab_id', 'profilepic_path'];
+        'bio', 'year', 'email', 'linkedin_user', 'belongs_to_lab_id', 'profilepic_path',
+        'classes'];
 
     public function user()
     {
