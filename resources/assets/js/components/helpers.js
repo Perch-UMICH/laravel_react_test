@@ -65,8 +65,8 @@ export function loginUser(email, password) {
     // cookie.remove('perch_api_key');
     // cookie.remove('perch_user_id');
 
-    sessionStorage.removeItem('token');
-    sessionStorage.removeItem('user_id');
+    // Benji changed this
+    sessionStorage.clear();
 
     // Login
     console.log('logging in ' + email);
@@ -76,16 +76,21 @@ export function loginUser(email, password) {
         email, password
     })
         .then(response => {
-            // cookie.set('perch_api_key', response.data.result.token, {path: "/"});
-            // cookie.set('perch_user_id', response.data.result.id, {path: "/"});
+            console.log(response)
             sessionStorage.setItem('token', response.data.result[1].token);
             sessionStorage.setItem('user_id', response.data.result[0].id);
             if (response.data.result[0].is_student) {
                 // Save student id
                 sessionStorage.setItem('student_id', response.data.result[1].id);
+                // sessionStorage.setItem('faculty_id', null);
             }
             else if (response.data.result[0].is_faculty) {
-                sessionStorage.setItem('faculty_id', response.data.result[1].id);
+                // sessionStorage.setItem('student_id', null);
+                sessionStorage.setItem('faculty_id', response.data.result[1].id); // EMI HAS CHANGED THIS! FROM HERE TILL...
+                getUserLabs(response.data.result[0].id).then(resp => {
+                    console.log(resp);
+                    // sessionStorage.setItem('lab_id', somethin_good);
+                }); // ... HERE!
             }
             console.log('Successfully logged in');
             return response.data
@@ -98,11 +103,12 @@ export function loginUser(email, password) {
 }
 
 export function logoutCurrentUser() {
+    // Clear all user cookies
+    //   cookie.remove('perch_api_key');
+    //   cookie.remove('perch_user_id');
     let oldToken = sessionStorage.getItem('token')
-    sessionStorage.removeItem('faculty_id');
-    sessionStorage.removeItem('student_id');
-    sessionStorage.removeItem('user_id');
-    sessionStorage.removeItem('token');
+    // Benji changed this
+    sessionStorage.clear()
 
     return axios.post('api/logout',
         {
@@ -111,8 +117,10 @@ export function logoutCurrentUser() {
             }
         }
     ).then(response => {
-
+        // cookie.remove('perch_api_key');
+        // cookie.remove('perch_user_id');
         console.log(response.data.message);
+        // sessionStorage.removeItem('token');
         return true;
     })
         .catch(error => {
@@ -151,6 +159,8 @@ export function resetPasswordFromEmail(email, password, password_confirmation, t
         });
 }
 
+// CHANGED BY BENJI (Most of these getId's)
+
 export function getCurrentUserId() {
     return sessionStorage.getItem('user_id');
 }
@@ -159,16 +169,24 @@ export function getCurrentStudentId() {
     return sessionStorage.getItem('student_id');
 }
 
+export function getCurrentLabId() {
+    return sessionStorage.getItem('lab_id');
+}
+
+export function getCurrentFacultyId() {
+    return sessionStorage.getItem('faculty_id');
+}
+
 export function isStudent() {
     return sessionStorage.getItem('student_id') != null;
 }
 
 export function isLab() {
-    return sessionStorage.getItem('faculty_id') != null;
+    return sessionStorage.getItem('lab_id') != null;
 }
 
-export function getCurrentLabId() {
-    return sessionStorage.getItem('faculty_id');
+export function isFaculty() {
+    return sessionStorage.getItem('lab_id') != null;
 }
 
 
@@ -281,7 +299,8 @@ export function getUserLabs(user_id) {
     //  email - (string)
     //  year - (string)
 // Optional:
-    // past_research - (text) description of past research experience
+    // past_research - (string, comma separated) names of past research experiences (lab names)
+    // classes - (string, comma separated) names of relevant classes
     // bio - (text) short bio on student goals
     // major - (string) degree pursuing
     // gpa - (double)
@@ -319,10 +338,11 @@ export function getStudent(student_id) {
         })
 }
 
-export function createStudent(user_id, first_name, last_name, major, year, gpa, email, bio) {
+export function createStudent(user_id, first_name, last_name, major, year, gpa, email, bio, past_research, classes, faculty_endorsement_id) {
     console.log('Creating student');
-    return axios.post('api/students', {user_id, first_name, last_name, major, year, gpa, email, bio})
+    return axios.post('api/students', {user_id, first_name, last_name, major, year, gpa, email, bio, past_research, classes, faculty_endorsement_id})
         .then(response => {
+            sessionStorage.setItem('student_id', response.data.result.id) // CHANGED BY BENJI
             console.log(response.data.message);
             return response.data.result;
         })
@@ -332,10 +352,10 @@ export function createStudent(user_id, first_name, last_name, major, year, gpa, 
         })
 }
 
-export function updateStudent(student_id, first_name, last_name, major, year, gpa, email, bio) {
+export function updateStudent(student_id, first_name, last_name, major, year, gpa, email, bio, past_research, classes, faculty_endorsement_id) {
     console.log('Updating student');
     let _method = 'PUT';
-    return axios.post('api/students/' + student_id, {_method, student_id, first_name, last_name, major, year, gpa, email, bio})
+    return axios.post('api/students/' + student_id, {_method, student_id, first_name, last_name, major, year, gpa, email, bio, past_research, classes, faculty_endorsement_id})
         .then(response => {
             console.log(response.data.message);
             return response.data.result;
@@ -629,8 +649,10 @@ export function getFaculty(faculty_id) {
 
 export function createFaculty(user_id, first_name, last_name, title, email) {
     console.log('Creating faculty');
-    return axios.post('api/faculties', [user_id, first_name, last_name, title, email])
+    return axios.post('api/faculties', {user_id, first_name, last_name, title, email}) /// EMI CHANGED THIS: "[]" to "{}"
         .then(response => {
+            console.log(response)
+            sessionStorage.setItem('faculty_id', response.data.result.id)
             console.log(response.data.message);
             return response.data.result;
         })
@@ -742,11 +764,11 @@ export function getLabData(lab_id, skilltag_data, preferences_data, position_dat
         })
 }
 
-
 export function createLab(faculty_id, name, department, location, description, publications, url, gpa, weeklyCommitment, contact_phone, contact_email) {
     console.log('Creating lab');
     return axios.post('api/labs', {faculty_id, name, department, location, description, publications, url, gpa, weeklyCommitment, contact_phone, contact_email})
         .then(response => {
+            sessionStorage.setItem('lab_id', response.data.result.id) // CHANGED BY BENJI
             console.log(response.data.message);
             return response.data.result;
         })
@@ -1424,4 +1446,12 @@ export function getSearchData(student_id) {
             console.log(error);
             return [];
         })
+}
+
+export function permissionCheck() {
+    let page_id = window.location.pathname.split('/')[2]
+    let page_type = window.location.pathname.split('/')[1]
+    let checkLab = getCurrentLabId() === page_id && page_type === 'prof-page'
+    let checkStudent = getCurrentUserId() === page_id && page_type === 'student-profile'
+    return checkLab || checkStudent;
 }
