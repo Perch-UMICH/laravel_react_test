@@ -76,6 +76,7 @@ export function loginUser(email, password) {
         email, password
     })
         .then(response => {
+<<<<<<< HEAD
             console.log(response)
             sessionStorage.setItem('token', response.data.result[1].token);
             sessionStorage.setItem('user_id', response.data.result[0].id);
@@ -91,6 +92,18 @@ export function loginUser(email, password) {
                     console.log(resp);
                     // sessionStorage.setItem('lab_id', somethin_good);
                 }); // ... HERE!
+=======
+            // cookie.set('perch_api_key', response.data.result.token, {path: "/"});
+            // cookie.set('perch_user_id', response.data.result.id, {path: "/"});
+            sessionStorage.setItem('token', response.data.result.token);
+            sessionStorage.setItem('user_id', response.data.result.user.id);
+            if (response.data.result.user.is_student) {
+                // Save student id
+                sessionStorage.setItem('student_id', response.data.result.user.student.id);
+            }
+            else if (response.data.result.user.is_faculty) {
+                sessionStorage.setItem('faculty_id', response.data.result.user.faculty.id);
+>>>>>>> 55a0d16b13e3129e764833eed211e54f1cbfc9da
             }
             console.log('Successfully logged in');
             return response.data
@@ -103,12 +116,20 @@ export function loginUser(email, password) {
 }
 
 export function logoutCurrentUser() {
+<<<<<<< HEAD
     // Clear all user cookies
     //   cookie.remove('perch_api_key');
     //   cookie.remove('perch_user_id');
     let oldToken = sessionStorage.getItem('token')
     // Benji changed this
     sessionStorage.clear()
+=======
+    let oldToken = sessionStorage.getItem('token');
+    sessionStorage.removeItem('faculty_id');
+    sessionStorage.removeItem('student_id');
+    sessionStorage.removeItem('user_id');
+    sessionStorage.removeItem('token');
+>>>>>>> 55a0d16b13e3129e764833eed211e54f1cbfc9da
 
     return axios.post('api/logout',
         {
@@ -763,7 +784,6 @@ export function getLabData(lab_id, skilltag_data, preferences_data, position_dat
             return [];
         })
 }
-
 
 export function createLab(faculty_id, name, department, location, description, publications, url, gpa, weeklyCommitment, contact_phone, contact_email) {
     console.log('Creating lab');

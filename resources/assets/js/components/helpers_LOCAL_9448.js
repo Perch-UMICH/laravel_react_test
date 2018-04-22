@@ -764,7 +764,6 @@ export function getLabData(lab_id, skilltag_data, preferences_data, position_dat
         })
 }
 
-
 export function createLab(faculty_id, name, department, location, description, publications, url, gpa, weeklyCommitment, contact_phone, contact_email) {
     console.log('Creating lab');
     return axios.post('api/labs', {faculty_id, name, department, location, description, publications, url, gpa, weeklyCommitment, contact_phone, contact_email})
