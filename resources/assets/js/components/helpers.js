@@ -77,16 +77,16 @@ export function loginUser(email, password) {
     })
         .then(response => {
             console.log(response)
-            sessionStorage.setItem('token', response.data.result[1].token);
-            sessionStorage.setItem('user_id', response.data.result[0].id);
-            if (response.data.result[0].is_student) {
+            sessionStorage.setItem('token', response.data.result.token);
+            sessionStorage.setItem('user_id', response.data.result.user.id);
+            if (response.data.result.user.is_student) {
                 // Save student id
-                sessionStorage.setItem('student_id', response.data.result[1].id);
+                sessionStorage.setItem('student_id', response.data.result.user.student.id);
                 // sessionStorage.setItem('faculty_id', null);
             }
-            else if (response.data.result[0].is_faculty) {
+            else if (response.data.result.user.is_faculty) {
                 // sessionStorage.setItem('student_id', null);
-                sessionStorage.setItem('faculty_id', response.data.result[1].id); // EMI HAS CHANGED THIS! FROM HERE TILL...
+                sessionStorage.setItem('faculty_id', response.data.result.user.faculty.id); // EMI HAS CHANGED THIS! FROM HERE TILL...
                 getUserLabs(response.data.result[0].id).then(resp => {
                     console.log(resp);
                     // sessionStorage.setItem('lab_id', somethin_good);
