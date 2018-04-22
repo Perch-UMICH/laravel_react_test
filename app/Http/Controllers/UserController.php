@@ -51,6 +51,7 @@ class UserController extends Controller
             }
             else if ($user->is_faculty) {
                 $user->faculty;
+                $user->labs;
                 return $this->outputJSON(['user' => $user, 'token' => $token],"Faculty Logged In Successfully", 200);
             }
             else {
