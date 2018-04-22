@@ -78,14 +78,14 @@ export function loginUser(email, password) {
         .then(response => {
             // cookie.set('perch_api_key', response.data.result.token, {path: "/"});
             // cookie.set('perch_user_id', response.data.result.id, {path: "/"});
-            sessionStorage.setItem('token', response.data.result[1].token);
-            sessionStorage.setItem('user_id', response.data.result[0].id);
-            if (response.data.result[0].is_student) {
+            sessionStorage.setItem('token', response.data.result.token);
+            sessionStorage.setItem('user_id', response.data.result.user.id);
+            if (response.data.result.user.is_student) {
                 // Save student id
-                sessionStorage.setItem('student_id', response.data.result[1].id);
+                sessionStorage.setItem('student_id', response.data.result.user.student.id);
             }
-            else if (response.data.result[0].is_faculty) {
-                sessionStorage.setItem('faculty_id', response.data.result[1].id);
+            else if (response.data.result.user.is_faculty) {
+                sessionStorage.setItem('faculty_id', response.data.result.user.faculty.id);
             }
             console.log('Successfully logged in');
             return response.data
@@ -98,7 +98,7 @@ export function loginUser(email, password) {
 }
 
 export function logoutCurrentUser() {
-    let oldToken = sessionStorage.getItem('token')
+    let oldToken = sessionStorage.getItem('token');
     sessionStorage.removeItem('faculty_id');
     sessionStorage.removeItem('student_id');
     sessionStorage.removeItem('user_id');
