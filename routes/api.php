@@ -130,7 +130,7 @@ Route::get('positions/{position}/application', 'PositionController@application')
 Route::post('positions/{position}/application', 'PositionController@create_application'); // create for position
 Route::put('positions/{position}/application', 'PositionController@update_application'); // update (app and questions)
 
-Route::get('questions', 'ApplicationController@get_public_questions'); // get public questions
+Route::get('questions', 'ApplicationController@public_questions'); // get public questions
 
 // Response
 Route::get('students/{student}/responses', 'StudentController@app_responses'); // Get student responses

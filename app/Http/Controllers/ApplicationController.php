@@ -95,7 +95,7 @@ class ApplicationController extends Controller
 
     public function public_questions()
     {
-        $questions = AppQuestion::where('lab_id', null)->all();
+        $questions = AppQuestion::whereNull('lab_id')->get();
 
         return $this->outputJSON($questions, 'Retrieved public questions');
     }
