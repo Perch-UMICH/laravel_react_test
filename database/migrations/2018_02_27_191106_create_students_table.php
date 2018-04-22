@@ -28,6 +28,10 @@ class CreateStudentsTable extends Migration
             $table->string('major')->nullable();
             $table->double('gpa')->nullable();
 
+            // comma separated lists
+            $table->string('classes')->nullable();
+            $table->string('experiences')->nullable();
+
             $table->string('linkedin_link')->nullable();
             $table->string('website_link')->nullable();
 

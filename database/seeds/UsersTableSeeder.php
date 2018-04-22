@@ -35,6 +35,8 @@ class UsersTableSeeder extends Seeder
         $profile->year = 'Junior';
         $profile->gpa = '4.0';
         $profile->email = $student->email;
+        $profile->classes = 'MCDB 423|CHEM 215/216';
+        $profile->experiences = 'Dr. Kataoka\'s Alchemy Lab (Fall 2016 - Fall 2017)|U of M Neuroimaging Lab (Summer 2017)';
         $profile->save();
 
         // Create additional users
@@ -53,6 +55,8 @@ class UsersTableSeeder extends Seeder
         $profile->year = 'Freshman';
         $profile->major = 'Biology';
         $profile->email = $student->email;
+        $profile->classes = 'EECS 281|EECS 388';
+        $profile->experiences = 'U of M HCI Lab (Summer 2017)';
         $profile->save();
 
         // Create faculty user

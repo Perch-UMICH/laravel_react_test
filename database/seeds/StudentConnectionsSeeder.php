@@ -25,8 +25,8 @@ class StudentConnectionsSeeder extends Seeder
     {
         $this->studentSkillsSeeder();
         $this->studentTagsSeeder();
-        $this->studentClassesSeeder();
-        $this->studentExperiencesSeeder();
+        //$this->studentClassesSeeder();
+        //$this->studentExperiencesSeeder();
         $this->studentAppResponsesSeeder();
     }
 
