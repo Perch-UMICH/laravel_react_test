@@ -93,7 +93,7 @@ class PositionController extends Controller
         $application = new Application();
         $application->save();
 
-        $position->application->delete();
+        $position->application()->delete();
         $position->application()->save($application);
 
         $questions = $input['questions'];

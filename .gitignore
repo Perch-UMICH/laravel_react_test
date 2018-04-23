@@ -13,3 +13,7 @@ yarn-error.log
 .env
 .env.testing
 perch_api.zip
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
