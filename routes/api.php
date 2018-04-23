@@ -19,6 +19,9 @@ use Illuminate\Support\Facades\Auth;
 //    return $request->user();
 //});
 
+
+// ACCOUNTS //
+
 // User Registration:
 Route::post('login', 'UserController@login');
 Route::post('register', 'UserController@register');
@@ -40,6 +43,8 @@ Route::post('password/email', 'Auth\ForgotPasswordController@sendResetLink');
 //password_confirmation [retype-new-password]
 //token [the-token-you-get-from-previous-one]
 Route::post('password/reset', 'Auth\ResetPasswordController@reset');
+
+//Route::post('password/request', 'Auth\ResetPass');
 
 // USERS //
 Route::get('users', 'UserController@index');

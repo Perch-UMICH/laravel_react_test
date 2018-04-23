@@ -112,6 +112,10 @@ class UserController extends Controller
     public function update(Request $request, User $user) {
         $input = $request->all();
         $input = array_filter($input);
+
+        if ($request->has('password'))
+            $input['password'] = bcrypt($input['password']);
+
         $user->update($input);
         $user->save();
         return $this->outputJSON($user, 'User updated');

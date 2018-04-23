@@ -30,7 +30,7 @@ Route::get('/dev', function () {
     return view('dev');
 });
 
-//Auth::routes();
+Auth::routes();
 
 // Google OAuth
 Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout');
