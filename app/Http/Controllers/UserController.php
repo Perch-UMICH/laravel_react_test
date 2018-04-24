@@ -36,12 +36,21 @@ class UserController extends Controller
      */
     public function login(Request $request)
     {
+//        $validator = $request->validate([
+//            'email' => 'required|email',
+//            'password' => 'required',
+//        ]);
+//
+//        if ($validator->fails()) {
+//            return response()->json(['errors'=>$validator->errors()]);
+//        }
+
         $input = $request->all();
         $user = User::where('email', $input['email'])->first();
 
         if($user == null) {
             return $this->outputJSON(null,"Invalid Email Address",404);
-        } elseif (Auth::attempt(['email' => $input['email'], 'password' => $input['password']])) {
+        } elseif (Auth::guard('web')->attempt(['email' => $input['email'], 'password' => $input['password']], false, false)) {
             // Create token
             $token = $user->createToken('token')->accessToken;
             // Get user type if it exists
@@ -113,6 +122,7 @@ class UserController extends Controller
         $input = $request->all();
         $input = array_filter($input);
 
+        // Password update
         if ($request->has('password'))
             $input['password'] = bcrypt($input['password']);
 
