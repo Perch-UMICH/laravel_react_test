@@ -12,6 +12,7 @@ use App\User;
 use App\Skill;
 use App\Tag;
 use App\Lab;
+use Storage;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
@@ -330,5 +331,17 @@ class StudentController extends Controller
         $applicationResponse->sent = true;
 
         return $this->outputJSON(null, 'Response submitted to position ' . $applicationResponse->application->position->name);
+    }
+
+    // RESUME
+
+    public function add_resume(Request $request, Student $student) {
+        // Delete old resume if exists
+        // NOTE: this doesn't seem to work...
+        Storage::delete($student->resume_path);
+        $path = Storage::putFile('resumes', $request->file('resume'));
+        $student->resume_path = $path;
+
+        return $this->outputJSON($student, 'Stored new resume');
     }
 }

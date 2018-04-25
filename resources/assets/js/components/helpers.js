@@ -1400,7 +1400,6 @@ export function getLabPositionApplicants(position_id) {
 //  user_id - (int)
 //  url - (string) url of the page that user is on at time of submission
 //  feedback - (text)
-
 export function submitUserFeedback(user_id, url, feedback) {
     console.log('Submitting feedback');
 

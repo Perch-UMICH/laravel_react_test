@@ -64,21 +64,27 @@ Route::get('students/{student}', 'StudentController@show'); // Get student
 Route::put('students/{student}','StudentController@update'); // Update a student
 Route::delete('students/{student}', 'StudentController@destroy'); // Delete a student
 
+// Student tags
 Route::get('students/{student}/tags', 'StudentController@tags'); // Get a student's tags
 Route::post('students/{student}/tags', 'StudentController@add_tag');
 Route::post('students/{student}/tags/sync', 'StudentController@sync_tags'); // sync -> delete all and replace with only input
 Route::put('students/{student}/tags', 'StudentController@remove_tag');
 
+// Student skills
 Route::get('students/{student}/skills', 'StudentController@skills'); // Get student's skills
 Route::post('students/{student}/skills', 'StudentController@add_skill');
 Route::post('students/{student}/skills/sync', 'StudentController@sync_skills');
 Route::put('students/{student}/skills', 'StudentController@remove_skill');
 
+// Student classes
 Route::get('students/{student}/courses/school', 'StudentController@school_courses');
 Route::post('students/{student}/courses/school', 'StudentController@add_school_courses');
 Route::put('students/{student}/courses/school', 'StudentController@remove_school_courses');
 
-//Faculty:
+// Student resume
+Route::post('students/{student}/resume', 'StudentController@add_resume');
+
+// FACULTY //
 Route::get('faculties', 'FacultyController@index'); // Get all faculty
 Route::get('faculties/{faculty}', 'FacultyController@show');
 Route::post('faculties', 'FacultyController@store');
@@ -164,7 +170,7 @@ Route::get('courses/school', 'SchoolCourseController@index');
 
 // MISC //
 
-// Profile pics
+// Profile pics (for students, labs, and faculty)
 Route::post('pics', 'ProfilepicController@store');
 
 // Feedback
