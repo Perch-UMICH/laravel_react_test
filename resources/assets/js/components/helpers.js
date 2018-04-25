@@ -12,7 +12,9 @@ axios.defaults.headers.common = {};
 axios.defaults.baseURL = 'http://perch-api.us-east-1.elasticbeanstalk.com';
 axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
-// Authentication
+
+// AUTHENTICATION //
+
 export function isLoggedIn() {
     if(sessionStorage.getItem('token') == null) {
         console.log('Not logged in');
@@ -190,8 +192,9 @@ export function isFaculty() {
     return sessionStorage.getItem('lab_id') != null;
 }
 
+// USERS //
 
-// USERS
+// Users
 // Base user on website
 // Required:
     // name - (string) username
@@ -290,6 +293,7 @@ export function getUserLabs(user_id) {
         })
 }
 
+// STUDENTS //
 
 // Students
 // Student profile
@@ -610,6 +614,8 @@ export function removeSchoolCoursesFromStudent(student_id, course_ids) {
         })
 }
 
+// FACULTY //
+
 // Faculties
 // Faculty profile
 // Required:
@@ -690,6 +696,7 @@ export function deleteFaculty(faculty_id) {
         })
 }
 
+// LABS //
 
 // Labs
 // Lab page
@@ -1045,7 +1052,7 @@ export function removeMembersFromLab(lab_id, user_ids) {
         })
 }
 
-
+// METADATA //
 
 // Skills
 // Laboratory skills
@@ -1137,6 +1144,8 @@ export function getAllSchoolCourses() {
             return [];
         })
 }
+
+// LAB POSITIONS //
 
 // Positions
 // Open projects/positions in a lab
@@ -1395,6 +1404,8 @@ export function getLabPositionApplicants(position_id) {
         })
 }
 
+// MISC //
+
 // Feedback
 // User feedback
 //  user_id - (int)
@@ -1414,25 +1425,55 @@ export function submitUserFeedback(user_id, url, feedback) {
         })
 }
 
-// data should be of type FormData
-// see: https://stackoverflow.com/questions/39663961/how-do-you-send-images-to-node-js-with-axios
-// type - should be either "student", "faculty", or "lab"
-// id - based on type, should be the id of that object
-export function uploadPic(type, id, data) {
-    data.set('type', type);
-    data.set('id', id);
-    console.log(data);
-    return axios.post('api/pics', data)
+// Pictures
+    // type - should be either "student", "faculty", or "lab"
+    // id - based on type, should be the id of that object
+    // input_element_id - (string) name of the html id of the "input" element
+export function uploadPic(type, id, input_element_id) {
+    const fileInput = document.getElementById(input_element_id.files[0]);
+    const formData = new FormData();
+    formData.append( 'image', fileInput );
+
+    formData.append('type', type);
+    formData.append('id', id);
+    console.log(formData);
+    const config = {
+        headers: { 'content-type': 'multipart/form-data' }
+    };
+
+    axios.post('api/pics', formData, config)
         .then(response => {
             console.log(response.data.message);
-            return response.data.result;
+            console.log(response.data.result);
         })
         .catch(function (error) {
             console.log(error);
-            return [];
         })
 }
 
+// Resumes
+    // student_id - (int)
+    // input_element_id - (string) name of the html id of the "input" element
+
+export function uploadResume(student_id, input_element_id) {
+    const fileInput = document.getElementById(input_element_id.files[0]);
+    const formData = new FormData();
+    formData.append( 'resume', fileInput );
+
+    console.log(formData);
+    const config = {
+        headers: { 'content-type': 'multipart/form-data' }
+    };
+
+    axios.post('api/students/' + student_id + '/resume', formData, config)
+        .then(response => {
+            console.log(response.data.message);
+            console.log(response.data.result);
+        })
+        .catch(function (error) {
+            console.log(error);
+        })
+}
 
 // Returns all data necessary for student lab search
 // student_id - id of the student who's searching

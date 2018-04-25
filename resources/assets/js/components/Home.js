@@ -4,7 +4,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom';
 import axios from 'axios'
-import {uploadPic} from './helpers.js'
+import {uploadPic, uploadResume} from './helpers.js'
 import FormData from 'form-data'
 
 
@@ -15,25 +15,11 @@ class Home extends React.Component {
     }
 
     sendImage() {
-        const fileInput = document.getElementById('fileToUpload'.files[0]);
-        const formData = new FormData();
-        formData.append( 'image', fileInput );
+        uploadPic('student', 1, 'fileToUpload')
+    }
 
-        formData.append('type', 'student');
-        formData.append('id', 1);
-        console.log(formData);
-        const config = {
-            headers: { 'content-type': 'multipart/form-data' }
-        };
-
-        axios.post('api/pics', formData, config)
-            .then(response => {
-                console.log(response.data.message);
-                console.log(response.data.result);
-            })
-            .catch(function (error) {
-                console.log(error);
-            })
+    sendResume() {
+        uploadResume(1, 'fileToUpload');
     }
 
     render() {
@@ -41,7 +27,8 @@ class Home extends React.Component {
             <div>
                 <h1>Home page</h1>
                     <input type="file" name="fileToUpload" id="fileToUpload"></input>
-                    <button onClick={this.sendImage}>Submit</button>
+                    <button onClick={this.sendImage}>Submit Pic</button>
+                    <button onClick={this.sendResume}>Submit Resume</button>
             </div>
         )
     }
