@@ -5,13 +5,14 @@
 import React from "react";
 import { Redirect } from "react-router-dom";
 import axios from 'axios';
-import { cookie } from 'react-cookie'
 import FormData from 'form-data'
 
 axios.defaults.headers.common = {};
-axios.defaults.baseURL = 'http://perch-api.us-east-1.elasticbeanstalk.com';
+axios.defaults.baseURL = 'http://localhost:8000';
 axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
-
+if (sessionStorage.token){
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + sessionStorage.getItem('token');
+}
 
 // AUTHENTICATION //
 
@@ -25,13 +26,7 @@ export function isLoggedIn() {
 }
 
 export function verifyLogin() {
-    return axios.post('api/verify',
-        {
-            headers: {
-                'Authorization': 'Bearer ' + sessionStorage.getItem('token'),
-            }
-        }
-    )
+    return axios.post('api/verify')
         .then(response => {
             console.log(response.data);
             return true;
@@ -113,12 +108,8 @@ export function logoutCurrentUser() {
     // Benji changed this
     sessionStorage.clear()
 
-    return axios.post('api/logout',
-        {
-            headers: {
-                'Authorization': 'Bearer ' + oldToken,
-            }
-        }
+    return axios.post('api/logout'
+
     ).then(response => {
         // cookie.remove('perch_api_key');
         // cookie.remove('perch_user_id');
@@ -197,12 +188,12 @@ export function isFaculty() {
 // Users
 // Base user on website
 // Required:
-    // name - (string) username
-    // email - (string) sign up email
-    // google_id - (int) unique id associated with google account
+// name - (string) username
+// email - (string) sign up email
+// google_id - (int) unique id associated with google account
 // Optional:
-    // is_student - (bool)
-    // is_faculty - (bool)
+// is_student - (bool)
+// is_faculty - (bool)
 
 export function getAllUsers() {
     console.log('Getting users');
@@ -298,25 +289,25 @@ export function getUserLabs(user_id) {
 // Students
 // Student profile
 // Required:
-    //  user_id - (int, foreign) id of User associated with this profile
-    //  first_name - (string)
-    //  last_name - (string)
-    //  email - (string)
-    //  year - (string)
+//  user_id - (int, foreign) id of User associated with this profile
+//  first_name - (string)
+//  last_name - (string)
+//  email - (string)
+//  year - (string)
 // Optional:
-    // experiences - (string, comma separated) names of past research experiences (lab names)
-    // classes - (string, comma separated) names of relevant classes
-    // bio - (text) short bio on student goals
-    // major - (string) degree pursuing
-    // gpa - (double)
-    // linkedin_user - (string) link to linkedin user profile
-    // belongs_to_lab_id - (int, foreign) id of lab on site that student current belongs to
-    // faculty_endorsements - (text) names of endorsing professors
+// experiences - (string, comma separated) names of past research experiences (lab names)
+// classes - (string, comma separated) names of relevant classes
+// bio - (text) short bio on student goals
+// major - (string) degree pursuing
+// gpa - (double)
+// linkedin_user - (string) link to linkedin user profile
+// belongs_to_lab_id - (int, foreign) id of lab on site that student current belongs to
+// faculty_endorsements - (text) names of endorsing professors
 // Associations
-    // Users
-    // Skills
-    // Tags
-    // Labs ("favorited")
+// Users
+// Skills
+// Tags
+// Labs ("favorited")
 
 export function getAllStudents() {
     console.log('Getting students');
@@ -619,15 +610,15 @@ export function removeSchoolCoursesFromStudent(student_id, course_ids) {
 // Faculties
 // Faculty profile
 // Required:
-    // user_id - (int, foreign) id of User associated with this profile
-    // first_name - (string)
-    // last_name - (string)
-    // email - (string) contact email address
+// user_id - (int, foreign) id of User associated with this profile
+// first_name - (string)
+// last_name - (string)
+// email - (string) contact email address
 // Optional:
-    // title - (string) title of position in university (e.g. PI, assistant prof, grad student)
+// title - (string) title of position in university (e.g. PI, assistant prof, grad student)
 // Associations
-    // Users
-    // Labs
+// Users
+// Labs
 
 export function getAllFaculties() {
     console.log('Getting all faculty');
@@ -701,22 +692,22 @@ export function deleteFaculty(faculty_id) {
 // Labs
 // Lab page
 // Required:
-    // name - (string)
-    // department - (string)
-    // description - (text) short description of lab goals
+// name - (string)
+// department - (string)
+// description - (text) short description of lab goals
 // Optional:
-    // publications - (text) description of recent publications
-    // url - (string) url to official lab page
-    // location - (string) location at university
-    // contact_phone - (string)
-    // contact_email - (string)
-    // gpa - (float) desired GPA of applicants
-    // weeklyCommitment - (int) hours/week of commitment expected
+// publications - (text) description of recent publications
+// url - (string) url to official lab page
+// location - (string) location at university
+// contact_phone - (string)
+// contact_email - (string)
+// gpa - (float) desired GPA of applicants
+// weeklyCommitment - (int) hours/week of commitment expected
 // Associations
-    // Skills
-    // Tags
-    // Students
-    // Faculties
+// Skills
+// Tags
+// Students
+// Faculties
 
 export function getAllLabs() {
     console.log('Getting all labs');
@@ -1056,8 +1047,8 @@ export function removeMembersFromLab(lab_id, user_ids) {
 
 // Skills
 // Laboratory skills
-    // name - (string)
-    // description - (string)
+// name - (string)
+// description - (string)
 export function getAllSkills() {
     console.log('Getting all skills');
     return axios.get('api/skills')
@@ -1085,8 +1076,8 @@ export function getSkill(skill_id) {
 
 // Tags
 // Academic subjects/disciplines, areas of study, etc.
-    // name - (string)
-    // description - (string)
+// name - (string)
+// description - (string)
 export function getAllTags() {
     console.log('Getting all tags');
     return axios.get('api/tags')
@@ -1114,8 +1105,8 @@ export function getTag(tag_id) {
 
 // Preferences
 // Lab preferences for applicants
-    // type - (string)
-    // title - (string)
+// type - (string)
+// title - (string)
 export function getAllPreferences() {
     console.log('Getting all preferences');
     return axios.get('api/preferences')
@@ -1131,8 +1122,8 @@ export function getAllPreferences() {
 
 // School Courses
 // University courses
-    // title - (string)
-    // description - (string)
+// title - (string)
+// description - (string)
 export function getAllSchoolCourses() {
     console.log('Getting all school courses');
     return axios.get('api/courses/school')
@@ -1149,11 +1140,11 @@ export function getAllSchoolCourses() {
 
 // Positions
 // Open projects/positions in a lab
-    //  lab_id - (int) id of lab to associate with
-    //  title - (string)
-    //  description -(text)
-    //  time_commitment - (string) short description of time commitment (e.g. 10-12 hours/week)
-    //  open_slots - (int) total open slots for applicants
+//  lab_id - (int) id of lab to associate with
+//  title - (string)
+//  description -(text)
+//  time_commitment - (string) short description of time commitment (e.g. 10-12 hours/week)
+//  open_slots - (int) total open slots for applicants
 // NOTE: Positions must have an application attached to them to make them "live"
 
 export function getAllLabPositions(lab_id) {
@@ -1232,8 +1223,8 @@ export function deleteLabPosition(lab_id, position_ids) {
 
 // Applications
 // Application of questions attached to an open lab position
-    // position_id - (integer)
-    // questions - (array of strings)
+// position_id - (integer)
+// questions - (array of strings)
 
 export function getPositionApplication(position_id) {
     console.log('Getting application');
@@ -1288,9 +1279,9 @@ export function updateApplication(position_id, questions) {
 
 // Application Responses
 // Response to an application for a position, created by a student
-    // student_id
-    // position_id
-    // answers - (array of strings)
+// student_id
+// position_id
+// answers - (array of strings)
 // NOTE: 'create' allows a student to start an application, but it must be 'submitted' for the lab to see
 
 export function createApplicationResponse(student_id, position_id, answers) {
@@ -1426,9 +1417,9 @@ export function submitUserFeedback(user_id, url, feedback) {
 }
 
 // Pictures
-    // type - should be either "student", "faculty", or "lab"
-    // id - based on type, should be the id of that object
-    // input_element_id - (string) name of the html id of the "input" element
+// type - should be either "student", "faculty", or "lab"
+// id - based on type, should be the id of that object
+// input_element_id - (string) name of the html id of the "input" element
 export function uploadPic(type, id, input_element_id) {
     const fileInput = document.getElementById(input_element_id.files[0]);
     const formData = new FormData();
@@ -1452,8 +1443,8 @@ export function uploadPic(type, id, input_element_id) {
 }
 
 // Resumes
-    // student_id - (int)
-    // input_element_id - (string) name of the html id of the "input" element
+// student_id - (int)
+// input_element_id - (string) name of the html id of the "input" element
 
 export function uploadResume(student_id, input_element_id) {
     const fileInput = document.getElementById(input_element_id.files[0]);
@@ -1496,4 +1487,13 @@ export function permissionCheck() {
     let checkLab = getCurrentLabId() === page_id && page_type === 'prof-page'
     let checkStudent = getCurrentUserId() === page_id && page_type === 'student-profile'
     return checkLab || checkStudent;
+}
+
+//// CHANGED BY BENJI
+
+export function returnToProfile() {
+    if (isStudent())
+        window.location = `/student-profile/${getCurrentUserId()}`;
+    else if (isLab())
+        window.location = `/prof-page/${getCurrentLabId()}`;
 }

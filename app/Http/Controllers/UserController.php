@@ -158,7 +158,7 @@ class UserController extends Controller
             return $this->outputJSON(null,"Error: invalid user_id");
         }
         $student = $user->student;
-        if (count($student)) {
+        if ($student != null) {
             return $this->outputJSON($student,"Retrieved student profile of user " . $user->email);
         }
         else {
@@ -171,7 +171,7 @@ class UserController extends Controller
             return $this->outputJSON(null,"Error: invalid user_id");
         }
         $faculty = $user->faculty;
-        if (count($faculty)) {
+        if ($faculty != null) {
             return $this->outputJSON($faculty,"Retrieved faculty profile of user " . $user->email);
         }
         else {

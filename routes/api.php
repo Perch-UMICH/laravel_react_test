@@ -35,6 +35,32 @@ Route::get('login/google/callback', 'Auth\LoginController@handleProviderCallback
 Route::group(['middleware' => 'auth:api'], function(){
     Route::post('verify', 'UserController@verify');
     Route::post('logout', 'UserController@logout');
+
+    // User edits
+    Route::put('users/{user}', 'UserController@update');
+    Route::delete('users/{user}', 'UserController@delete');
+
+    // Student edits
+    Route::post('students/{student}/tags', 'StudentController@add_tag');
+    Route::post('students/{student}/tags/sync', 'StudentController@sync_tags'); // sync -> delete all and replace with only input
+    Route::put('students/{student}/tags', 'StudentController@remove_tag');
+
+    Route::post('students/{student}/skills', 'StudentController@add_skill');
+    Route::post('students/{student}/skills/sync', 'StudentController@sync_skills');
+    Route::put('students/{student}/skills', 'StudentController@remove_skill');
+
+    Route::post('students/{student}/courses/school', 'StudentController@add_school_courses');
+    Route::put('students/{student}/courses/school', 'StudentController@remove_school_courses');
+
+    Route::post('students/{student}/resume', 'StudentController@add_resume');
+
+    // Faculty edits
+    Route::post('faculties', 'FacultyController@store');
+    Route::put('faculties/{faculty}', 'FacultyController@update');
+    Route::delete('faculties/{faculty}', 'FacultyController@destroy');
+
+    // Lab edits
+
 });
 
 Route::post('password/email', 'Auth\ForgotPasswordController@sendResetLink');
@@ -50,8 +76,8 @@ Route::post('password/reset', 'Auth\ResetPasswordController@reset');
 Route::get('users', 'UserController@index');
 Route::post('users/isStudent', 'UserController@isStudent'); // Check if user_id is a student
 Route::get('users/{user}', 'UserController@show');
-Route::put('users/{user}', 'UserController@update');
-Route::delete('users/{user}', 'UserController@delete');
+//Route::put('users/{user}', 'UserController@update');
+//Route::delete('users/{user}', 'UserController@delete');
 
 Route::get('users/{user}/student', 'UserController@get_student_profile');
 Route::get('users/{user}/faculty', 'UserController@get_faculty_profile');
@@ -66,31 +92,30 @@ Route::delete('students/{student}', 'StudentController@destroy'); // Delete a st
 
 // Student tags
 Route::get('students/{student}/tags', 'StudentController@tags'); // Get a student's tags
-Route::post('students/{student}/tags', 'StudentController@add_tag');
-Route::post('students/{student}/tags/sync', 'StudentController@sync_tags'); // sync -> delete all and replace with only input
-Route::put('students/{student}/tags', 'StudentController@remove_tag');
+//Route::post('students/{student}/tags', 'StudentController@add_tag');
+//Route::post('students/{student}/tags/sync', 'StudentController@sync_tags'); // sync -> delete all and replace with only input
+//Route::put('students/{student}/tags', 'StudentController@remove_tag');
 
 // Student skills
 Route::get('students/{student}/skills', 'StudentController@skills'); // Get student's skills
-Route::post('students/{student}/skills', 'StudentController@add_skill');
-Route::post('students/{student}/skills/sync', 'StudentController@sync_skills');
-Route::put('students/{student}/skills', 'StudentController@remove_skill');
+//Route::post('students/{student}/skills', 'StudentController@add_skill');
+//Route::post('students/{student}/skills/sync', 'StudentController@sync_skills');
+//Route::put('students/{student}/skills', 'StudentController@remove_skill');
 
 // Student classes
 Route::get('students/{student}/courses/school', 'StudentController@school_courses');
-Route::post('students/{student}/courses/school', 'StudentController@add_school_courses');
-Route::put('students/{student}/courses/school', 'StudentController@remove_school_courses');
+//Route::post('students/{student}/courses/school', 'StudentController@add_school_courses');
+//Route::put('students/{student}/courses/school', 'StudentController@remove_school_courses');
 
 // Student resume
-Route::post('students/{student}/resume', 'StudentController@add_resume');
+//Route::post('students/{student}/resume', 'StudentController@add_resume');
 
 // FACULTY //
 Route::get('faculties', 'FacultyController@index'); // Get all faculty
 Route::get('faculties/{faculty}', 'FacultyController@show');
-Route::post('faculties', 'FacultyController@store');
-Route::put('faculties/{faculty}', 'FacultyController@update');
-Route::delete('faculties/{faculty}', 'FacultyController@destroy');
-
+//Route::post('faculties', 'FacultyController@store');
+//Route::put('faculties/{faculty}', 'FacultyController@update');
+//Route::delete('faculties/{faculty}', 'FacultyController@destroy');
 
 // LABS //
 
