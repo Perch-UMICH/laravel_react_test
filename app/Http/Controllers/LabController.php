@@ -264,8 +264,24 @@ class LabController extends Controller
 
     public function positions(Lab $lab) {
         $positions = $lab->positions()->get();
+        foreach ($positions as $p) {
+            $p->application;
+        }
         return $this->outputJSON($positions,"Positions from lab retrieved");
     }
+
+    public function application(Request $request) {
+        $input = $request->all();
+        $pos = Position::find($input['position_id']);
+        $application = $pos->application;
+        if (!$application) return $this->outputJSON(null, 'Error: position has no application associated with it');
+        $questions = $application->questions;
+
+        $app = ['base' => $application, 'questions' => $questions];
+        return $this->outputJSON($app, 'Application retrieved');
+    }
+
+
 
 //    public function applications(Lab $lab) {
 //        $applications = $lab->applications()->get();
@@ -339,6 +355,98 @@ class LabController extends Controller
         $position->save();
 
         return $this->outputJSON($position,"Created position " . $position->title . " and added to lab " . $lab->name);
+    }
+
+    public function update_position(Request $request) {
+        $input = $request->all();
+        $input = array_filter($input);
+
+        $position = Position::find($input['position_id']);
+        $position->update($input);
+        $position->save();
+        return $this->outputJSON($position, 'Lab Position updated');
+    }
+
+    public function create_application(Request $request)
+    {
+        $input = $request->all();
+
+        $position = Position::find($input['position_id']);
+        if ($position == null)
+            return $this->outputJSON(null,"Error: invalid position_id");
+
+        $application = new Application();
+        $application->save();
+
+        $position->application()->delete();
+        $position->application()->save($application);
+
+        $questions = $input['questions'];
+        $count = 0;
+        foreach ($questions as $q) {
+            $question = new AppQuestion();
+            $question->question = $q;
+            $question->number = $count;
+            $application->questions()->save($question);
+            $count++;
+        }
+
+        $application->questions;
+
+        return $this->outputJSON($application,"Created application and added to position " . $position->title);
+    }
+
+    public function update_application(Request $request) {
+        $input = $request->all();
+
+        $position = Position::find($input['position_id']);
+        if ($position == null)
+            return $this->outputJSON(null,"Error: invalid position_id");
+
+        $application = $position->application;
+        // Remove old questions
+        foreach($application->questions as $q) {
+            $q->delete();
+        }
+
+        // Add new
+        $questions = $input['questions'];
+        $count = 0;
+        foreach ($questions as $q) {
+            $question = new AppQuestion();
+            $question->question = $q;
+            $question->number = $count;
+            $count++;
+            $question->save();
+            $application->questions()->save($question);
+        }
+
+        $application->questions;
+
+        return $this->outputJSON($application,"Updated application");
+    }
+
+    public function app_responses(Request $request) {
+        $input = $request->all();
+        $position = Position::find($input['position_id']);
+        if ($position == null)
+            return $this->outputJSON(null,"Error: invalid position_id");
+
+        $application = $position->application;
+        if (!$application) return $this->outputJSON(null, 'Error: position has no application associated with it');
+        $responses = $application->responses;
+
+        $response_data = [];
+        $count = 0;
+        foreach ($responses as $response) {
+            if ($response->sent) {
+                $response_data[$count] = Collection::make();
+                $response_data[$count]->put('base', $response);
+                $response_data[$count]->put('answers', $response->answers);
+                $count++;
+            }
+        }
+        return $this->outputJSON($response_data, 'Retrieved responses to this application');
     }
 
 //    public function create_application(Request $request, Lab $lab) {

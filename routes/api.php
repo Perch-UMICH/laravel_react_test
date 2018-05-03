@@ -40,27 +40,71 @@ Route::group(['middleware' => 'auth:api'], function(){
     Route::put('users/{user}', 'UserController@update');
     Route::delete('users/{user}', 'UserController@delete');
 
-    // Student edits
-    Route::post('students/{student}/tags', 'StudentController@add_tag');
-    Route::post('students/{student}/tags/sync', 'StudentController@sync_tags'); // sync -> delete all and replace with only input
-    Route::put('students/{student}/tags', 'StudentController@remove_tag');
-
-    Route::post('students/{student}/skills', 'StudentController@add_skill');
-    Route::post('students/{student}/skills/sync', 'StudentController@sync_skills');
-    Route::put('students/{student}/skills', 'StudentController@remove_skill');
-
-    Route::post('students/{student}/courses/school', 'StudentController@add_school_courses');
-    Route::put('students/{student}/courses/school', 'StudentController@remove_school_courses');
-
-    Route::post('students/{student}/resume', 'StudentController@add_resume');
-
     // Faculty edits
     Route::post('faculties', 'FacultyController@store');
     Route::put('faculties/{faculty}', 'FacultyController@update');
     Route::delete('faculties/{faculty}', 'FacultyController@destroy');
 
-    // Lab edits
+    // Lab creation
+    Route::post('labs', 'LabController@store');
 
+    // Lab edits
+    Route::group(['middleware' => 'lab_owner'], function() {
+        Route::put('labs/{lab}', 'LabController@update');
+        Route::delete('labs/{lab}', 'LabController@destroy');
+
+        Route::post('labs/{lab}/members', 'LabController@add_members');
+        Route::put('labs/{lab}/members', 'LabController@remove_members');
+
+        Route::post('labs/{lab}/skills', 'LabController@add_skill');
+        Route::post('labs/{lab}/skills/sync', 'LabController@sync_skills');
+        Route::put('labs/{lab}/skills', 'LabController@remove_skill');
+
+        Route::post('labs/{lab}/tags', 'LabController@add_tag');
+        Route::post('labs/{lab}/tags/sync', 'LabController@sync_tags');
+        Route::put('labs/{lab}/tags', 'LabController@remove_tag');
+
+        Route::get('labs/{lab}/preferences', 'LabController@preferences');
+        Route::post('labs/{lab}/preferences', 'LabController@add_preference');
+        Route::put('labs/{lab}/preferences', 'LabController@remove_preference');
+
+        Route::post('labs/{lab}/positions', 'LabController@create_position'); // create for lab
+        Route::post('labs/{lab}/positions/update', 'LabController@update_position'); // create for lab
+        Route::post('labs/{lab}/positions/delete', 'LabController@delete_positions'); // delete (also deletes application)
+        Route::post('labs/{lab}/positions/responses', 'LabController@app_responses'); // Get all responses to an application
+
+        Route::post('labs/{lab}/applications', 'LabController@create_application');
+        Route::post('labs/{lab}/applications/update', 'LabController@update_application');
+    });
+
+    // Student creation
+    Route::post('students','StudentController@store'); // Create a student
+
+    // Student edits
+    Route::group(['middleware' => 'student_profile_owner'], function() {
+        Route::get('students/{student}', 'StudentController@show'); // Get student
+        Route::put('students/{student}','StudentController@update'); // Update a student
+        Route::delete('students/{student}', 'StudentController@destroy'); // Delete a student
+
+        Route::post('students/{student}/tags', 'StudentController@add_tag');
+        Route::post('students/{student}/tags/sync', 'StudentController@sync_tags'); // sync -> delete all and replace with only input
+        Route::put('students/{student}/tags', 'StudentController@remove_tag');
+
+        Route::post('students/{student}/skills', 'StudentController@add_skill');
+        Route::post('students/{student}/skills/sync', 'StudentController@sync_skills');
+        Route::put('students/{student}/skills', 'StudentController@remove_skill');
+
+        Route::post('students/{student}/courses/school', 'StudentController@add_school_courses');
+        Route::put('students/{student}/courses/school', 'StudentController@remove_school_courses');
+
+        Route::post('students/{student}/resume', 'StudentController@add_resume');
+
+        Route::get('students/{student}/responses', 'StudentController@app_responses'); // Get student responses
+        Route::post('students/{student}/responses', 'StudentController@create_app_response'); // Create a response
+        Route::post('students/{student}/responses/update', 'StudentController@update_app_response'); // Update a response
+        Route::post('students/{student}/responses/submit', 'StudentController@submit_app_response'); // Submit a response
+        Route::post('students/{student}/responses/delete', 'StudentController@delete_app_response'); // Delete a response
+    });
 });
 
 Route::post('password/email', 'Auth\ForgotPasswordController@sendResetLink');
@@ -85,10 +129,10 @@ Route::get('users/{user}/labs', 'UserController@get_labs');
 
 // STUDENTS (note: {student} means student_id): //
 Route::get('students', 'StudentController@index'); // Get all students
-Route::post('students','StudentController@store'); // Create a student
-Route::get('students/{student}', 'StudentController@show'); // Get student
-Route::put('students/{student}','StudentController@update'); // Update a student
-Route::delete('students/{student}', 'StudentController@destroy'); // Delete a student
+//Route::post('students','StudentController@store'); // Create a student
+//Route::get('students/{student}', 'StudentController@show'); // Get student
+//Route::put('students/{student}','StudentController@update'); // Update a student
+//Route::delete('students/{student}', 'StudentController@destroy'); // Delete a student
 
 // Student tags
 Route::get('students/{student}/tags', 'StudentController@tags'); // Get a student's tags
@@ -126,57 +170,53 @@ Route::post('labs/{lab}', 'LabController@get_lab');
 Route::get('labs', 'LabController@index'); // Get all faculty
 Route::get('labs/{lab}', 'LabController@show');
 
-Route::post('labs', 'LabController@store');
-Route::put('labs/{lab}', 'LabController@update');
-Route::delete('labs/{lab}', 'LabController@destroy');
+//Route::post('labs', 'LabController@store');
+//Route::put('labs/{lab}', 'LabController@update');
+//Route::delete('labs/{lab}', 'LabController@destroy');
 
 
 // Lab Members
 Route::get('labs/{lab}/members', 'LabController@members');
-Route::post('labs/{lab}/members', 'LabController@add_members');
-Route::put('labs/{lab}/members', 'LabController@remove_members');
+//Route::post('labs/{lab}/members', 'LabController@add_members');
+//Route::put('labs/{lab}/members', 'LabController@remove_members');
 
 // Lab skills/tags
 
 Route::get('labs/{lab}/skills', 'LabController@skills');
-Route::post('labs/{lab}/skills', 'LabController@add_skill');
-Route::post('labs/{lab}/skills/sync', 'LabController@sync_skills');
-Route::put('labs/{lab}/skills', 'LabController@remove_skill');
+//Route::post('labs/{lab}/skills', 'LabController@add_skill');
+//Route::post('labs/{lab}/skills/sync', 'LabController@sync_skills');
+//Route::put('labs/{lab}/skills', 'LabController@remove_skill');
 
 Route::get('labs/{lab}/tags', 'LabController@tags');
-Route::post('labs/{lab}/tags', 'LabController@add_tag');
-Route::post('labs/{lab}/tags/sync', 'LabController@sync_tags');
-Route::put('labs/{lab}/tags', 'LabController@remove_tag');
+//Route::post('labs/{lab}/tags', 'LabController@add_tag');
+//Route::post('labs/{lab}/tags/sync', 'LabController@sync_tags');
+//Route::put('labs/{lab}/tags', 'LabController@remove_tag');
 
 Route::get('preferences', 'LabPreferenceController@index');
-Route::get('labs/{lab}/preferences', 'LabController@preferences');
-Route::post('labs/{lab}/preferences', 'LabController@add_preference');
-Route::put('labs/{lab}/preferences', 'LabController@remove_preference');
+//Route::get('labs/{lab}/preferences', 'LabController@preferences');
+//Route::post('labs/{lab}/preferences', 'LabController@add_preference');
+//Route::put('labs/{lab}/preferences', 'LabController@remove_preference');
 
 // POSITIONS //
 Route::get('labs/{lab}/positions', 'LabController@positions'); // get all from lab
-Route::post('labs/{lab}/positions', 'LabController@create_position'); // create for lab
-Route::put('labs/{lab}/positions', 'LabController@delete_positions'); // delete (also deletes application)
+//Route::post('labs/{lab}/positions', 'LabController@create_position'); // create for lab
+//Route::post('labs/{lab}/positions/update', 'LabController@update_position'); // create for lab
+//Route::post('labs/{lab}/positions/delete', 'LabController@delete_positions'); // delete (also deletes application)
 
-Route::get('positions/{position}', 'PositionController@show'); // get individual
-Route::put('positions/{position}','PositionController@update'); // update
 
 // Applications
 Route::get('positions/{position}/application', 'PositionController@application'); // get from position
-Route::post('positions/{position}/application', 'PositionController@create_application'); // create for position
-Route::put('positions/{position}/application', 'PositionController@update_application'); // update (app and questions)
+//Route::post('labs/{lab}/applications', 'LabController@create_application');
+//Route::post('labs/{lab}/applications/update', 'LabController@update_application');
+//Route::get('labs/{lab}/positions/responses', 'LabController@app_responses'); // Get all responses to an application
 
-Route::get('questions', 'ApplicationController@public_questions'); // get public questions
 
-// Response
-Route::get('students/{student}/responses', 'StudentController@app_responses'); // Get student responses
-Route::post('students/{student}/responses', 'StudentController@create_app_response'); // Create a response
-Route::post('students/{student}/responses/update', 'StudentController@update_app_response'); // Update a response
-Route::post('students/{student}/responses/submit', 'StudentController@submit_app_response'); // Submit a response
-Route::post('students/{student}/responses/delete', 'StudentController@delete_app_response'); // Delete a response
-
-Route::get('positions/{position}/application/responses', 'PositionController@app_responses'); // Get all responses to an application
-
+// Responses
+//Route::get('students/{student}/responses', 'StudentController@app_responses'); // Get student responses
+//Route::post('students/{student}/responses', 'StudentController@create_app_response'); // Create a response
+//Route::post('students/{student}/responses/update', 'StudentController@update_app_response'); // Update a response
+//Route::post('students/{student}/responses/submit', 'StudentController@submit_app_response'); // Submit a response
+//Route::post('students/{student}/responses/delete', 'StudentController@delete_app_response'); // Delete a response
 
 // METADATA //
 

@@ -2,6 +2,8 @@
 
 namespace App\Http;
 
+use App\Http\Middleware\LabOwner;
+use App\Http\Middleware\StudentProfileOwner;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -58,5 +60,7 @@ class Kernel extends HttpKernel
         'can' => \Illuminate\Auth\Middleware\Authorize::class,
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
+        'lab_owner' => LabOwner::class,
+        'student_profile_owner' => StudentProfileOwner::class,
     ];
 }

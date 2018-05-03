@@ -1187,11 +1187,10 @@ export function createLabPosition(lab_id, title, description, time_commitment, o
         })
 }
 
-export function updateLabPosition(position_id, title, description, time_commitment, open_slots) {
+export function updateLabPosition(lab_id, position_id, title, description, time_commitment, open_slots) {
     console.log('Updating position');
-    let _method = 'PUT';
 
-    return axios.post('api/positions/' + position_id, {_method, title, description, time_commitment, open_slots})
+    return axios.post('api/labs/' + lab_id + '/positions/update', {position_id, title, description, time_commitment, open_slots})
         .then(response => {
             console.log(response.data.message);
             return response.data.result;
@@ -1206,11 +1205,10 @@ export function deleteLabPosition(lab_id, position_ids) {
     console.log('Deleting positions');
 
     let payload = {
-        position_ids: position_ids,
-        _method: 'PUT'
+        position_ids: position_ids
     };
 
-    return axios.post('api/labs/' + lab_id + '/positions', payload)
+    return axios.post('api/labs/' + lab_id + '/positions/delete', payload)
         .then(response => {
             console.log(response.data.message);
             return response.data.result;
@@ -1240,14 +1238,15 @@ export function getPositionApplication(position_id) {
         })
 }
 
-export function createApplication(position_id, questions) {
+export function createApplication(lab_id, position_id, questions) {
     console.log('Creating application');
 
     let payload = {
+        position_id: position_id,
         questions: questions
     };
 
-    return axios.post('api/positions/' + position_id + '/application', payload)
+    return axios.post('api/labs/' + lab_id + '/applications', payload)
         .then(response => {
             console.log(response.data.message);
             return response.data.result;
@@ -1258,15 +1257,29 @@ export function createApplication(position_id, questions) {
         })
 }
 
-export function updateApplication(position_id, questions) {
+export function updateApplication(lab_id, position_id, questions) {
     console.log('Creating application');
 
     let payload = {
-        _method: 'PUT',
+        position_id: position_id,
         questions: questions
     };
 
-    return axios.post('api/positions/' + position_id + '/application', payload)
+    return axios.post('api/labs/' + lab_id + '/applications/update', payload)
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+// Gets ApplicationResponses to a particular position
+export function getLabPositionApplicants(lab_id, position_id) {
+    console.log('Getting application responses');
+    return axios.post('api/labs/' + lab_id + '/positions/responses', {position_id})
         .then(response => {
             console.log(response.data.message);
             return response.data.result;
@@ -1371,20 +1384,6 @@ export function getStudentPendingResponses(student_id) {
     };
 
     return axios.get('api/students/' + student_id + '/responses', payload)
-        .then(response => {
-            console.log(response.data.message);
-            return response.data.result;
-        })
-        .catch(function (error) {
-            console.log(error);
-            return [];
-        })
-}
-
-// Gets ApplicationResponses to a particular position
-export function getLabPositionApplicants(position_id) {
-    console.log('Getting application responses');
-    return axios.get('api/positions/' + position_id + '/application/responses')
         .then(response => {
             console.log(response.data.message);
             return response.data.result;
