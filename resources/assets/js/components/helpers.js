@@ -349,8 +349,11 @@ export function createStudent(user_id, first_name, last_name, major, year, gpa, 
         })
 }
 
-export function updateStudent(student_id, first_name, last_name, major, year, gpa, email, bio, experiences, classes, faculty_endorsement_id) {
+// RESTRICTED: student_id
+export function updateStudent(first_name, last_name, major, year, gpa, email, bio, experiences, classes, faculty_endorsement_id) {
     console.log('Updating student');
+
+    let student_id = sessionStorage.getItem('student_id');
     let _method = 'PUT';
     return axios.post('api/students/' + student_id, {_method, student_id, first_name, last_name, major, year, gpa, email, bio, experiences, classes, faculty_endorsement_id})
         .then(response => {
@@ -363,8 +366,11 @@ export function updateStudent(student_id, first_name, last_name, major, year, gp
         })
 }
 
-export function deleteStudent(student_id) {
+// RESTRICTED: student_id
+export function deleteStudent() {
     console.log('Deleting student');
+
+    let student_id = sessionStorage.getItem('student_id');
     return axios.delete('api/students/' + student_id)
         .then(response => {
             console.log(response.data.message);
@@ -390,9 +396,11 @@ export function getStudentSkills(student_id) {
         })
 }
 
-export function addSkillsToStudent(student_id, skill_ids) {
+// RESTRICTED: student_id
+export function addSkillsToStudent(skill_ids) {
     console.log('Adding skills to student');
 
+    let student_id = sessionStorage.getItem('student_id');
     let payload = {
         skill_ids: skill_ids
     };
@@ -407,9 +415,11 @@ export function addSkillsToStudent(student_id, skill_ids) {
         })
 }
 
-export function syncSkillsToStudent(student_id, skill_ids) {
+// RESTRICTED: student_id
+export function syncSkillsToStudent(skill_ids) {
     console.log('Syncing skills to student');
 
+    let student_id = sessionStorage.getItem('student_id');
     let payload = {
         skill_ids: skill_ids
     };
@@ -424,9 +434,11 @@ export function syncSkillsToStudent(student_id, skill_ids) {
         })
 }
 
-export function removeSkillsFromStudent(student_id, skill_ids) {
+// RESTRICTED: student_id
+export function removeSkillsFromStudent(skill_ids) {
     console.log('Removing skills from student');
 
+    let student_id = sessionStorage.getItem('student_id');
     let payload = {
         skill_ids: skill_ids,
         _method: 'PUT'
@@ -456,9 +468,11 @@ export function getStudentTags(student_id) {
         })
 }
 
-export function addTagsToStudent(student_id, tag_ids) {
+// RESTRICTED: student_id
+export function addTagsToStudent(tag_ids) {
     console.log('Adding tags to student');
 
+    let student_id = sessionStorage.getItem('student_id');
     let payload = {
         tag_ids: tag_ids
     };
@@ -473,9 +487,11 @@ export function addTagsToStudent(student_id, tag_ids) {
         })
 }
 
-export function syncTagsToStudent(student_id, tag_ids) {
+// RESTRICTED: student_id
+export function syncTagsToStudent(tag_ids) {
     console.log('Syncing tags to student');
 
+    let student_id = sessionStorage.getItem('student_id');
     let payload = {
         tag_ids: tag_ids
     };
@@ -490,9 +506,11 @@ export function syncTagsToStudent(student_id, tag_ids) {
         })
 }
 
-export function removeTagsFromStudent(student_id, tag_ids) {
+// RESTRICTED: student_id
+export function removeTagsFromStudent(tag_ids) {
     console.log('Removing tags from student');
 
+    let student_id = sessionStorage.getItem('student_id');
     let payload = {
         tag_ids: tag_ids,
         _method: 'PUT'
@@ -522,9 +540,11 @@ export function getStudentFavLabs(student_id) {
         })
 }
 
-export function addFavLabsToStudent(student_id, lab_ids) {
+// RESTRICTED: student_id
+export function addFavLabsToStudent(lab_ids) {
     console.log('Adding favorite lab to student');
 
+    let student_id = sessionStorage.getItem('student_id');
     let payload = {
         tag_ids: lab_ids
     };
@@ -539,9 +559,11 @@ export function addFavLabsToStudent(student_id, lab_ids) {
         })
 }
 
-export function removeFavLabsFromStudent(student_id, lab_ids) {
+// RESTRICTED: student_id
+export function removeFavLabsFromStudent(lab_ids) {
     console.log('Removing favorite lab from student');
 
+    let student_id = sessionStorage.getItem('student_id');
     let payload = {
         tag_ids: lab_ids,
         _method: 'PUT'
@@ -558,53 +580,53 @@ export function removeFavLabsFromStudent(student_id, lab_ids) {
 }
 
 
-export function getStudentSchoolCourses(student_id) {
-    console.log('Getting student school courses');
-    return axios.get('api/students/' + student_id + '/courses/school')
-        .then(response => {
-            console.log(response.data.message);
-            return response.data.result;
-        })
-        .catch(function (error) {
-            console.log(error);
-            return [];
-        })
-}
-
-export function addSchoolCoursesToStudent(student_id, course_ids) {
-    console.log('Adding school courses to student');
-
-    let payload = {
-        course_ids: course_ids
-    };
-    return axios.post('api/students/' + student_id + '/courses/school', payload)
-        .then(response => {
-            console.log(response.data.message);
-            return response.data.result;
-        })
-        .catch(function (error) {
-            console.log(error);
-            return [];
-        })
-}
-
-export function removeSchoolCoursesFromStudent(student_id, course_ids) {
-    console.log('Removing school courses from student');
-
-    let payload = {
-        _method: 'PUT',
-        course_ids: course_ids
-    };
-    return axios.post('api/students/' + student_id + '/courses/school', payload)
-        .then(response => {
-            console.log(response.data.message);
-            return response.data.result;
-        })
-        .catch(function (error) {
-            console.log(error);
-            return [];
-        })
-}
+// export function getStudentSchoolCourses(student_id) {
+//     console.log('Getting student school courses');
+//     return axios.get('api/students/' + student_id + '/courses/school')
+//         .then(response => {
+//             console.log(response.data.message);
+//             return response.data.result;
+//         })
+//         .catch(function (error) {
+//             console.log(error);
+//             return [];
+//         })
+// }
+//
+// export function addSchoolCoursesToStudent(student_id, course_ids) {
+//     console.log('Adding school courses to student');
+//
+//     let payload = {
+//         course_ids: course_ids
+//     };
+//     return axios.post('api/students/' + student_id + '/courses/school', payload)
+//         .then(response => {
+//             console.log(response.data.message);
+//             return response.data.result;
+//         })
+//         .catch(function (error) {
+//             console.log(error);
+//             return [];
+//         })
+// }
+//
+// export function removeSchoolCoursesFromStudent(student_id, course_ids) {
+//     console.log('Removing school courses from student');
+//
+//     let payload = {
+//         _method: 'PUT',
+//         course_ids: course_ids
+//     };
+//     return axios.post('api/students/' + student_id + '/courses/school', payload)
+//         .then(response => {
+//             console.log(response.data.message);
+//             return response.data.result;
+//         })
+//         .catch(function (error) {
+//             console.log(error);
+//             return [];
+//         })
+// }
 
 // FACULTY //
 
@@ -779,8 +801,10 @@ export function createLab(faculty_id, name, department, location, description, p
         })
 }
 
-export function updateLab(lab_id, name, department, location, description, publications, url, gpa, weeklyCommitment, contact_phone, contact_email) {
+// RESTRICTED: lab_id
+export function updateLab(name, department, location, description, publications, url, gpa, weeklyCommitment, contact_phone, contact_email) {
     console.log('Updating lab');
+    let lab_id = sessionStorage.getItem('lab_id');
     let _method = 'PUT';
     return axios.post('api/labs/' + lab_id, {_method, lab_id, name, department, location, description, publications, url, gpa, weeklyCommitment, contact_phone, contact_email})
         .then(response => {
@@ -793,8 +817,11 @@ export function updateLab(lab_id, name, department, location, description, publi
         })
 }
 
-export function deleteLab(lab_id) {
+// RESTRICTED: lab_id
+export function deleteLab() {
     console.log('Deleting lab');
+
+    let lab_id = sessionStorage.getItem('lab_id');
     return axios.delete('api/labs/' + lab_id)
         .then(response => {
             console.log(response.data.message);
@@ -820,9 +847,11 @@ export function getLabSkills(lab_id) {
         })
 }
 
-export function addSkillsToLab(lab_id, skill_ids) {
+// RESTRICTED: lab_id
+export function addSkillsToLab(skill_ids) {
     console.log('Adding skills to lab');
 
+    let lab_id = sessionStorage.getItem('lab_id');
     let payload = {
         skill_ids: skill_ids
     };
@@ -837,9 +866,11 @@ export function addSkillsToLab(lab_id, skill_ids) {
         })
 }
 
-export function syncSkillsToLab(lab_id, skill_ids) {
+// RESTRICTED: lab_id
+export function syncSkillsToLab(skill_ids) {
     console.log('Syncing skills to lab');
 
+    let lab_id = sessionStorage.getItem('lab_id');
     let payload = {
         skill_ids: skill_ids
     };
@@ -854,9 +885,11 @@ export function syncSkillsToLab(lab_id, skill_ids) {
         })
 }
 
-export function removeSkillsFromLab(lab_id, skill_ids) {
+// RESTRICTED: lab_id
+export function removeSkillsFromLab(skill_ids) {
     console.log('Removing skills from lab');
 
+    let lab_id = sessionStorage.getItem('lab_id');
     let payload = {
         skill_ids: skill_ids,
         _method: 'PUT'
@@ -886,9 +919,11 @@ export function getLabTags(lab_id) {
         })
 }
 
-export function addTagsToLab(lab_id, tag_ids) {
+// RESTRICTED: lab_id
+export function addTagsToLab(tag_ids) {
     console.log('Adding tags to lab');
 
+    let lab_id = sessionStorage.getItem('lab_id');
     let payload = {
         tag_ids: tag_ids
     };
@@ -903,9 +938,11 @@ export function addTagsToLab(lab_id, tag_ids) {
         })
 }
 
-export function syncTagsToLab(lab_id, tag_ids) {
+// RESTRICTED: lab_id
+export function syncTagsToLab(tag_ids) {
     console.log('Syncing tags to lab');
 
+    let lab_id = sessionStorage.getItem('lab_id');
     let payload = {
         tag_ids: tag_ids
     };
@@ -920,9 +957,11 @@ export function syncTagsToLab(lab_id, tag_ids) {
         })
 }
 
-export function removeTagsFromLab(lab_id, tag_ids) {
+// RESTRICTED: lab_id
+export function removeTagsFromLab(tag_ids) {
     console.log('Removing tag from lab');
 
+    let lab_id = sessionStorage.getItem('lab_id');
     let payload = {
         tag_ids: tag_ids,
         _method: 'PUT'
@@ -952,9 +991,11 @@ export function getLabPreferences(lab_id) {
         })
 }
 
-export function addPreferencesToLab(lab_id, preference_ids) {
+// RESTRICTED: lab_id
+export function addPreferencesToLab(preference_ids) {
     console.log('Adding preferences to lab');
 
+    let lab_id = sessionStorage.getItem('lab_id');
     let payload = {
         tag_ids: preference_ids
     };
@@ -969,9 +1010,11 @@ export function addPreferencesToLab(lab_id, preference_ids) {
         })
 }
 
-export function removePreferencesFromLab(lab_id, preference_ids) {
+// RESTRICTED: lab_id
+export function removePreferencesFromLab(preference_ids) {
     console.log('Removing preferences from lab');
 
+    let lab_id = sessionStorage.getItem('lab_id');
     let payload = {
         tag_ids: preference_ids,
         _method: 'PUT'
@@ -1008,9 +1051,11 @@ export function getLabMembers(lab_id) {
 }
 
 // Order of role_ids should correspond with order of user_ids (same size)
-export function addMembersToLab(lab_id, user_ids, role_ids) {
+// RESTRICTED: lab_id
+export function addMembersToLab(user_ids, role_ids) {
     console.log('Adding members to lab');
 
+    let lab_id = sessionStorage.getItem('lab_id');
     let payload = {
         user_ids: user_ids,
         role_ids: role_ids
@@ -1026,9 +1071,11 @@ export function addMembersToLab(lab_id, user_ids, role_ids) {
         })
 }
 
-export function removeMembersFromLab(lab_id, user_ids) {
+// RESTRICTED: lab_id
+export function removeMembersFromLab(user_ids) {
     console.log('Removing members from lab');
 
+    let lab_id = sessionStorage.getItem('lab_id');
     let payload = {
         _method: 'PUT',
         user_ids: user_ids
@@ -1174,8 +1221,11 @@ export function getLabPosition(position_id) {
         })
 }
 
-export function createLabPosition(lab_id, title, description, time_commitment, open_slots) {
+// RESTRICTED: lab_id
+export function createLabPosition(title, description, time_commitment, open_slots) {
     console.log('Creating position for lab');
+
+    let lab_id = sessionStorage.getItem('lab_id');
 
     return axios.post('api/labs/' + lab_id + '/positions', {title, description, time_commitment, open_slots})
         .then(response => {
@@ -1188,9 +1238,11 @@ export function createLabPosition(lab_id, title, description, time_commitment, o
         })
 }
 
-export function updateLabPosition(lab_id, position_id, title, description, time_commitment, open_slots) {
+// RESTRICTED: lab_id
+export function updateLabPosition(position_id, title, description, time_commitment, open_slots) {
     console.log('Updating position');
 
+    let lab_id = sessionStorage.getItem('lab_id');
     return axios.post('api/labs/' + lab_id + '/positions/update', {position_id, title, description, time_commitment, open_slots})
         .then(response => {
             console.log(response.data.message);
@@ -1202,9 +1254,11 @@ export function updateLabPosition(lab_id, position_id, title, description, time_
         })
 }
 
-export function deleteLabPosition(lab_id, position_ids) {
+// RESTRICTED: lab_id
+export function deleteLabPosition(position_ids) {
     console.log('Deleting positions');
 
+    let lab_id = sessionStorage.getItem('lab_id');
     let payload = {
         position_ids: position_ids
     };
@@ -1239,8 +1293,11 @@ export function getPositionApplication(position_id) {
         })
 }
 
-export function createApplication(lab_id, position_id, questions) {
+// RESTRICTED: lab_id
+export function createApplication(position_id, questions) {
     console.log('Creating application');
+
+    let lab_id = sessionStorage.getItem('lab_id');
 
     let payload = {
         position_id: position_id,
@@ -1258,8 +1315,11 @@ export function createApplication(lab_id, position_id, questions) {
         })
 }
 
-export function updateApplication(lab_id, position_id, questions) {
+// RESTRICTED: lab_id
+export function updateApplication(position_id, questions) {
     console.log('Creating application');
+
+    let lab_id = sessionStorage.getItem('lab_id');
 
     let payload = {
         position_id: position_id,
@@ -1278,7 +1338,11 @@ export function updateApplication(lab_id, position_id, questions) {
 }
 
 // Gets ApplicationResponses to a particular position
-export function getLabPositionApplicants(lab_id, position_id) {
+// RESTRICTED: lab_id
+export function getLabPositionApplicants(position_id) {
+
+    let lab_id = sessionStorage.getItem('lab_id');
+
     console.log('Getting application responses');
     return axios.post('api/labs/' + lab_id + '/positions/responses', {position_id})
         .then(response => {
@@ -1298,8 +1362,11 @@ export function getLabPositionApplicants(lab_id, position_id) {
 // answers - (array of strings)
 // NOTE: 'create' allows a student to start an application, but it must be 'submitted' for the lab to see
 
-export function createApplicationResponse(student_id, position_id, answers) {
+// RESTRICTED: student_id
+export function createApplicationResponse(position_id, answers) {
     console.log('Creating application response');
+
+    let student_id = sessionStorage.getItem('student_id');
 
     let payload = {
         student_id: student_id,
@@ -1318,8 +1385,11 @@ export function createApplicationResponse(student_id, position_id, answers) {
         })
 }
 
-export function updateApplicationResponse(student_id, application_response_id, answers) {
+// RESTRICTED: student_id
+export function updateApplicationResponse(application_response_id, answers) {
     console.log('Updating application response');
+
+    let student_id = sessionStorage.getItem('student_id');
 
     let payload = {
         student_id: student_id,
@@ -1338,8 +1408,11 @@ export function updateApplicationResponse(student_id, application_response_id, a
         })
 }
 
-export function submitApplicationResponse(student_id, application_response_id) {
+// RESTRICTED: student_id
+export function submitApplicationResponse(application_response_id) {
     console.log('Submitting application response');
+
+    let student_id = sessionStorage.getItem('student_id');
 
     let payload = {
         student_id: student_id,
@@ -1357,8 +1430,11 @@ export function submitApplicationResponse(student_id, application_response_id) {
         })
 }
 
-export function deleteApplicationResponse(student_id, application_response_id) {
+// RESTRICTED: student_id
+export function deleteApplicationResponse(application_response_id) {
     console.log('Deleting application response');
+
+    let student_id = sessionStorage.getItem('student_id');
 
     let payload = {
         student_id: student_id,
@@ -1377,9 +1453,11 @@ export function deleteApplicationResponse(student_id, application_response_id) {
 }
 
 // Gets responses that haven't yet been submitted (in progress)
-export function getStudentPendingResponses(student_id) {
+// RESTRICTED: student_id
+export function getStudentPendingResponses() {
     console.log('Getting application response');
 
+    let student_id = sessionStorage.getItem('student_id');
     let payload = {
         student_id: student_id
     };
