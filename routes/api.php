@@ -82,7 +82,7 @@ Route::group(['middleware' => 'auth:api'], function(){
 
     // Student edits
     Route::group(['middleware' => 'student_profile_owner'], function() {
-        Route::get('students/{student}', 'StudentController@show'); // Get student
+        //Route::get('students/{student}', 'StudentController@show'); // Get student
         Route::put('students/{student}','StudentController@update'); // Update a student
         Route::delete('students/{student}', 'StudentController@destroy'); // Delete a student
 
@@ -130,7 +130,7 @@ Route::get('users/{user}/labs', 'UserController@get_labs');
 // STUDENTS (note: {student} means student_id): //
 Route::get('students', 'StudentController@index'); // Get all students
 //Route::post('students','StudentController@store'); // Create a student
-//Route::get('students/{student}', 'StudentController@show'); // Get student
+Route::get('students/{student}', 'StudentController@show'); // Get student
 //Route::put('students/{student}','StudentController@update'); // Update a student
 //Route::delete('students/{student}', 'StudentController@destroy'); // Delete a student
 
