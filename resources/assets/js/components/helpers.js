@@ -8,7 +8,8 @@ import axios from 'axios';
 import FormData from 'form-data'
 
 axios.defaults.headers.common = {};
-axios.defaults.baseURL = 'http://perch-api.us-east-1.elasticbeanstalk.com';
+// axios.defaults.baseURL = 'http://perch-api.us-east-1.elasticbeanstalk.com';
+axios.defaults.baseURL = 'http://perchapi-test.us-east-1.elasticbeanstalk.com/';
 //axios.defaults.baseURL = 'http://localhost:8000';
 axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 if (sessionStorage.token){
@@ -1578,4 +1579,8 @@ export function returnToProfile() {
         window.location = `/student-profile/${getCurrentUserId()}`;
     else if (isLab())
         window.location = `/prof-page/${getCurrentLabId()}`;
+}
+
+export function exists(item) {
+    return item ? true : false;
 }
