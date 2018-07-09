@@ -17,10 +17,10 @@ class Lab extends Model
         return $this->belongsToMany('App\Tag', 'lab_tag');
     }
 
-    // Favoriters
-    public function students() {
-        return $this->belongsToMany('App\Student', 'lab_student');
-    }
+//    // Favoriters
+//    public function students() {
+//        return $this->belongsToMany('App\Student', 'lab_student');
+//    }
 
     public function members() {
         return $this->belongsToMany('App\User', 'lab_user')->withPivot('user_id', 'lab_id', 'role');

@@ -11,6 +11,7 @@ use App\Student;
 
 class SearchController extends Controller
 {
+    // OLD
     public function get_search_data(Request $request) {
         $input = $request->all();
 
@@ -46,5 +47,55 @@ class SearchController extends Controller
         ];
 
         return $this->outputJSON($search_data,"Search data retrieved");
+    }
+
+    public function get_search_data_urop(Request $request)
+    {
+        $skills = ['Lab - Animal', 'Lab Research', 'Computer Programming', 'Data Collection and Analysis', 'Clinical Research', 'Community Research', 'Library/archival/internet Research', 'Experimental Research', 'Field Work'];
+        $areas = ['Social Sciences', 'Health Sciences', 'Engineering', 'Arts & Humanities', 'Life Sciences', 'Natural Sciences', 'Environmental Sciences', 'Public Health'];
+        $commitments = [6, 8, 10, 12];
+
+        $projects = Position::all();
+        $departments = [];
+        $classifications = [];
+        $sub_categories = [];
+        foreach ($projects as $p) {
+            $urop = $p->urop_position;
+            $class = $urop->classificiation;
+            $cat = $urop->sub_category;
+            $dept = $urop->dept;
+            if (array_unique($departments, $dept)) {
+                $departments[] = $dept;
+            }
+            if (array_unique($classifications, $class)) {
+                $classifications[] = $class;
+            }
+            if (array_unique($sub_categories, $cat)) {
+                $sub_categories[] = $cat;
+            }
+        }
+
+        $search_data = [
+            'available_skills' => $sub_categories,
+            'available_areas' => $classifications,
+            'all_commitments' => $commitments
+        ];
+
+        return $this->outputJSON($search_data,"Search data retrieved");
+
+    }
+
+    public function search_urop(Request $request)
+    {
+        // commitment
+        // skills
+        // tags
+        // department
+        $input = $request->all();
+        $commitment = $input['commitment'];
+        $skills = $input['skills'];
+        $tags = $input['tags'];
+        $departments = $input['departments'];
+
     }
 }

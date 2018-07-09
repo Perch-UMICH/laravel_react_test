@@ -76,82 +76,82 @@ class PositionController extends Controller
         return $this->outputJSON(null, 'Lab Position deleted');
     }
 
-    // Applications
-    public function application(Position $position) {
-        $application = $position->application;
-        if (!$application) return $this->outputJSON(null, 'Error: position has no application associated with it');
-        $questions = $application->questions;
-
-        $app = ['base' => $application, 'questions' => $questions];
-        return $this->outputJSON($app, 'Application retrieved');
-    }
-
-    public function create_application(Position $position, Request $request)
-    {
-        $input = $request->all();
-
-        $application = new Application();
-        $application->save();
-
-        $position->application()->delete();
-        $position->application()->save($application);
-
-        $questions = $input['questions'];
-        $count = 0;
-        foreach ($questions as $q) {
-            $question = new AppQuestion();
-            $question->question = $q;
-            $question->number = $count;
-            $application->questions()->save($question);
-            $count++;
-        }
-
-        return $this->outputJSON($application,"Created application and added to position " . $position->title);
-    }
-
-    public function update_application(Position $position, Request $request) {
-        $input = $request->all();
-
-        $application = $position->application;
-        // Remove old questions
-        foreach($application->questions as $q) {
-            $q->delete();
-        }
-
-        // Add new
-        $questions = $input['questions'];
-        $count = 0;
-        foreach ($questions as $q) {
-            $question = new AppQuestion();
-            $question->question = $q;
-            $question->number = $count;
-            $count++;
-            $question->save();
-            $application->questions()->save($question);
-        }
-
-        $questions = $application->questions;
-        $app = ['base' => $application, 'questions' => $questions];
-
-        return $this->outputJSON($app,"Updated application");
-    }
-
-    public function app_responses(Position $position)
-    {
-        $application = $position->application;
-        if (!$application) return $this->outputJSON(null, 'Error: position has no application associated with it');
-        $responses = $application->responses;
-
-        $response_data = [];
-        $count = 0;
-        foreach ($responses as $response) {
-            if ($response->sent) {
-                $response_data[$count] = Collection::make();
-                $response_data[$count]->put('base', $response);
-                $response_data[$count]->put('answers', $response->answers);
-                $count++;
-            }
-        }
-        return $this->outputJSON($response_data, 'Retrieved responses to this application');
-    }
+//    // Applications
+//    public function application(Position $position) {
+//        $application = $position->application;
+//        if (!$application) return $this->outputJSON(null, 'Error: position has no application associated with it');
+//        $questions = $application->questions;
+//
+//        $app = ['base' => $application, 'questions' => $questions];
+//        return $this->outputJSON($app, 'Application retrieved');
+//    }
+//
+//    public function create_application(Position $position, Request $request)
+//    {
+//        $input = $request->all();
+//
+//        $application = new Application();
+//        $application->save();
+//
+//        $position->application()->delete();
+//        $position->application()->save($application);
+//
+//        $questions = $input['questions'];
+//        $count = 0;
+//        foreach ($questions as $q) {
+//            $question = new AppQuestion();
+//            $question->question = $q;
+//            $question->number = $count;
+//            $application->questions()->save($question);
+//            $count++;
+//        }
+//
+//        return $this->outputJSON($application,"Created application and added to position " . $position->title);
+//    }
+//
+//    public function update_application(Position $position, Request $request) {
+//        $input = $request->all();
+//
+//        $application = $position->application;
+//        // Remove old questions
+//        foreach($application->questions as $q) {
+//            $q->delete();
+//        }
+//
+//        // Add new
+//        $questions = $input['questions'];
+//        $count = 0;
+//        foreach ($questions as $q) {
+//            $question = new AppQuestion();
+//            $question->question = $q;
+//            $question->number = $count;
+//            $count++;
+//            $question->save();
+//            $application->questions()->save($question);
+//        }
+//
+//        $questions = $application->questions;
+//        $app = ['base' => $application, 'questions' => $questions];
+//
+//        return $this->outputJSON($app,"Updated application");
+//    }
+//
+//    public function app_responses(Position $position)
+//    {
+//        $application = $position->application;
+//        if (!$application) return $this->outputJSON(null, 'Error: position has no application associated with it');
+//        $responses = $application->responses;
+//
+//        $response_data = [];
+//        $count = 0;
+//        foreach ($responses as $response) {
+//            if ($response->sent) {
+//                $response_data[$count] = Collection::make();
+//                $response_data[$count]->put('base', $response);
+//                $response_data[$count]->put('answers', $response->answers);
+//                $count++;
+//            }
+//        }
+//        return $this->outputJSON($response_data, 'Retrieved responses to this application');
+//    }
 }

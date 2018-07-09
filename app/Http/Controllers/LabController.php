@@ -281,8 +281,6 @@ class LabController extends Controller
         return $this->outputJSON($app, 'Application retrieved');
     }
 
-
-
 //    public function applications(Lab $lab) {
 //        $applications = $lab->applications()->get();
 //        $application_data = [];

@@ -13,8 +13,22 @@ class Position extends Model
         return $this->belongsTo('App\Lab');
     }
 
+    public function urop_position()
+    {
+        return $this->hasOne('App\UropPosition');
+
+    }
+
     public function application()
     {
         return $this->hasOne('App\Application');
+    }
+
+    public function skills() {
+        return $this->belongsToMany('App\Skill', 'position_skill');
+    }
+
+    public function tags() {
+        return $this->belongsToMany('App\Tag', 'position_tag');
     }
 }
