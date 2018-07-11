@@ -243,5 +243,7 @@ Route::get('feedback', 'FeedbackController@index');
 Route::post('feedback', 'FeedbackController@store');
 
 // Search
-Route::post('search', 'SearchController@get_search_data');
+Route::get('search_data', 'SearchController@get_search_data_urop');
+Route::post('search', 'SearchController@search_urop');
+
 

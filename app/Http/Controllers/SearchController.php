@@ -61,23 +61,19 @@ class SearchController extends Controller
         $sub_categories = [];
         foreach ($projects as $p) {
             $urop = $p->urop_position;
-            $class = $urop->classificiation;
+            $class = $urop->classification;
             $cat = $urop->sub_category;
             $dept = $urop->dept;
-            if (array_unique($departments, $dept)) {
-                $departments[] = $dept;
-            }
-            if (array_unique($classifications, $class)) {
-                $classifications[] = $class;
-            }
-            if (array_unique($sub_categories, $cat)) {
-                $sub_categories[] = $cat;
-            }
+
+            $departments[] = $dept;
+            $classifications[] = $class;
+            $sub_categories[] = $cat;
         }
 
         $search_data = [
-            'available_skills' => $sub_categories,
-            'available_areas' => $classifications,
+            'available_skills' => array_unique($sub_categories),
+            'available_areas' => array_unique($classifications),
+            'available_departments' => array_unique($departments),
             'all_commitments' => $commitments
         ];
 
@@ -92,10 +88,75 @@ class SearchController extends Controller
         // tags
         // department
         $input = $request->all();
-        $commitment = $input['commitment'];
-        $skills = $input['skills'];
-        $tags = $input['tags'];
-        $departments = $input['departments'];
+        $commitments = $input['commitments']; // 6 8 10 12
+        $skills = $input['skills']; // sub_cats
+        $tags = $input['tags']; // classes
+        $departments = $input['departments']; // depts
+        $keywords = $input['keywords'];
 
+        $projects = Position::all();
+        $selected = [];
+
+        foreach ($projects as $p) {
+            $urop = $p->urop_position;
+            $commitment = $p->min_time_commitment;
+            $desc = $p->description;
+
+            $class = $urop->classification;
+            $cat = $urop->sub_category;
+            $dept = $urop->dept;
+            if (empty($commitments) || in_array($commitment, $commitments)) {
+                $has_commitment = true;
+            }
+            else {
+                $has_commitment = false;
+            }
+
+            if (empty($skills) || in_array($cat, $skills)) {
+                $has_skill = true;
+            }
+            else {
+                $has_skill = false;
+            }
+
+            if (empty($tags) || in_array($class, $tags)) {
+                $has_tag = true;
+            }
+            else {
+                $has_tag = false;
+            }
+
+            if (empty($departments) || in_array($dept, $departments)) {
+                $has_department = true;
+            }
+            else {
+                $has_department = false;
+            }
+
+            $has_keyword = false;
+            $loc = null;
+
+            if (empty($keywords)) {
+                $has_keyword = true;
+            }
+            else {
+                foreach ($keywords as $k) {
+                    $loc = strpos($desc, $k);
+                    if ($loc !== false) {
+                        $has_keyword = true;
+                    } else {
+                        $has_keyword = false;
+                    }
+                }
+            }
+
+            if ($has_commitment && $has_skill && $has_tag && $has_department && $has_keyword) {
+                $selected[] = $p;
+            }
+        }
+
+
+
+        return $this->outputJSON(['results' => $selected, 'keyword_location' => $loc],"Search performed");
     }
 }

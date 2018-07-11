@@ -1550,10 +1550,40 @@ export function uploadResume(student_id, input_element_id) {
 }
 
 // Returns all data necessary for student lab search
-// student_id - id of the student who's searching
-export function getSearchData(student_id) {
+export function getSearchData() {
     console.log('Retrieving search data');
-    return axios.post('api/search', {student_id})
+    return axios.get('api/search_data')
+        .then(response => {
+            console.log(response.data.message);
+            return response.data.result;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+// Does backend lab search based on parameters
+// Each paramters should be an array
+// Areas: ['Social Sciences', 'Health Sciences', 'Engineering', 'Arts & Humanities', 'Life Sciences', 'Natural Sciences', 'Environmental Sciences', 'Public Health'];
+// Skills: ['Lab - Animal', 'Lab Research', 'Computer Programming', 'Data Collection and Analysis', 'Clinical Research', 'Community Research', 'Library/archival/internet Research', 'Experimental Research', 'Field Work'];
+// Commitments: [6, 8, 10, 12]
+// Departments: list is way too long will add later
+// Keywords: can be any string, will search for exact match
+
+// Returns array of matching projects, along with the location of the searched keyword in the "description" of the project
+export function labSearch(areas, skills, commitments, departments, keywords) {
+    console.log('Performing search');
+
+    let payload = {
+        tags: areas,
+        skills: skills,
+        commitments: commitments,
+        departments: departments,
+        keywords: keywords
+    };
+
+    return axios.post('api/search', payload)
         .then(response => {
             console.log(response.data.message);
             return response.data.result;
