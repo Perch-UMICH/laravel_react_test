@@ -20,7 +20,12 @@ class UROPSeeder extends Seeder
      */
     public function run()
     {
-//        // UROP SKILLS ("SubCategory" in urop db)
+        $this->pb_db_seeder();
+    }
+
+    public function urop_test_seeder()
+    {
+        //        // UROP SKILLS ("SubCategory" in urop db)
 //        $skills = ['Lab - Animal', 'Lab Research', 'Computer Programming', 'Data Collection and Analysis', 'Clinical Research', 'Community Research', 'Library/archival/internet Research', 'Experimental Research', 'Field Work'];
 //        foreach ($skills as $s) {
 //            $skill = new Skill();
@@ -152,6 +157,57 @@ Specific tasks and responsibilities include:
         $lab = Lab::find(2);
         $lab->members()->sync([4 => ['role' => 1], 1 => ['role' => 3]]);
     }
+    // Seeds db with excel file containing projects
+    public function pb_db_seeder()
+    {
+        $file = '/storage/app/public/pb_data_test.xlsx';
+        $reader = Excel::load($file);
+        $data = $reader->get();
 
+        foreach ($data as $d) {
+            // Check for project duplicate
+            $projs = Position::all();
+            $titles = [];
+            foreach ($projs as $p) {
+                $titles[] = $p->title;
+            }
+            if (!in_array($d['projtitle'], $titles)) {
+                $pos = new Position();
+                $pos->title = $d['projtitle'];
+                $pos->description = $d['projdescr'];
+                $pos->min_time_commitment = intval($d['hrsperweek'][0]);
+                $pos->duties = $d['duties'];
+                $pos->min_qual = $d['minqual'];
+
+                $pos->contact_phone = '111-111-1111';
+                $pos->contact_email = 'email@email.com';
+                $pos->location = $d['location'];
+
+                $pos->filled = false;
+
+                $pos->save();
+
+                $urop = new UropPosition();
+                $urop->proj_id = $d['projid'];
+                $urop->term = $d['term'];
+                $urop->classification = $d['classifications'];
+                $urop->sub_category = $d['subcategory'];
+                $urop->dept = $d['dept'];
+                $urop->learning_comp = $d['learningcomp'];
+                $urop->training = $d['training'];
+
+                $pos->urop_position()->save($urop);
+
+                // Group 1
+
+                $lab = new Lab();
+                $lab->name = $d['name'] . '\'s Group';
+                $lab->location = $d['location'];
+                $lab->save();
+
+                $lab->positions()->save($pos);
+            }
+        }
+    }
 
 }
