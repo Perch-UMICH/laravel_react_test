@@ -32,6 +32,8 @@ Route::get('login/google/callback', 'Auth\LoginController@handleProviderCallback
 
 // Note: calls to routes protected by auth:api require a valid
 // user api key to be sent in the header of the request
+
+// MUST BE LOGGED IN
 Route::group(['middleware' => 'auth:api'], function(){
     Route::post('verify', 'UserController@verify');
     Route::post('logout', 'UserController@logout');
@@ -48,7 +50,12 @@ Route::group(['middleware' => 'auth:api'], function(){
     // Lab creation
     Route::post('labs', 'LabController@store');
 
+    // Search
+    Route::get('search_data', 'SearchController@get_search_data_urop');
+    Route::post('search', 'SearchController@search_urop');
+
     // Lab edits
+    // MUST BE LOGGED IN + BE LAB OWNER
     Route::group(['middleware' => 'lab_owner'], function() {
         Route::put('labs/{lab}', 'LabController@update');
         Route::delete('labs/{lab}', 'LabController@destroy');
@@ -106,6 +113,9 @@ Route::group(['middleware' => 'auth:api'], function(){
         Route::post('students/{student}/responses/delete', 'StudentController@delete_app_response'); // Delete a response
     });
 });
+
+
+// ALL ROUTES BELOW ARE PUBLIC
 
 Route::post('password/email', 'Auth\ForgotPasswordController@sendResetLink');
 //email [your-email-address]
@@ -242,8 +252,6 @@ Route::post('pics', 'ProfilepicController@store');
 Route::get('feedback', 'FeedbackController@index');
 Route::post('feedback', 'FeedbackController@store');
 
-// Search
-Route::get('search_data', 'SearchController@get_search_data_urop');
-Route::post('search', 'SearchController@search_urop');
+
 
 
