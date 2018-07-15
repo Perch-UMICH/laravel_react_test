@@ -839,6 +839,8 @@ export function deleteLab() {
 }
 
 
+// NOTE: skill/tags are now added directly to positions; grabbing lab skills/tags compiles across all its positions
+
 export function getLabSkills(lab_id) {
     console.log('Getting lab skills');
     return axios.get('api/labs/' + lab_id + '/skills')
@@ -853,12 +855,13 @@ export function getLabSkills(lab_id) {
 }
 
 // RESTRICTED: lab_id
-export function addSkillsToLab(skill_ids) {
+export function addSkillsToLab(skill_ids, position_id) {
     console.log('Adding skills to lab');
 
     let lab_id = sessionStorage.getItem('lab_id');
     let payload = {
-        skill_ids: skill_ids
+        skill_ids: skill_ids,
+        position_id: position_id
     };
     return axios.post('api/labs/' + lab_id + '/skills', payload)
         .then(response => {
@@ -872,12 +875,13 @@ export function addSkillsToLab(skill_ids) {
 }
 
 // RESTRICTED: lab_id
-export function syncSkillsToLab(skill_ids) {
+export function syncSkillsToLab(skill_ids, position_id) {
     console.log('Syncing skills to lab');
 
     let lab_id = sessionStorage.getItem('lab_id');
     let payload = {
-        skill_ids: skill_ids
+        skill_ids: skill_ids,
+        position_id: position_id
     };
     return axios.post('api/labs/' + lab_id + '/skills/sync', payload)
         .then(response => {
@@ -891,12 +895,13 @@ export function syncSkillsToLab(skill_ids) {
 }
 
 // RESTRICTED: lab_id
-export function removeSkillsFromLab(skill_ids) {
+export function removeSkillsFromLab(skill_ids, position_id) {
     console.log('Removing skills from lab');
 
     let lab_id = sessionStorage.getItem('lab_id');
     let payload = {
         skill_ids: skill_ids,
+        position_id: position_id,
         _method: 'PUT'
     };
     return axios.post('api/labs/' + lab_id + '/skills', payload)
@@ -925,12 +930,13 @@ export function getLabTags(lab_id) {
 }
 
 // RESTRICTED: lab_id
-export function addTagsToLab(tag_ids) {
+export function addTagsToLab(tag_ids, position_id) {
     console.log('Adding tags to lab');
 
     let lab_id = sessionStorage.getItem('lab_id');
     let payload = {
-        tag_ids: tag_ids
+        tag_ids: tag_ids,
+        position_id: position_id
     };
     return axios.post('api/labs/' + lab_id + '/tags', payload)
         .then(response => {
@@ -944,12 +950,13 @@ export function addTagsToLab(tag_ids) {
 }
 
 // RESTRICTED: lab_id
-export function syncTagsToLab(tag_ids) {
+export function syncTagsToLab(tag_ids, position_id) {
     console.log('Syncing tags to lab');
 
     let lab_id = sessionStorage.getItem('lab_id');
     let payload = {
-        tag_ids: tag_ids
+        tag_ids: tag_ids,
+        position_id: position_id
     };
     return axios.post('api/labs/' + lab_id + '/tags/sync', payload)
         .then(response => {
@@ -963,12 +970,13 @@ export function syncTagsToLab(tag_ids) {
 }
 
 // RESTRICTED: lab_id
-export function removeTagsFromLab(tag_ids) {
+export function removeTagsFromLab(tag_ids, position_id) {
     console.log('Removing tag from lab');
 
     let lab_id = sessionStorage.getItem('lab_id');
     let payload = {
         tag_ids: tag_ids,
+        position_id: position_id,
         _method: 'PUT'
     };
     return axios.post('api/labs/' + lab_id + '/tags', payload)
@@ -982,58 +990,57 @@ export function removeTagsFromLab(tag_ids) {
         })
 }
 
-
-export function getLabPreferences(lab_id) {
-    console.log('Getting lab preferences');
-    return axios.get('api/labs/' + lab_id + '/preferences')
-        .then(response => {
-            console.log(response.data.message);
-            return response.data.result;
-        })
-        .catch(function (error) {
-            console.log(error);
-            return [];
-        })
-}
-
-// RESTRICTED: lab_id
-export function addPreferencesToLab(preference_ids) {
-    console.log('Adding preferences to lab');
-
-    let lab_id = sessionStorage.getItem('lab_id');
-    let payload = {
-        tag_ids: preference_ids
-    };
-    return axios.post('api/labs/' + lab_id + '/preferences', payload)
-        .then(response => {
-            console.log(response.data.message);
-            return response.data.result;
-        })
-        .catch(function (error) {
-            console.log(error);
-            return [];
-        })
-}
-
-// RESTRICTED: lab_id
-export function removePreferencesFromLab(preference_ids) {
-    console.log('Removing preferences from lab');
-
-    let lab_id = sessionStorage.getItem('lab_id');
-    let payload = {
-        tag_ids: preference_ids,
-        _method: 'PUT'
-    };
-    return axios.post('api/labs/' + lab_id + '/preferences', payload)
-        .then(response => {
-            console.log(response.data.message);
-            return response.data.result;
-        })
-        .catch(function (error) {
-            console.log(error);
-            return [];
-        })
-}
+// export function getLabPreferences(lab_id) {
+//     console.log('Getting lab preferences');
+//     return axios.get('api/labs/' + lab_id + '/preferences')
+//         .then(response => {
+//             console.log(response.data.message);
+//             return response.data.result;
+//         })
+//         .catch(function (error) {
+//             console.log(error);
+//             return [];
+//         })
+// }
+//
+// // RESTRICTED: lab_id
+// export function addPreferencesToLab(preference_ids) {
+//     console.log('Adding preferences to lab');
+//
+//     let lab_id = sessionStorage.getItem('lab_id');
+//     let payload = {
+//         tag_ids: preference_ids
+//     };
+//     return axios.post('api/labs/' + lab_id + '/preferences', payload)
+//         .then(response => {
+//             console.log(response.data.message);
+//             return response.data.result;
+//         })
+//         .catch(function (error) {
+//             console.log(error);
+//             return [];
+//         })
+// }
+//
+// // RESTRICTED: lab_id
+// export function removePreferencesFromLab(preference_ids) {
+//     console.log('Removing preferences from lab');
+//
+//     let lab_id = sessionStorage.getItem('lab_id');
+//     let payload = {
+//         tag_ids: preference_ids,
+//         _method: 'PUT'
+//     };
+//     return axios.post('api/labs/' + lab_id + '/preferences', payload)
+//         .then(response => {
+//             console.log(response.data.message);
+//             return response.data.result;
+//         })
+//         .catch(function (error) {
+//             console.log(error);
+//             return [];
+//         })
+// }
 
 
 // Lab members
