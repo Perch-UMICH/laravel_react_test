@@ -24,7 +24,6 @@ class CreateFacultiesTable extends Migration
             $table->string('email')->nullable();
 
             $table->string('title')->nullable();
-            $table->integer('pi_of_lab_id')->nullable();
             $table->string('profilepic_path')->nullable();
 
             $table->timestamps();

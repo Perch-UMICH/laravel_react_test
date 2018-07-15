@@ -6,7 +6,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class Position extends Model
 {
-    protected $fillable = ['title', 'description', 'time_commitment', 'open_slots'];
+    protected $fillable = [
+        'title',
+        'description',
+        'duties',
+        'min_qual',
+        'min_time_commitment',
+        'filled',
+        'contact_email',
+        'contact_phone',
+        'location',
+        'is_urop_project'];
 
     public function lab()
     {

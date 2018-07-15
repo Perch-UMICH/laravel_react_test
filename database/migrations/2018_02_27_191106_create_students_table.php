@@ -25,21 +25,20 @@ class CreateStudentsTable extends Migration
             $table->string('year')->nullable();
 
             $table->text('bio')->nullable();
-            $table->string('major')->nullable();
+            $table->string('major')->nullable(); // normalize
             $table->double('gpa')->nullable();
+            $table->text('experiences')->nullable();
 
-            // comma separated lists
-            $table->string('classes')->nullable();
-            $table->string('experiences')->nullable();
+            // comma separated list
+            $table->string('classes')->nullable(); // normalize
 
             $table->string('linkedin_link')->nullable();
             $table->string('website_link')->nullable();
 
-            $table->integer('belongs_to_lab_id')->nullable();
-            $table->text('faculty_endorsements')->nullable();
-
             $table->string('profilepic_path')->nullable();
             $table->string('resume_path')->nullable();
+
+            $table->boolean('is_urop_student')->nullable();
 
             $table->timestamps();
 

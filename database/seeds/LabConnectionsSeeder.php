@@ -55,19 +55,6 @@ class LabConnectionsSeeder extends Seeder
     }
 
     /**
-     * Seeds lab_students table
-     */
-    public function labStudentSeeder() {
-        //DB::table('lab_students')->delete();
-
-//        $lab = Lab::find(1);
-//        $lab->students()->sync([1]);
-//
-//        $lab = Lab::find(2);
-//        $lab->students()->sync([2]);
-    }
-
-    /**
      * Seeds the lab_tags table
      *
      * @return void

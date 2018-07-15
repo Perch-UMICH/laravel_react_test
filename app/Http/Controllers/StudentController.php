@@ -16,7 +16,6 @@ use Storage;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
-
 class StudentController extends Controller
 {
     /**
@@ -135,7 +134,9 @@ class StudentController extends Controller
         return $this->outputJSON(null, 'Student profile deleted');
     }
 
-    // SKILLS
+    // STUDENT ASSOCIATIONS:
+
+    // Skills:
 
     // Get student skills of a student, based on student_id
     public function skills(Student $student) {
@@ -165,7 +166,7 @@ class StudentController extends Controller
         return $this->outputJSON(null,"Removed skills");
     }
 
-    // TAGS
+    // Tags:
 
     // Get student tags of a student, based on student_id
     public function tags(Student $student) {
@@ -194,14 +195,7 @@ class StudentController extends Controller
         return $this->outputJSON(null,"Removed tags");
     }
 
-
-//    // Get favorited labs of student, based on student_id
-//    public function labs(Student $student) {
-//        $labs = $student->labs()->wherePivot('student_id', $student->id)->get();
-//        return $this->outputJSON($labs,"Labs retrieved");
-//    }
-
-    // COURSES
+    // Courses:
 
     public function school_courses(Student $student) {
         $courses = $student->school_courses()->wherePivot('student_id', $student->id)->get();
@@ -222,7 +216,14 @@ class StudentController extends Controller
         return $this->outputJSON(null,"Removed courses");
     }
 
-    // SEARCHED LABS
+    // Searched Labs:
+
+
+    //    // Get favorited labs of student, based on student_id
+//    public function labs(Student $student) {
+//        $labs = $student->labs()->wherePivot('student_id', $student->id)->get();
+//        return $this->outputJSON($labs,"Labs retrieved");
+//    }
 
 //    public function sync_labs(Request $request, Student $student) {
 //        $input = $request->all();
@@ -246,11 +247,8 @@ class StudentController extends Controller
 //        return $this->outputJSON(null, "Removed labs");
 //    }
 
-    // LAB MEMBERSHIP
 
-    // TODO
-
-    // APP RESPONSES
+    // App Responses:
 
     public function app_responses(Student $student) {
         $responses = $student->app_responses;
@@ -333,7 +331,7 @@ class StudentController extends Controller
         return $this->outputJSON(null, 'Response submitted to position ' . $applicationResponse->application->position->name);
     }
 
-    // RESUME
+    // Resume:
 
     public function add_resume(Request $request, Student $student) {
         // Delete old resume if exists

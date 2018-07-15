@@ -88,6 +88,7 @@ Route::group(['middleware' => 'auth:api'], function(){
     Route::post('students','StudentController@store'); // Create a student
 
     // Student edits
+    // MUST BE LOGGED IN + BE A STUDENT PROFILE OWNER
     Route::group(['middleware' => 'student_profile_owner'], function() {
         //Route::get('students/{student}', 'StudentController@show'); // Get student
         Route::put('students/{student}','StudentController@update'); // Update a student
