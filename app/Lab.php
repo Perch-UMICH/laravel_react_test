@@ -15,13 +15,6 @@ class Lab extends Model
         'contact_email',
         'labpic_path'];
 
-    public function skills() {
-        return $this->belongsToMany('App\Skill', 'lab_skill');
-    }
-
-    public function tags() {
-        return $this->belongsToMany('App\Tag', 'lab_tag');
-    }
 
     public function members() {
         return $this->belongsToMany('App\User', 'lab_user')->withPivot('user_id', 'lab_id', 'role');

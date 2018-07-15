@@ -6,6 +6,7 @@ use App\AppQuestion;
 use App\Lab;
 use App\Position;
 use App\Application;
+use App\Skill;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
@@ -210,61 +211,117 @@ class LabController extends Controller
     }
 
     // LAB ASSOCIATIONS
+    // NOTE: skill/tag additions are made to positions, not labs directly
 
-    // Skills:
+    // Skills (derived from positions):
 
     public function skills(Lab $lab) {
-        $skills = $lab->skills()->wherePivot('lab_id', $lab->id)->get();
+        $skills = [];
+        $skill_ids = [];
+        $positions = $lab->positions;
+        foreach ($positions as $p) {
+            $p_skills = $p->skills;
+            foreach ($p_skills as $s) {
+                $skill_ids[] = $s->id;
+            }
+        }
+        array_unique($skill_ids);
+        foreach ($skill_ids as $id) {
+            $skills[] = Skill::find($id);
+        }
         return $this->outputJSON($skills,"Skills from lab retrieved");
     }
 
-    public function add_skill(Request $request, Lab $lab) {
+
+    public function add_skill(Request $request) {
         $input = $request->all();
         $ids = $input['skill_ids'];
-        $lab->skills()->syncWithoutDetaching($ids);
+        $position_id = $input['position_id'];
+        $position = Position::find($position_id);
+
+        if ($position == null) return $this->outputJSON(null,"Error: invalid position_id",404);
+
+        $position->skills()->syncWithoutDetaching($ids);
         return $this->outputJSON(null,"Added skills");
     }
 
-    public function sync_skills(Request $request, Lab $lab) {
+    public function sync_skills(Request $request) {
         $input = $request->all();
         $ids = $input['skill_ids'];
-        $lab->skills()->sync($ids);
+        $position_id = $input['position_id'];
+        $position = Position::find($position_id);
+
+        if ($position == null) return $this->outputJSON(null,"Error: invalid position_id",404);
+
+        $position->skills()->sync($ids);
         return $this->outputJSON(null,"Synced skills");
     }
 
-    public function remove_skill(Request $request, Lab $lab) {
+    public function remove_skill(Request $request) {
         $input = $request->all();
         $ids = $input['skill_ids'];
-        $lab->skills()->detach($ids);
-        return $this->outputJSON(null,"Removed skills from lab " . $lab->name);
+        $position_id = $input['position_id'];
+        $position = Position::find($position_id);
+
+        if ($position == null) return $this->outputJSON(null,"Error: invalid position_id",404);
+
+        $position->skills()->detach($ids);
+        return $this->outputJSON(null,"Removed skills");
     }
 
-    // Tags:
+    // Tags (derived from positions):
 
     public function tags(Lab $lab) {
-        $tags = $lab->tags()->wherePivot('lab_id', $lab->id)->get();
+        $tags = [];
+        $tag_ids = [];
+        $positions = $lab->positions;
+        foreach ($positions as $p) {
+            $p_tags = $p->tags;
+            foreach ($p_tags as $t) {
+                $tag_ids[] = $t->id;
+            }
+        }
+        array_unique($tag_ids);
+        foreach ($tag_ids as $id) {
+            $tags[] = Skill::find($id);
+        }
         return $this->outputJSON($tags,"Tags from lab retrieved");
     }
 
     public function add_tag(Request $request, Lab $lab) {
         $input = $request->all();
         $ids = $input['tag_ids'];
-        $lab->tags()->syncWithoutDetaching($ids);
+        $position_id = $input['position_id'];
+        $position = Position::find($position_id);
+
+        if ($position == null) return $this->outputJSON(null,"Error: invalid position_id",404);
+
+        $position->tags()->syncWithoutDetaching($ids);
         return $this->outputJSON(null,"Added tags");
     }
 
     public function sync_tags(Request $request, Lab $lab) {
         $input = $request->all();
         $ids = $input['tag_ids'];
-        $lab->tags()->sync($ids);
+        $position_id = $input['position_id'];
+        $position = Position::find($position_id);
+
+        if ($position == null) return $this->outputJSON(null,"Error: invalid position_id",404);
+
+        $position->tags()->sync($ids);
         return $this->outputJSON(null,"Synced tags");
     }
 
     public function remove_tag(Request $request, Lab $lab) {
         $input = $request->all();
         $ids = $input['tag_ids'];
-        $lab->tags()->detach($ids);
-        return $this->outputJSON(null,"Removed tags from lab " . $lab->name);
+        $position_id = $input['position_id'];
+        $position = Position::find($position_id);
+
+        if ($position == null) return $this->outputJSON(null,"Error: invalid position_id",404);
+
+        $position->tags()->detach($ids);
+        return $this->outputJSON(null,"Removed tags");
     }
 
     // Members:

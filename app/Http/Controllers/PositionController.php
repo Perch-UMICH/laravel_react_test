@@ -75,5 +75,4 @@ class PositionController extends Controller
         $position->delete();
         return $this->outputJSON(null, 'Lab Position deleted');
     }
-
 }
