@@ -178,7 +178,7 @@ Route::get('faculties/{faculty}', 'FacultyController@show');
 Route::post('labs/all', 'LabController@get_all_labs');
 Route::post('labs/{lab}', 'LabController@get_lab');
 
-Route::get('labs', 'LabController@index'); // Get all faculty
+Route::get('labs', 'LabController@index');
 Route::get('labs/{lab}', 'LabController@show');
 
 //Route::post('labs', 'LabController@store');
@@ -255,4 +255,8 @@ Route::post('feedback', 'FeedbackController@store');
 
 
 
-
+// scale
+// position (x,y)
+// rotation
+// width
+// height

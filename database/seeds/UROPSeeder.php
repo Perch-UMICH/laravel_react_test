@@ -1,14 +1,11 @@
 <?php
 
-use App\Tag;
 use App\Lab;
-use App\Skill;
-use App\Student;
-use App\LabPreference;
 use App\Position;
-use App\Application;
-use App\AppQuestion;
 use App\UropPosition;
+use App\Department;
+use App\UropTag;
+
 use Illuminate\Database\Seeder;
 
 class UROPSeeder extends Seeder
@@ -173,39 +170,98 @@ Specific tasks and responsibilities include:
             }
             if (!in_array($d['projtitle'], $titles)) {
                 $pos = new Position();
-                $pos->title = $d['projtitle'];
+                $pos->title = trim($d['projtitle']);
                 $pos->description = $d['projdescr'];
-                $pos->min_time_commitment = intval($d['hrsperweek'][0]);
+
+                $hrs = $d['hrsperweek'];
+                if ($hrs == 0) {
+                    $pos->min_time_commitment = null;
+                }
+                else if (($d['hrsperweek'][1] != '-')) {
+                    $pos->min_time_commitment = intval($d['hrsperweek'][0] . $d['hrsperweek'][1]);
+                }
+                else {
+                    $pos->min_time_commitment = intval($d['hrsperweek'][0]);
+                }
                 $pos->duties = $d['duties'];
                 $pos->min_qual = $d['minqual'];
 
                 $pos->contact_phone = '111-111-1111';
                 $pos->contact_email = 'email@email.com';
-                $pos->location = $d['location'];
+                $pos->location = trim($d['location']);
 
                 $pos->filled = false;
+                $pos->is_urop_project = true;
 
                 $pos->save();
 
                 $urop = new UropPosition();
                 $urop->proj_id = $d['projid'];
                 $urop->term = $d['term'];
-                $urop->classification = $d['classifications'];
-                $urop->sub_category = $d['subcategory'];
-                $urop->dept = $d['dept'];
+                // Biomedical Sciences, Social Sciences, Physical Sciences, Engineering, Natural/Life Sciences, Arts and Humanities, Envrionmental Studies
+                $urop->classification = trim($d['classifications']);
+                // Community Res, Data Coll Analysis, Lang, Exper Res, Creative Arts, Computer Prog, Lib/Archiv/Internet, Lab - Animals, Clin Res
+                $urop->sub_category = trim($d['subcategory']);
+                $urop->dept = trim($d['dept']);
                 $urop->learning_comp = $d['learningcomp'];
                 $urop->training = $d['training'];
 
                 $pos->urop_position()->save($urop);
 
-                // Group 1
-
-                $lab = new Lab();
-                $lab->name = $d['name'] . '\'s Group';
-                $lab->location = $d['location'];
-                $lab->save();
-
+                // Generate corresponding group based on sponsor
+                $name = $d['name'] . '\'s Group';
+                $lab = Lab::where('name', $name)->first();
+                if ($lab == null) {
+                    $lab = new Lab();
+                    $lab->name = $d['name'] . '\'s Group';
+                    $lab->location = $d['location'];
+                    $lab->save();
+                }
                 $lab->positions()->save($pos);
+
+                // Normalize departments
+                $depts_in = explode(', ', $urop->dept);
+                foreach ($depts_in as $dept_in) {
+                    $dept = Department::where('name',$dept_in)->first();
+                    if ($dept == null && $dept_in != '') {
+                        $dept = new Department();
+                        $dept->name = $dept_in;
+                        $dept->save();
+                    }
+
+                    if ($dept != null) {
+                        $pos->departments()->save($dept);
+                    }
+                }
+
+                // Normalize classifications and subcats (urop_tags)
+                $classes_in = explode(', ', $urop->classification);
+                foreach ($classes_in as $class_in) {
+                    $class = UropTag::where('name',$class_in)->first();
+                    if ($class == null && $class_in != '') {
+                        $class = new UropTag();
+                        $class->type = 'Classification';
+                        $class->name = $class_in;
+                        $class->save();
+                    }
+                    if ($class != null) {
+                        $urop->urop_tags()->save($class);
+                    }
+                }
+
+                $cats_in = explode(', ', $urop->sub_category);
+                foreach ($cats_in as $cat_in) {
+                    $cat = UropTag::where('name',$cat_in)->first();
+                    if ($cat == null && $cat_in != '') {
+                        $cat = new UropTag();
+                        $cat->type = 'SubCategory';
+                        $cat->name = $cat_in;
+                        $cat->save();
+                    }
+                    if ($cat != null) {
+                        $urop->urop_tags()->save($cat);
+                    }
+                }
             }
         }
     }

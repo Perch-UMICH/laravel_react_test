@@ -42,10 +42,8 @@ class StudentController extends Controller
             $skills = $student->skills()->wherePivot('student_id', $student->id)->get();
             $tags = $student->tags()->wherePivot('student_id', $student->id)->get();
             $school_courses = $student->school_courses()->wherePivot('student_id', $student->id)->get();
-            $experiences = $student->experiences();
             $student_data[$student->id] = ['data' => $student, 'skills' => $skills,
-                'tags' => $tags, 'school_courses' => $school_courses,
-                'experiences' => $experiences];
+                'tags' => $tags, 'school_courses' => $school_courses];
         }
         return $this->outputJSON($student_data, 'Students retrieved');
     }
@@ -57,7 +55,6 @@ class StudentController extends Controller
         $skills = $student->skills()->wherePivot('student_id', $student->id)->get();
         $tags = $student->tags()->wherePivot('student_id', $student->id)->get();
         $school_courses = $student->school_courses()->wherePivot('student_id', $student->id)->get();
-        $experiences = $student->experiences();
         $student_data = ['data' => $student, 'skills' => $skills,
             'tags' => $tags, 'school_courses' => $school_courses,
             'experiences' => $experiences];

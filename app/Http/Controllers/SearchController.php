@@ -9,6 +9,9 @@ use App\Skill;
 use App\Tag;
 use App\Student;
 
+use App\Department;
+use App\UropTag;
+
 class SearchController extends Controller
 {
     // OLD
@@ -51,24 +54,10 @@ class SearchController extends Controller
 
     public function get_search_data_urop(Request $request)
     {
-        $skills = ['Lab - Animal', 'Lab Research', 'Computer Programming', 'Data Collection and Analysis', 'Clinical Research', 'Community Research', 'Library/archival/internet Research', 'Experimental Research', 'Field Work'];
-        $areas = ['Social Sciences', 'Health Sciences', 'Engineering', 'Arts & Humanities', 'Life Sciences', 'Natural Sciences', 'Environmental Sciences', 'Public Health'];
         $commitments = [6, 8, 10, 12];
-
-        $projects = Position::all();
-        $departments = [];
-        $classifications = [];
-        $sub_categories = [];
-        foreach ($projects as $p) {
-            $urop = $p->urop_position;
-            $class = $urop->classification;
-            $cat = $urop->sub_category;
-            $dept = $urop->dept;
-
-            $departments[] = $dept;
-            $classifications[] = $class;
-            $sub_categories[] = $cat;
-        }
+        $departments = Department::all();
+        $classifications = UropTag::where('type','Classification')->get();
+        $sub_categories = UropTag::where('type','SubCategory')->get();
 
         $search_data = [
             'available_skills' => array_unique($sub_categories),
@@ -96,42 +85,22 @@ class SearchController extends Controller
 
         $projects = Position::all();
         $selected = [];
+        $selected_keywords = [];
 
+        // CURRENTLY DOESN'T ACCOUNT FOR PROJS WITH MULTIPLE CLASSES AND SUBCATS
         foreach ($projects as $p) {
             $urop = $p->urop_position;
             $commitment = $p->min_time_commitment;
             $desc = $p->description;
 
-            $class = $urop->classification;
-            $cat = $urop->sub_category;
-            $dept = $urop->dept;
-            if (empty($commitments) || in_array($commitment, $commitments)) {
-                $has_commitment = true;
-            }
-            else {
-                $has_commitment = false;
-            }
+            $class = $urop->urop_tags->where('type','Classification')[0]->name;
+            $cat = $urop->urop_tags->where('type','SubCategory')[0]->name;
+            $dept = $p->departments;
 
-            if (empty($skills) || in_array($cat, $skills)) {
-                $has_skill = true;
-            }
-            else {
-                $has_skill = false;
-            }
-
-            if (empty($tags) || in_array($class, $tags)) {
-                $has_tag = true;
-            }
-            else {
-                $has_tag = false;
-            }
-
-            if (empty($departments) || in_array($dept, $departments)) {
-                $has_department = true;
-            }
-            else {
-                $has_department = false;
-            }
+            $has_commitment = (empty($commitments) || in_array($commitment, $commitments));
+            $has_skill = (empty($skills) || in_array($cat, $skills));
+            $has_tag = (empty($tags) || in_array($class, $tags));
+            $has_department = (empty($departments) || in_array($dept, $departments));
 
             $has_keyword = false;
             $loc = null;
@@ -152,11 +121,10 @@ class SearchController extends Controller
 
             if ($has_commitment && $has_skill && $has_tag && $has_department && $has_keyword) {
                 $selected[] = $p;
+                $selected_keywords[] = $loc;
             }
         }
 
-
-
-        return $this->outputJSON(['results' => $selected, 'keyword_location' => $loc],"Search performed");
+        return $this->outputJSON(['results' => $selected, 'keyword_location' => $selected_keywords],"Search performed");
     }
 }

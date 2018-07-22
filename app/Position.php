@@ -41,4 +41,8 @@ class Position extends Model
     public function tags() {
         return $this->belongsToMany('App\Tag', 'position_tag');
     }
+
+    public function departments() {
+        return $this->belongsToMany('App\Department', 'department_position');
+    }
 }

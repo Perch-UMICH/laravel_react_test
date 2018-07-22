@@ -22,10 +22,15 @@ class LabController extends Controller
         $labs = Lab::all();
         $lab_data = [];
         foreach( $labs as $lab ) {
-            $skills = $lab->skills()->wherePivot('lab_id', $lab->id)->get();
-            $tags = $lab->tags()->wherePivot('lab_id', $lab->id)->get();
+            $skills = $this->skills($lab)->original;
+            $tags = $this->tags($lab)->original;
+            if (array_key_exists('result',$skills)) $skills = $skills['result'];
+            else $skills = null;
+            if (array_key_exists('result',$tags)) $tags = $tags['result'];
+            else $tags = null;
+
             $positions = $lab->positions()->get();
-            $lab_data[$lab->id] = ['data' => $lab, 'skills' => $skills, 'tags' => $tags, 'positions' => $positions];
+            $lab_data[$lab->id] = ['data' => $lab, 'skills' => $skills, 'tags' => $tags];
         }
         return $this->outputJSON($lab_data,"Labs retrieved");
     }
@@ -43,13 +48,13 @@ class LabController extends Controller
             $lab_data[$lab->id] = Collection::make();
             $lab_data[$lab->id]->put('data', $lab);
 
-            if ($input['skilltag_data']) {
-                $skills = $lab->skills()->wherePivot('lab_id', $lab->id)->get();
-                $tags = $lab->tags()->wherePivot('lab_id', $lab->id)->get();
-                $lab_data[$lab->id]->put('skills', $skills);
-                $lab_data[$lab->id]->put('tags', $tags);
-
-            }
+//            if ($input['skilltag_data']) {
+//                $skills = $lab->skills()->wherePivot('lab_id', $lab->id)->get();
+//                $tags = $lab->tags()->wherePivot('lab_id', $lab->id)->get();
+//                $lab_data[$lab->id]->put('skills', $skills);
+//                $lab_data[$lab->id]->put('tags', $tags);
+//
+//            }
             if ($input['position_data']) {
                 $positions = $lab->positions()->get();
                 $lab_data[$lab->id]->put('positions', $positions);
@@ -120,8 +125,14 @@ class LabController extends Controller
      */
     public function show(Lab $lab)
     {
-        $skills = $lab->skills()->wherePivot('lab_id', $lab->id)->get();
-        $tags = $lab->tags()->wherePivot('lab_id', $lab->id)->get();
+        $skills = $this->skills($lab)->original;
+        $tags = $this->tags($lab)->original;
+
+        if (array_key_exists('result',$skills)) $skills = $skills['result'];
+        else $skills = null;
+        if (array_key_exists('result',$tags)) $tags = $tags['result'];
+        else $tags = null;
+
         $lab_data = ['data' => $lab, 'skills' => $skills, 'tags' => $tags];
         return $this->outputJSON($lab_data,"Lab retrieved");
     }
@@ -134,13 +145,13 @@ class LabController extends Controller
         $lab_data = Collection::make();
         $lab_data->put('data', $lab);
 
-        if ($input['skilltag_data']) {
-            $skills = $lab->skills()->wherePivot('lab_id', $lab->id)->get();
-            $tags = $lab->tags()->wherePivot('lab_id', $lab->id)->get();
-            $lab_data->put('skills', $skills);
-            $lab_data->put('tags', $tags);
-
-        }
+//        if ($input['skilltag_data']) {
+//            $skills = $lab->skills()->wherePivot('lab_id', $lab->id)->get();
+//            $tags = $lab->tags()->wherePivot('lab_id', $lab->id)->get();
+//            $lab_data->put('skills', $skills);
+//            $lab_data->put('tags', $tags);
+//
+//        }
         if ($input['position_data']) {
             $positions = $lab->positions()->get();
             $lab_data->put('positions', $positions);
@@ -232,7 +243,6 @@ class LabController extends Controller
         return $this->outputJSON($skills,"Skills from lab retrieved");
     }
 
-
     public function add_skill(Request $request) {
         $input = $request->all();
         $ids = $input['skill_ids'];
@@ -283,7 +293,7 @@ class LabController extends Controller
         }
         array_unique($tag_ids);
         foreach ($tag_ids as $id) {
-            $tags[] = Skill::find($id);
+            $tags[] = Tag::find($id);
         }
         return $this->outputJSON($tags,"Tags from lab retrieved");
     }

@@ -10,7 +10,7 @@ class Lab extends Model
         ['name',
         'description',
         'publications',
-        'url','locaiton',
+        'url','location',
         'contact_phone',
         'contact_email',
         'labpic_path'];
