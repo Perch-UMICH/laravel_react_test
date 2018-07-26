@@ -55,9 +55,9 @@ class SearchController extends Controller
     public function get_search_data_urop(Request $request)
     {
         $commitments = [6, 8, 10, 12];
-        $departments = Department::all();
-        $classifications = UropTag::where('type','Classification')->get();
-        $sub_categories = UropTag::where('type','SubCategory')->get();
+        $departments = Department::all()->pluck('name')->toArray();
+        $classifications = UropTag::where('type','Classification')->pluck('name')->toArray();
+        $sub_categories = UropTag::where('type','SubCategory')->pluck('name')->toArray();
 
         $search_data = [
             'available_skills' => array_unique($sub_categories),
@@ -95,7 +95,7 @@ class SearchController extends Controller
 
             $class = $urop->urop_tags->where('type','Classification')[0]->name;
             $cat = $urop->urop_tags->where('type','SubCategory')[0]->name;
-            $dept = $p->departments;
+            $dept = $p->departments->pluck('name')[0];
 
             $has_commitment = (empty($commitments) || in_array($commitment, $commitments));
             $has_skill = (empty($skills) || in_array($cat, $skills));

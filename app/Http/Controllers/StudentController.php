@@ -56,8 +56,7 @@ class StudentController extends Controller
         $tags = $student->tags()->wherePivot('student_id', $student->id)->get();
         $school_courses = $student->school_courses()->wherePivot('student_id', $student->id)->get();
         $student_data = ['data' => $student, 'skills' => $skills,
-            'tags' => $tags, 'school_courses' => $school_courses,
-            'experiences' => $experiences];
+            'tags' => $tags, 'school_courses' => $school_courses];
         return $this->outputJSON($student_data,"Student retrieved");
     }
 

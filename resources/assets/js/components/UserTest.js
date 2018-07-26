@@ -7,7 +7,7 @@ import axios from 'axios'
 import {getAllUsers, passwordResetEmail} from './helpers'
 
 // Makes get request to server for all users on site
-class Users extends React.Component {
+class UserTest extends React.Component {
     constructor() {
 
         super();
@@ -39,4 +39,4 @@ class Users extends React.Component {
     }
 }
 
-export default Users
+export default UserTest
