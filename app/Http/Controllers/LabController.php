@@ -107,7 +107,7 @@ class LabController extends Controller
         $input = array_filter($input);
 
         $lab = Lab::where('name', $request['name']);
-        if ($lab == null) {
+        if ($lab !== null) {
             return $this->outputJSON($lab, 'Error: lab with this name already exists');
         }
 
@@ -249,7 +249,7 @@ class LabController extends Controller
         $position_id = $input['position_id'];
         $position = Position::find($position_id);
 
-        if ($position == null) return $this->outputJSON(null,"Error: invalid position_id",404);
+        if ($position === null) return $this->outputJSON(null,"Error: invalid position_id",404);
 
         $position->skills()->syncWithoutDetaching($ids);
         return $this->outputJSON(null,"Added skills");
@@ -261,7 +261,7 @@ class LabController extends Controller
         $position_id = $input['position_id'];
         $position = Position::find($position_id);
 
-        if ($position == null) return $this->outputJSON(null,"Error: invalid position_id",404);
+        if ($position === null) return $this->outputJSON(null,"Error: invalid position_id",404);
 
         $position->skills()->sync($ids);
         return $this->outputJSON(null,"Synced skills");
@@ -273,7 +273,7 @@ class LabController extends Controller
         $position_id = $input['position_id'];
         $position = Position::find($position_id);
 
-        if ($position == null) return $this->outputJSON(null,"Error: invalid position_id",404);
+        if ($position === null) return $this->outputJSON(null,"Error: invalid position_id",404);
 
         $position->skills()->detach($ids);
         return $this->outputJSON(null,"Removed skills");
@@ -304,7 +304,7 @@ class LabController extends Controller
         $position_id = $input['position_id'];
         $position = Position::find($position_id);
 
-        if ($position == null) return $this->outputJSON(null,"Error: invalid position_id",404);
+        if ($position === null) return $this->outputJSON(null,"Error: invalid position_id",404);
 
         $position->tags()->syncWithoutDetaching($ids);
         return $this->outputJSON(null,"Added tags");
@@ -316,7 +316,7 @@ class LabController extends Controller
         $position_id = $input['position_id'];
         $position = Position::find($position_id);
 
-        if ($position == null) return $this->outputJSON(null,"Error: invalid position_id",404);
+        if ($position === null) return $this->outputJSON(null,"Error: invalid position_id",404);
 
         $position->tags()->sync($ids);
         return $this->outputJSON(null,"Synced tags");
@@ -328,7 +328,7 @@ class LabController extends Controller
         $position_id = $input['position_id'];
         $position = Position::find($position_id);
 
-        if ($position == null) return $this->outputJSON(null,"Error: invalid position_id",404);
+        if ($position ===null) return $this->outputJSON(null,"Error: invalid position_id",404);
 
         $position->tags()->detach($ids);
         return $this->outputJSON(null,"Removed tags");
@@ -431,7 +431,7 @@ class LabController extends Controller
         $input = $request->all();
 
         $position = Position::find($input['position_id']);
-        if ($position == null)
+        if ($position ===null)
             return $this->outputJSON(null,"Error: invalid position_id");
 
         $application = new Application();
@@ -459,7 +459,7 @@ class LabController extends Controller
         $input = $request->all();
 
         $position = Position::find($input['position_id']);
-        if ($position == null)
+        if ($position ===null)
             return $this->outputJSON(null,"Error: invalid position_id");
 
         $application = $position->application;
@@ -490,7 +490,7 @@ class LabController extends Controller
     public function app_responses(Request $request) {
         $input = $request->all();
         $position = Position::find($input['position_id']);
-        if ($position == null)
+        if ($position ===null)
             return $this->outputJSON(null,"Error: invalid position_id");
 
         $application = $position->application;

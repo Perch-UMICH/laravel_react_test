@@ -12,8 +12,8 @@ class Controller extends BaseController
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
     protected function outputJSON($result = null, $message = '', $responseCode = 200) {
-        if ($message != '') $response["message"] = $message;
-        if ($result != null) $response["result"] = $result;
+        if ($message !== '') $response["message"] = $message;
+        if ($result !== null) $response["result"] = $result;
         return response()->json(
             $response,
             $responseCode);
@@ -31,7 +31,7 @@ class Controller extends BaseController
             $lev = levenshtein($needle, $h);
 
             // Check for an exact match
-            if ($lev == 0) {
+            if ($lev === 0) {
                 $closest = $h;
                 $shortest = 0;
                 break;
