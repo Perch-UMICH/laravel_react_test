@@ -38,13 +38,19 @@ class Student extends Model
         return $this->belongsToMany('App\Tag', 'student_tag');
     }
 
-    public function school_courses()
-    {
-        return $this->belongsToMany('App\SchoolCourse', 'school_course_student');
-    }
 
     public function responses()
     {
         return $this->hasMany('App\ApplicationResponse');
+    }
+
+    public function work_experiences()
+    {
+        return $this->belongsToMany('App\WorkExperience', 'student_work_experience');
+    }
+
+    public function class_experiences()
+    {
+        return $this->belongsToMany('App\ClassExperience', 'class_experience_student');
     }
 }

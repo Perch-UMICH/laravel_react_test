@@ -74,18 +74,22 @@ class SearchController extends Controller
     {
         // commitment
         // skills
-        // tags
+        // areas
         // department
         $input = $request->all();
         $commitments = $input['commitments']; // 6 8 10 12
         $skills = $input['skills']; // sub_cats
-        $tags = $input['tags']; // classes
+        $areas = $input['areas']; // classes
         $departments = $input['departments']; // depts
-        $keywords = $input['keywords'];
+        $keyword = $input['keyword'];
 
-        $projects = Position::all();
+        $projects = Position::with(['urop_position','departments'])->get();
         $selected = [];
         $selected_keywords = [];
+
+        if (empty($commitments) && empty($skills) && empty($areas) && empty($departments) && empty($keyword))
+            return $this->outputJSON(['results' => $projects, 'keyword_location' => $selected_keywords], "Search performed");
+
 
         // CURRENTLY DOESN'T ACCOUNT FOR PROJS WITH MULTIPLE CLASSES AND SUBCATS
         foreach ($projects as $p) {
@@ -93,33 +97,30 @@ class SearchController extends Controller
             $commitment = $p->min_time_commitment;
             $desc = $p->description;
 
-            $class = $urop->urop_tags->where('type','Classification')[0]->name;
-            $cat = $urop->urop_tags->where('type','SubCategory')[0]->name;
-            $dept = $p->departments->pluck('name')[0];
+            $class = $urop->urop_tags->where('type', 'Classification')->first();
+            if ($class) $class = $class->name;
+            $cat = $urop->urop_tags->where('type', 'SubCategory')->first();
+            if ($cat) $cat = $cat->name;
 
-            $has_commitment = (empty($commitments) || in_array($commitment, $commitments));
-            $has_skill = (empty($skills) || in_array($cat, $skills));
-            $has_tag = (empty($tags) || in_array($class, $tags));
-            $has_department = (empty($departments) || in_array($dept, $departments));
+            $dept = $p->departments;
+            if ($dept != null) $dept = $dept->pluck('name')[0];
+
+            $has_commitment = (!empty($commitments) && in_array(strtolower($commitment), array_map('strtolower', $commitments)));
+            $has_skill = ($cat && !empty($skills) && in_array(strtolower($cat), array_map('strtolower', $skills)));
+            $has_area = ($class && !empty($areas) && in_array(strtolower($class), array_map('strtolower', $areas)));
+            $has_department = (!empty($departments) && in_array(strtolower($dept), array_map('strtolower', $departments)));
 
             $has_keyword = false;
             $loc = null;
 
-            if (empty($keywords)) {
+            $loc = stripos($desc, $keyword);
+            if ($loc !== false) {
                 $has_keyword = true;
-            }
-            else {
-                foreach ($keywords as $k) {
-                    $loc = strpos($desc, $k);
-                    if ($loc !== false) {
-                        $has_keyword = true;
-                    } else {
-                        $has_keyword = false;
-                    }
-                }
+            } else {
+                $has_keyword = false;
             }
 
-            if ($has_commitment && $has_skill && $has_tag && $has_department && $has_keyword) {
+            if ($has_commitment || $has_skill || $has_area || $has_department || $has_keyword) {
                 $selected[] = $p;
                 $selected_keywords[] = $loc;
             }

@@ -10,7 +10,7 @@ class Department extends Model
         return $this->hasMany('App\Major');
     }
 
-    public function departments() {
-        return $this->belongsToMany('App\Department', 'department_urop_position');
+    public function urop_positions() {
+        return $this->belongsToMany('App\UropPosition', 'department_urop_position');
     }
 }
