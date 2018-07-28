@@ -18,6 +18,33 @@ class Controller extends BaseController
             $response,
             $responseCode);
     }
+
+    // Finds string in haystack that's closest (levenshtein) to needle
+    protected function closest_match($needle, $haystack) {
+        $shortest = INF;
+        $closest = null;
+
+        foreach ($haystack as $h) {
+
+            // Calculate the distance between the input word
+            // and the current word
+            $lev = levenshtein($needle, $h);
+
+            // Check for an exact match
+            if ($lev == 0) {
+                $closest = $h;
+                $shortest = 0;
+                break;
+            }
+
+            if ($lev <= $shortest) {
+                $closest  = $h;
+                $shortest = $lev;
+            }
+        }
+
+        return $closest;
+    }
 }
 
 

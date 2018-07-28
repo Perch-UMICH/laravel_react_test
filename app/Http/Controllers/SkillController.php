@@ -99,5 +99,21 @@ class SkillController extends Controller
         return $this->outputJSON(null, 'Skill definition deleted');
     }
 
+    // Searches for skills that are a close match to the requested name
+    public function search_matching_skills(Request $request)
+    {
+        $input = $request->all();
+        $query = $input['query'];
+        $skills = Skill::all()->pluck('name')->toArray();
+
+        foreach($skills as $s) {
+            $pos = stripos($s, $query);
+            if ($pos !== false) {
+
+            }
+        }
+
+        return $this->outputJSON($closest, 'Returned closest matching skills');
+    }
 
 }
