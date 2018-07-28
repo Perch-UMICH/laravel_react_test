@@ -12,8 +12,8 @@ class Controller extends BaseController
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
     protected function outputJSON($result = null, $message = '', $responseCode = 200) {
-        if ($message != '') $response["message"] = $message;
-        if ($result != null) $response["result"] = $result;
+        if ($message !== '') $response["message"] = $message;
+        if ($result !== null) $response["result"] = $result;
         return response()->json(
             $response,
             $responseCode);
