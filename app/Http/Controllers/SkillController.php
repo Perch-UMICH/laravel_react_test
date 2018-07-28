@@ -87,7 +87,13 @@ class SkillController extends Controller
         $skills = Skill::all()->pluck('name')->toArray();
         $selected = $this->exact_match($query, $skills);
 
-        return $this->outputJSON($selected, 'Returned closest matching skills');
+        $skills = [];
+        foreach ($selected as $s) {
+            $skill = Skill::where('name',$s);
+            $skills[] = $skill;
+        }
+
+        return $this->outputJSON($skills, 'Returned closest matching skills');
     }
 
 }

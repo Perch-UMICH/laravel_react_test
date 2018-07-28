@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Middleware\StudentProfileOwner;
 use App\Position;
 use App\Application;
 use App\ApplicationResponse;
@@ -13,6 +14,8 @@ use App\Skill;
 use App\Tag;
 use App\Lab;
 use Storage;
+use App\WorkExperience;
+use App\ClassExperience;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
@@ -337,5 +340,45 @@ class StudentController extends Controller
         $student->resume_path = $path;
 
         return $this->outputJSON($student, 'Stored new resume');
+    }
+
+    // Experiences
+
+    public function create_and_add_work_experiences(Request $request, Student $student) {
+        $input = $request->all();
+        $experiences = $input['experiences'];
+        foreach ($experiences as $e) {
+            $work = new WorkExperience($e);
+            $student->work_experiences()->save($work);
+        }
+        $student->work_experiences;
+        return $this->outputJSON($student, 'Added work experiences to student');
+    }
+
+    public function remove_work_experiences(Request $request, Student $student) {
+        $input = $request->all();
+        $ids = $input['ids'];
+        WorkExperience::destroy($ids);
+        return $this->outputJSON($student, 'Deleted work experiences from student');
+    }
+
+    public function add_class_experience(Request $request, Student $student) {
+        $input = $request->all();
+        $experiences = $input['experiences'];
+        foreach ($experiences as $e) {
+            $class = ClassExperience::where('title', $e->title);
+            if ($class == null) {
+                $class = new ClassExperience($e);
+            }
+            $student->class_experiences()->syncWithoutDetaching($class->id);
+        }
+        return $this->outputJSON($student, 'Added class experience to student');
+    }
+
+    public function remove_class_experiences(Request $request, Student $student) {
+        $input = $request->all();
+        $ids = $input['ids'];
+        $student->class_experiences()->detach($ids);
+        return $this->outputJSON($student, 'Deleted class experiences from student');
     }
 }

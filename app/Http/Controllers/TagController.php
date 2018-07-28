@@ -70,7 +70,8 @@ class TagController extends Controller
      */
     public function destroy(Tag $tag)
     {
-        //
+        $tag->delete();
+        return $this->outputJSON(null, 'Tag definition deleted');
     }
 
     // Searches for tags that are a close match to the requested name
@@ -81,6 +82,12 @@ class TagController extends Controller
         $tags = Tag::all()->pluck('name')->toArray();
         $selected = $this->exact_match($query, $tags);
 
-        return $this->outputJSON($selected, 'Returned closest matching tags');
+        $tags = [];
+        foreach ($selected as $s) {
+            $tag = Tag::where('name',$s);
+            $tags[] = $tag;
+        }
+
+        return $this->outputJSON($tags, 'Returned closest matching tags');
     }
 }
