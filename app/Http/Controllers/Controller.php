@@ -31,7 +31,7 @@ class Controller extends BaseController
             $lev = levenshtein($needle, $h);
 
             // Check for an exact match
-            if ($lev == 0) {
+            if ($lev === 0) {
                 $closest = $h;
                 $shortest = 0;
                 break;
