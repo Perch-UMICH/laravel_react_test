@@ -54,6 +54,9 @@ Route::group(['middleware' => 'auth:api'], function(){
     Route::get('search_data', 'SearchController@get_search_data_urop');
     Route::post('search', 'SearchController@search_urop');
 
+    Route::post('skills/match','SkillController@search_matching_skills');
+    Route::post('tags/match','TagController@search_matching_tags');
+
     // Lab edits
     // MUST BE LOGGED IN + BE LAB OWNER
     Route::group(['middleware' => 'lab_owner'], function() {
@@ -94,6 +97,7 @@ Route::group(['middleware' => 'auth:api'], function(){
         Route::put('students/{student}','StudentController@update'); // Update a student
         Route::delete('students/{student}', 'StudentController@destroy'); // Delete a student
 
+        // Skills and Tags
         Route::post('students/{student}/tags', 'StudentController@add_tag');
         Route::post('students/{student}/tags/sync', 'StudentController@sync_tags'); // sync -> delete all and replace with only input
         Route::put('students/{student}/tags', 'StudentController@remove_tag');
@@ -101,6 +105,7 @@ Route::group(['middleware' => 'auth:api'], function(){
         Route::post('students/{student}/skills', 'StudentController@add_skill');
         Route::post('students/{student}/skills/sync', 'StudentController@sync_skills');
         Route::put('students/{student}/skills', 'StudentController@remove_skill');
+        //
 
         Route::post('students/{student}/courses/school', 'StudentController@add_school_courses');
         Route::put('students/{student}/courses/school', 'StudentController@remove_school_courses');
@@ -113,6 +118,35 @@ Route::group(['middleware' => 'auth:api'], function(){
         Route::post('students/{student}/responses/submit', 'StudentController@submit_app_response'); // Submit a response
         Route::post('students/{student}/responses/delete', 'StudentController@delete_app_response'); // Delete a response
     });
+
+    // METADATA //
+
+    Route::post('skills/match','SkillController@search_matching_skills');
+    Route::post('tags/match','TagController@search_matching_tags');
+
+    // Skills:
+    Route::get('skills', 'SkillController@index');
+    Route::get('skills/{skill}', 'SkillController@show');
+    Route::post('skills', 'SkillController@store');
+    Route::put('skills/{skill}', 'SkillController@update');
+
+    // Tags
+    Route::get('tags', 'TagController@index');
+    Route::get('tags/{tag}', 'TagController@show');
+    Route::post('tags', 'TagController@store');
+    Route::put('tags/{tag}', 'TagController@update');
+
+    // School Courses
+    Route::get('courses/school', 'SchoolCourseController@index');
+
+    // MISC //
+
+    // Profile pics (for students, labs, and faculty)
+    Route::post('pics', 'ProfilepicController@store');
+
+    // Feedback
+    Route::get('feedback', 'FeedbackController@index');
+    Route::post('feedback', 'FeedbackController@store');
 });
 
 
@@ -156,6 +190,7 @@ Route::get('students/{student}/skills', 'StudentController@skills'); // Get stud
 //Route::post('students/{student}/skills', 'StudentController@add_skill');
 //Route::post('students/{student}/skills/sync', 'StudentController@sync_skills');
 //Route::put('students/{student}/skills', 'StudentController@remove_skill');
+
 
 // Student classes
 Route::get('students/{student}/courses/school', 'StudentController@school_courses');
@@ -229,29 +264,7 @@ Route::get('positions/{position}/application', 'PositionController@application')
 //Route::post('students/{student}/responses/submit', 'StudentController@submit_app_response'); // Submit a response
 //Route::post('students/{student}/responses/delete', 'StudentController@delete_app_response'); // Delete a response
 
-// METADATA //
 
-// Skills:
-Route::get('skills', 'SkillController@index');
-Route::get('skills/{skill}', 'SkillController@show');
-//Route::post('skills', 'SkillController@store');
-//Route::put('skills/{skill}', 'SkillController@update');
-
-// Tags
-Route::get('tags', 'TagController@index');
-Route::get('tags/{tag}', 'TagController@show');
-
-// School Courses
-Route::get('courses/school', 'SchoolCourseController@index');
-
-// MISC //
-
-// Profile pics (for students, labs, and faculty)
-Route::post('pics', 'ProfilepicController@store');
-
-// Feedback
-Route::get('feedback', 'FeedbackController@index');
-Route::post('feedback', 'FeedbackController@store');
 
 
 
