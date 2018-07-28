@@ -33,7 +33,8 @@ class UropPosition extends Model
         return $this->belongsTo('App\Position');
     }
 
-    public function urop_tags() {
+    public function urop_tags()
+    {
         return $this->belongsToMany('App\UropTag', 'urop_position_urop_tag');
     }
 }
