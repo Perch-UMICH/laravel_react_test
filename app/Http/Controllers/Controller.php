@@ -45,6 +45,19 @@ class Controller extends BaseController
 
         return $closest;
     }
+
+    protected function exact_match($needle, $haystack) {
+        $selected = [];
+        foreach($haystack as $h) {
+            $pos = stripos($h, $needle);
+            if ($pos !== false) {
+                $selected[] = $h;
+            }
+        }
+
+        return $selected;
+    }
+
 }
 
 
