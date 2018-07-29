@@ -42,7 +42,7 @@ class UsersTableSeeder extends Seeder
         // Create additional users
         $student = new User();
         $student->name = 'perch';
-        $student->email = 'test@perch.com';
+        $student->email = 'student@perch.com';
         $student->password = bcrypt('test');
         $student->is_student = true;
         $student->is_faculty = false;
@@ -73,7 +73,7 @@ class UsersTableSeeder extends Seeder
         $profile->first_name = "Akira";
         $profile->last_name = "Nishii";
         $profile->title = "MD, PhD";
-        $profile->email = "anishii@umich.edu";
+        $profile->contact_email = "anishii@umich.edu";
 
         $profile->save();
 
@@ -91,7 +91,7 @@ class UsersTableSeeder extends Seeder
         $profile->first_name = "Perch";
         $profile->last_name = "Faculty";
         $profile->title = "Graduate Researcher";
-        $profile->email = "faculty@perch.com";
+        $profile->contact_email = "faculty@perch.com";
         $profile->save();
     }
 }

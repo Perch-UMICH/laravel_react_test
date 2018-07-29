@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Middleware\StudentProfileOwner;
 use App\Position;
 use App\Application;
 use App\ApplicationResponse;
@@ -13,9 +14,10 @@ use App\Skill;
 use App\Tag;
 use App\Lab;
 use Storage;
+use App\WorkExperience;
+use App\ClassExperience;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-
 
 class StudentController extends Controller
 {
@@ -43,10 +45,8 @@ class StudentController extends Controller
             $skills = $student->skills()->wherePivot('student_id', $student->id)->get();
             $tags = $student->tags()->wherePivot('student_id', $student->id)->get();
             $school_courses = $student->school_courses()->wherePivot('student_id', $student->id)->get();
-            $experiences = $student->experiences();
             $student_data[$student->id] = ['data' => $student, 'skills' => $skills,
-                'tags' => $tags, 'school_courses' => $school_courses,
-                'experiences' => $experiences];
+                'tags' => $tags, 'school_courses' => $school_courses];
         }
         return $this->outputJSON($student_data, 'Students retrieved');
     }
@@ -58,10 +58,8 @@ class StudentController extends Controller
         $skills = $student->skills()->wherePivot('student_id', $student->id)->get();
         $tags = $student->tags()->wherePivot('student_id', $student->id)->get();
         $school_courses = $student->school_courses()->wherePivot('student_id', $student->id)->get();
-        $experiences = $student->experiences();
         $student_data = ['data' => $student, 'skills' => $skills,
-            'tags' => $tags, 'school_courses' => $school_courses,
-            'experiences' => $experiences];
+            'tags' => $tags, 'school_courses' => $school_courses];
         return $this->outputJSON($student_data,"Student retrieved");
     }
 
@@ -135,7 +133,9 @@ class StudentController extends Controller
         return $this->outputJSON(null, 'Student profile deleted');
     }
 
-    // SKILLS
+    // STUDENT ASSOCIATIONS:
+
+    // Skills:
 
     // Get student skills of a student, based on student_id
     public function skills(Student $student) {
@@ -165,7 +165,7 @@ class StudentController extends Controller
         return $this->outputJSON(null,"Removed skills");
     }
 
-    // TAGS
+    // Tags:
 
     // Get student tags of a student, based on student_id
     public function tags(Student $student) {
@@ -194,14 +194,7 @@ class StudentController extends Controller
         return $this->outputJSON(null,"Removed tags");
     }
 
-
-//    // Get favorited labs of student, based on student_id
-//    public function labs(Student $student) {
-//        $labs = $student->labs()->wherePivot('student_id', $student->id)->get();
-//        return $this->outputJSON($labs,"Labs retrieved");
-//    }
-
-    // COURSES
+    // Courses:
 
     public function school_courses(Student $student) {
         $courses = $student->school_courses()->wherePivot('student_id', $student->id)->get();
@@ -222,7 +215,14 @@ class StudentController extends Controller
         return $this->outputJSON(null,"Removed courses");
     }
 
-    // SEARCHED LABS
+    // Searched Labs:
+
+
+    //    // Get favorited labs of student, based on student_id
+//    public function labs(Student $student) {
+//        $labs = $student->labs()->wherePivot('student_id', $student->id)->get();
+//        return $this->outputJSON($labs,"Labs retrieved");
+//    }
 
 //    public function sync_labs(Request $request, Student $student) {
 //        $input = $request->all();
@@ -246,11 +246,8 @@ class StudentController extends Controller
 //        return $this->outputJSON(null, "Removed labs");
 //    }
 
-    // LAB MEMBERSHIP
 
-    // TODO
-
-    // APP RESPONSES
+    // App Responses:
 
     public function app_responses(Student $student) {
         $responses = $student->app_responses;
@@ -333,7 +330,7 @@ class StudentController extends Controller
         return $this->outputJSON(null, 'Response submitted to position ' . $applicationResponse->application->position->name);
     }
 
-    // RESUME
+    // Resume:
 
     public function add_resume(Request $request, Student $student) {
         // Delete old resume if exists
@@ -343,5 +340,46 @@ class StudentController extends Controller
         $student->resume_path = $path;
 
         return $this->outputJSON($student, 'Stored new resume');
+    }
+
+    // Experiences
+
+    public function create_and_add_work_experiences(Request $request, Student $student) {
+        $input = $request->all();
+        $experiences = $input['work_experiences'];
+        foreach ($experiences as $e) {
+            $work = new WorkExperience($e);
+            $student->work_experiences()->save($work);
+        }
+        $student->work_experiences;
+        return $this->outputJSON($student, 'Added work experiences to student');
+    }
+
+    public function remove_work_experiences(Request $request, Student $student) {
+        $input = $request->all();
+        $ids = $input['ids'];
+        WorkExperience::destroy($ids);
+        return $this->outputJSON($student, 'Deleted work experiences from student');
+    }
+
+    public function add_class_experiences(Request $request, Student $student) {
+        $input = $request->all();
+        $experiences = $input['class_experiences'];
+        foreach ($experiences as $e) {
+            $class = ClassExperience::where('title', $e->title);
+            if ($class == null) {
+                $class = new ClassExperience($e);
+                $class->save();
+            }
+            $student->class_experiences()->attach($class->id);
+        }
+        return $this->outputJSON($student, 'Added class experience to student');
+    }
+
+    public function remove_class_experiences(Request $request, Student $student) {
+        $input = $request->all();
+        $ids = $input['ids'];
+        $student->class_experiences()->detach($ids);
+        return $this->outputJSON($student, 'Deleted class experiences from student');
     }
 }

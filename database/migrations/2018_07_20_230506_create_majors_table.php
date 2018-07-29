@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateLabPreferencesTable extends Migration
+class CreateMajorsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,13 @@ class CreateLabPreferencesTable extends Migration
      */
     public function up()
     {
-        Schema::create('lab_preferences', function (Blueprint $table) {
+        Schema::create('majors', function (Blueprint $table) {
             $table->increments('id');
 
-            $table->string('type'); // Yes or No
-            $table->string('title');
+            $table->integer('department_id')->unsigned()->unique()->index();
+            $table->foreign('department_id')->references('id')->on('departments')->onDelete('cascade');
+
+            $table->string('name');
 
             $table->timestamps();
         });
@@ -30,6 +32,6 @@ class CreateLabPreferencesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('lab_preferences');
+        Schema::dropIfExists('majors');
     }
 }
