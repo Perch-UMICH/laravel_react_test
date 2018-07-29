@@ -19,16 +19,6 @@ class SkillController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -60,16 +50,6 @@ class SkillController extends Controller
         return $this->outputJSON($skill, 'Retrieved skill');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Skill  $skill
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Skill $skill)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.
@@ -105,15 +85,15 @@ class SkillController extends Controller
         $input = $request->all();
         $query = $input['query'];
         $skills = Skill::all()->pluck('name')->toArray();
+        $selected = $this->exact_match($query, $skills);
 
-        foreach($skills as $s) {
-            $pos = stripos($s, $query);
-            if ($pos !== false) {
-
-            }
+        $skills = [];
+        foreach ($selected as $s) {
+            $skill = Skill::where('name',$s);
+            $skills[] = $skill;
         }
 
-        return $this->outputJSON($closest, 'Returned closest matching skills');
+        return $this->outputJSON($skills, 'Returned closest matching skills');
     }
 
 }

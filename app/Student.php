@@ -46,7 +46,7 @@ class Student extends Model
 
     public function work_experiences()
     {
-        return $this->belongsToMany('App\WorkExperience', 'student_work_experience');
+        return $this->hasMany('App\WorkExperience');
     }
 
     public function class_experiences()
