@@ -107,6 +107,14 @@ Route::group(['middleware' => 'auth:api'], function(){
         Route::put('students/{student}/skills', 'StudentController@remove_skill');
         //
 
+        // Experiences
+        Route::post('students/{student}/work_experiences', 'StudentController@create_and_add_work_experiences');
+        Route::put('students/{student}/work_experiences', 'StudentController@remove_work_experiences');
+
+        Route::post('students/{student}/class_experiences', 'StudentController@add_class_experiences');
+        Route::put('students/{student}/class_experiences', 'StudentController@remove_class_experiences');
+        //
+
         Route::post('students/{student}/courses/school', 'StudentController@add_school_courses');
         Route::put('students/{student}/courses/school', 'StudentController@remove_school_courses');
 

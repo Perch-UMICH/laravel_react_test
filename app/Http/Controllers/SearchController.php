@@ -125,6 +125,11 @@ class SearchController extends Controller
                 $selected_keywords[] = $loc;
             }
         }
+        // Get labs
+
+        foreach ($selected as $s) {
+
+        }
 
         return $this->outputJSON(['results' => $selected, 'keyword_location' => $selected_keywords],"Search performed");
     }

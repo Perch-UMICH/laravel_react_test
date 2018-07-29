@@ -346,7 +346,7 @@ class StudentController extends Controller
 
     public function create_and_add_work_experiences(Request $request, Student $student) {
         $input = $request->all();
-        $experiences = $input['experiences'];
+        $experiences = $input['work_experiences'];
         foreach ($experiences as $e) {
             $work = new WorkExperience($e);
             $student->work_experiences()->save($work);
@@ -362,15 +362,16 @@ class StudentController extends Controller
         return $this->outputJSON($student, 'Deleted work experiences from student');
     }
 
-    public function add_class_experience(Request $request, Student $student) {
+    public function add_class_experiences(Request $request, Student $student) {
         $input = $request->all();
-        $experiences = $input['experiences'];
+        $experiences = $input['class_experiences'];
         foreach ($experiences as $e) {
             $class = ClassExperience::where('title', $e->title);
             if ($class == null) {
                 $class = new ClassExperience($e);
+                $class->save();
             }
-            $student->class_experiences()->syncWithoutDetaching($class->id);
+            $student->class_experiences()->attach($class->id);
         }
         return $this->outputJSON($student, 'Added class experience to student');
     }
