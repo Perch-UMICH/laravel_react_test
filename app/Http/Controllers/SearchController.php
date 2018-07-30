@@ -83,12 +83,15 @@ class SearchController extends Controller
         $departments = $input['departments']; // depts
         $keyword = $input['keyword'];
 
-        $projects = Position::with(['urop_position','departments'])->get();
+        $projects = Position::with(['urop_position','departments','lab'])->orderBy('lab_id')->get();
         $selected = [];
         $selected_keywords = [];
 
-        if (empty($commitments) && empty($skills) && empty($areas) && empty($departments) && empty($keyword))
+        if (empty($commitments) && empty($skills) && empty($areas) && empty($departments) && empty($keyword)) {
             return $this->outputJSON(['results' => $projects, 'keyword_location' => $selected_keywords], "Search performed");
+        }
+
+        // $l->positions()->whereHas('departments', function($query) {$query->where('name','Chemistry');})->get()
 
 
         // CURRENTLY DOESN'T ACCOUNT FOR PROJS WITH MULTIPLE CLASSES AND SUBCATS
@@ -125,12 +128,7 @@ class SearchController extends Controller
                 $selected_keywords[] = $loc;
             }
         }
-        // Get labs
 
-        foreach ($selected as $s) {
-
-        }
-
-        return $this->outputJSON(['results' => $selected, 'keyword_location' => $selected_keywords],"Search performed");
+        return $this->outputJSON(['results' => $labs, 'keyword_location' => $selected_keywords],"Search performed");
     }
 }

@@ -42,11 +42,11 @@ class StudentController extends Controller
         $student_data = [];
 
         foreach( $students as $student ) {
-            $skills = $student->skills()->wherePivot('student_id', $student->id)->get();
-            $tags = $student->tags()->wherePivot('student_id', $student->id)->get();
-            $school_courses = $student->school_courses()->wherePivot('student_id', $student->id)->get();
-            $student_data[$student->id] = ['data' => $student, 'skills' => $skills,
-                'tags' => $tags, 'school_courses' => $school_courses];
+            $student->skills;
+            $student->tags;
+            $student->work_experiences;
+            $student->class_experiences;
+            $student_data[$student->id] = $student;
         }
         return $this->outputJSON($student_data, 'Students retrieved');
     }
@@ -55,12 +55,11 @@ class StudentController extends Controller
     // Get Student based on student_id
     public function show(Student $student)
     {
-        $skills = $student->skills()->wherePivot('student_id', $student->id)->get();
-        $tags = $student->tags()->wherePivot('student_id', $student->id)->get();
-        $school_courses = $student->school_courses()->wherePivot('student_id', $student->id)->get();
-        $student_data = ['data' => $student, 'skills' => $skills,
-            'tags' => $tags, 'school_courses' => $school_courses];
-        return $this->outputJSON($student_data,"Student retrieved");
+        $student->skills;
+        $student->tags;
+        $student->work_experiences;
+        $student->class_experiences;
+        return $this->outputJSON($student,"Student retrieved");
     }
 
     /**
@@ -218,33 +217,33 @@ class StudentController extends Controller
     // Searched Labs:
 
 
-    //    // Get favorited labs of student, based on student_id
-//    public function labs(Student $student) {
-//        $labs = $student->labs()->wherePivot('student_id', $student->id)->get();
-//        return $this->outputJSON($labs,"Labs retrieved");
-//    }
+    // Get favorited labs of student, based on student_id
+    public function lab_list(Student $student) {
+        $labs = $student->labs()->wherePivot('student_id', $student->id)->get();
+        return $this->outputJSON($labs,"Labs retrieved");
+    }
 
-//    public function sync_labs(Request $request, Student $student) {
-//        $input = $request->all();
-//        $ids = $input['lab_ids'];
-//        $student->labs()->sync($ids);
-//        return $this->outputJSON(null,"Synced labs");
-//    }
+    public function sync_lab_list(Request $request, Student $student) {
+        $input = $request->all();
+        $ids = $input['lab_ids'];
+        $student->labs()->sync($ids);
+        return $this->outputJSON(null,"Synced labs");
+    }
 
-//    public function add_lab(Request $request, Student $student) {
-//        $input = $request->all();
-//        $ids = $input['lab_ids'];
-//        $student->labs()->syncWithoutDetaching($ids);
-//        return $this->outputJSON(null,"Added labs");
-//    }
+    public function add_to_lab_list(Request $request, Student $student) {
+        $input = $request->all();
+        $ids = $input['lab_ids'];
+        $student->labs()->syncWithoutDetaching($ids);
+        return $this->outputJSON(null,"Added labs");
+    }
 
-//    public function remove_lab(Request $request, Student $student)
-//    {
-//        $input = $request->all();
-//        $ids = $input['lab_ids'];
-//        $student->labs()->detach($ids);
-//        return $this->outputJSON(null, "Removed labs");
-//    }
+    public function remove_from_lab_list(Request $request, Student $student)
+    {
+        $input = $request->all();
+        $ids = $input['lab_ids'];
+        $student->labs()->detach($ids);
+        return $this->outputJSON(null, "Removed labs");
+    }
 
 
     // App Responses:
