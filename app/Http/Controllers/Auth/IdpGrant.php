@@ -25,6 +25,9 @@ class IdpGrant extends PasswordGrant
                 $email = $payload('email');
                 $aud = $payload('aud');
                 // $payload('hd') // G-suite domain
+                // $payload('name')
+                // $payload('given_name')
+                // $payload('family_name')
 
             } else {
                 // Invalid google token
