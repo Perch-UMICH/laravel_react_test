@@ -3,6 +3,7 @@
 namespace App\Controllers\Auth;
 
 use App\User;
+use App\Http\Controllers\UserController;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\AbstractGrant;
@@ -110,6 +111,7 @@ class IdpGrant extends AbstractGrant
     {
         $idp = $this->getRequestParameter('idp', $request);
         $token = $this->getRequestParameter('idpToken', $request);
+        $register = $this->getRequestParameter('register', $request);
         if($idp === "google") {
             $client = new \Google_Client(['client_id' => env('GOOGLE_CLIENT_ID')]);
 
@@ -123,7 +125,6 @@ class IdpGrant extends AbstractGrant
                 // $payload('name')
                 // $payload('given_name')
                 // $payload('family_name')
-
             } else {
                 // Invalid google token
                 throw OAuthServerException::invalidRequest('idpToken');
@@ -136,19 +137,27 @@ class IdpGrant extends AbstractGrant
             throw OAuthServerException::invalidRequest('username');
         }
 
-        $credentials = [
-            'username' => $username,
-            'email' => $email
-        ];
+        // Register a new google user
+        if($register) {
+            $uc = new UserController();
 
-        $user = User::where($credentials)->first();
+            // Will work even if the user already exists
+            $user = $uc->registerIdp($idp, $username, $email);
+        } else {
+            // Authenticate existing user
+            $credentials = [
+                'username' => $username,
+                'email' => $email
+            ];
 
-        if ($user instanceof User === false) {
-            $this->getEmitter()->emit(new RequestEvent(RequestEvent::USER_AUTHENTICATION_FAILED, $request));
+            $user = User::where($credentials)->first();
 
-            throw OAuthServerException::invalidCredentials();
+            if ($user instanceof User === false) {
+                $this->getEmitter()->emit(new RequestEvent(RequestEvent::USER_AUTHENTICATION_FAILED, $request));
+
+                throw OAuthServerException::invalidCredentials();
+            }
         }
-
         return $user;
     }
     public function getIdentifier()

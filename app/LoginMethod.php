@@ -18,7 +18,7 @@ class LoginMethod extends Model
      * @param string $method
      * @return mixed
      */
-    public function getId(string $method) {
+    public static function getId(string $method) {
         return LoginMethod::where('method', $method)->first()->id;
     }
 }

@@ -111,12 +111,32 @@ class UserController extends Controller
             return $this->outputJSON(null,"Email already taken", 404);
         }
         $input['password'] = bcrypt($input['password']);
+        $input['login_method_id'] = LoginMethod::getId('password');
         $user = User::create($input);
         $token['token'] = $user->createToken('token')->accessToken;
 
         Auth::attempt(['email' => request('email'), 'password' => request('password')]);
 
         return $this->outputJSON($token,"Successfully Registered");
+    }
+
+    public function registerIdp(string $idp, string $username, string $email = null) {
+        $methodId = LoginMethod::getId($idp);
+        $user = User::where(['username' => $username, 'login_method_id' => $methodId]);
+        if(!is_null($user)) {
+            // User already exists
+            return $user;
+        }
+
+        // Register a new user
+        $input['username'] = $username;
+        if(!is_null($email)) {
+            $input['email'] = $email;
+        }
+        $input['login_method_id'] = LoginMethod::getId($idp);
+
+        $user = User::create($input);
+        return $user;
     }
 
     public function update(Request $request, User $user) {
