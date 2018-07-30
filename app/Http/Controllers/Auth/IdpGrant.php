@@ -13,18 +13,34 @@ class IdpGrant extends PasswordGrant
 {
     protected function validateUser(ServerRequestInterface $request, ClientEntityInterface $client)
     {
-        $username = $this->getRequestParameter('username', $request);
+        $idp = $this->getRequestParameter('idp', $request);
+        $token = $this->getRequestParameter('idpToken', $request);
+        if($idp === "google") {
+            $client = new Google_Client(['client_id' => env('GOOGLE_CLIENT_ID')]);
+
+            // Google verifies 'iss' (google's source signature) and 'exp' (the token expiration)
+            $payload = $client->verifyIdToken($token);
+            if($payload) {
+                $username = $payload('sub');
+                $email = $payload('email');
+                $aud = $payload('aud');
+                // $payload('hd') // G-suite domain
+
+            } else {
+                // Invalid google token
+                throw OAuthServerException::invalidRequest('idpToken');
+            }
+        } else {
+            throw OAuthServerException::invalidRequest('idp');
+        }
+
         if (is_null($username)) {
             throw OAuthServerException::invalidRequest('username');
         }
 
-        $custom_hash_token = $this->getRequestParameter('hash_token', $request);
-        if (is_null($custom_hash_token)) {
-            throw OAuthServerException::invalidRequest('identifier');
-        }
-
         $credentials = [
             'username' => $username,
+            'email' => $email
         ];
 
         $user = User::where($credentials)->first();
