@@ -117,8 +117,9 @@ Route::group(['middleware' => 'auth:api'], function(){
         Route::put('students/{student}/class_experiences', 'StudentController@remove_class_experiences');
         //
 
-        Route::post('students/{student}/courses/school', 'StudentController@add_school_courses');
-        Route::put('students/{student}/courses/school', 'StudentController@remove_school_courses');
+        // Lab list
+        Route::post('student/{student}/lab_list', 'StudentController@add_to_lab_list');
+        Route::put('student/{student}/lab_list', 'StudentController@remove_from_lab_list');
 
         Route::post('students/{student}/resume', 'StudentController@add_resume');
 
@@ -146,8 +147,6 @@ Route::group(['middleware' => 'auth:api'], function(){
     Route::post('tags', 'TagController@store');
     Route::put('tags/{tag}', 'TagController@update');
 
-    // School Courses
-    Route::get('courses/school', 'SchoolCourseController@index');
 
     // MISC //
 

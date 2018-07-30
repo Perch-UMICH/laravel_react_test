@@ -38,6 +38,10 @@ class Student extends Model
         return $this->belongsToMany('App\Tag', 'student_tag');
     }
 
+    public function lab_list()
+    {
+        return $this->belongsToMany('App\Lab', 'student_lab');
+    }
 
     public function responses()
     {
