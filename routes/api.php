@@ -23,8 +23,10 @@ use Illuminate\Support\Facades\Auth;
 // ACCOUNTS //
 
 // User Registration:
-Route::post('login', 'UserController@login');
 Route::post('register', 'UserController@register');
+
+// User Login (Access Token Request):
+Route::post('login', 'UserController@login');
 
 Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout');
 Route::get('login/google', 'Auth\LoginController@redirectToProvider');

@@ -1,23 +1,34 @@
 <?php
+/**
+ * OAuth 2.0 Password grant.
+ *
+ * @author      Alex Bilbie <hello@alexbilbie.com>
+ * @copyright   Copyright (c) Alex Bilbie
+ * @license     http://mit-license.org/
+ *
+ * @link        https://github.com/thephpleague/oauth2-server
+ */
 
-namespace App\Controllers\Auth;
+namespace League\OAuth2\Server\Grant;
 
-use App\User;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
+use League\OAuth2\Server\Entities\UserEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
-use League\OAuth2\Server\Grant\AbstractGrant;
-use League\OAuth2\Server\RequestEvent;
-use Psr\Http\Message\ServerRequestInterface;
-
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
+use League\OAuth2\Server\RequestEvent;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use App\Http\Controllers\UserController;
 
-class IdpGrant extends AbstractGrant
+/**
+ * Password grant class.
+ */
+class PublicClientPasswordGrant extends AbstractGrant
 {
     /**
-     * IdpGrant constructor.
-     * @param UserRepositoryInterface $userRepository
+     * @param UserRepositoryInterface         $userRepository
+     * @param RefreshTokenRepositoryInterface $refreshTokenRepository
      */
     public function __construct(
         UserRepositoryInterface $userRepository
@@ -34,10 +45,9 @@ class IdpGrant extends AbstractGrant
         \DateInterval $accessTokenTTL
     ) {
         // Validate request
-        // WARNING: Client cannot be validated as it is a public client. Client id is easily impersonated
         $client = $this->validatePublicClient($request);
         $scopes = $this->validateScopes($this->getRequestParameter('scope', $request, $this->defaultScope));
-        $user = $this->validateUser($request);
+        $user = $this->validateUser($request, $client);
 
         // Finalize the requested scopes
         $finalizedScopes = $this->scopeRepository->finalizeScopes($scopes, $this->getIdentifier(), $client, $user->getIdentifier());
@@ -51,6 +61,40 @@ class IdpGrant extends AbstractGrant
         return $responseType;
     }
 
+    /**
+     * @param ServerRequestInterface $request
+     * @param ClientEntityInterface  $client
+     *
+     * @throws OAuthServerException
+     *
+     * @return UserEntityInterface
+     */
+    protected function validateUser(ServerRequestInterface $request, ClientEntityInterface $client)
+    {
+        $username = $this->getRequestParameter('username', $request);
+        if (is_null($username)) {
+            throw OAuthServerException::invalidRequest('username');
+        }
+
+        $password = $this->getRequestParameter('password', $request);
+        if (is_null($password)) {
+            throw OAuthServerException::invalidRequest('password');
+        }
+
+        $credentials = [
+            'username' => $username,
+            'password' => bcrypt($password),
+            'provider' => 'password',
+        ];
+
+        $user = UserController::getUser
+        if ($user instanceof UserEntityInterface === false) {
+            $this->getEmitter()->emit(new RequestEvent(RequestEvent::USER_AUTHENTICATION_FAILED, $request));
+            throw OAuthServerException::invalidCredentials();
+        }
+
+        return $user;
+    }
 
     /**
      * Validate the non-secret client.
@@ -103,66 +147,10 @@ class IdpGrant extends AbstractGrant
     }
 
     /**
-     * @param ServerRequestInterface $request
-     * @return mixed
+     * {@inheritdoc}
      */
-    protected function validateUser(ServerRequestInterface $request)
-    {
-        $idp = $this->getRequestParameter('idp', $request);
-        $token = $this->getRequestParameter('idpToken', $request);
-        if($idp === "google") {
-            $client = new \Google_Client(['client_id' => env('GOOGLE_CLIENT_ID')]);
-
-            // Google verifies 'iss' (google's source signature) and 'exp' (the token expiration)
-            $payload = $client->verifyIdToken($token);
-            if($payload) {
-                $username = $payload('sub');
-                $email = $payload('email');
-                // $aud = $payload('aud');
-                // $payload('hd') // G-suite domain
-                // $payload('name')
-                // $payload('given_name')
-                // $payload('family_name')
-
-            } else {
-                // Invalid google token
-                throw OAuthServerException::invalidRequest('idpToken');
-            }
-        } else {
-            throw OAuthServerException::invalidRequest('idp');
-        }
-
-        if (is_null($username)) {
-            throw OAuthServerException::invalidRequest('username');
-        }
-
-        $credentials = [
-            'username' => $username,
-            'email' => $email
-        ];
-
-        $user = User::where($credentials)->first();
-
-        if ($user instanceof User === false) {
-            $this->getEmitter()->emit(new RequestEvent(RequestEvent::USER_AUTHENTICATION_FAILED, $request));
-
-            throw OAuthServerException::invalidCredentials();
-        }
-
-        return $user;
-    }
     public function getIdentifier()
     {
-        return 'idp';
-    }
-
-    /**
-     * @param RefreshTokenRepositoryInterface $refreshTokenRepository
-     *
-     * @throw \LogicException
-     */
-    public function setRefreshTokenRepository(RefreshTokenRepositoryInterface $refreshTokenRepository)
-    {
-        throw new \LogicException('The Implicit Grant does not return refresh tokens');
+        return 'pcPassword';
     }
 }

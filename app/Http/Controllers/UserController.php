@@ -7,6 +7,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\User;
+use App\LoginMethod;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Validator;
 use Lcobucci\JWT\Parser;
@@ -30,9 +31,9 @@ class UserController extends Controller
 
 
     /**
-     * login api
-     *
-     * @return \Illuminate\Http\Response
+     * Login api
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
      */
     public function login(Request $request)
     {
@@ -192,5 +193,32 @@ class UserController extends Controller
         }
         return $this->outputJSON($labs,"User's labs retrieved");
 
+    }
+
+    public function get_user_from_credentials(string $provider, string $username, string $password = null) {
+        if($provider = 'password') {
+            if(is_null($password)) {
+                return null;
+            }
+            // Search for username and verify password
+            $user = User::where(['provider' => 1, 'username' => username, 'password' => bcrypt(password)])::first();
+            if(is_null($user)) {
+                return null;
+            }
+            if($user->password === bcrypt($password)) {
+                // Authenticated!
+                return $user;
+            }
+        } else {
+            // Authenticated through 3rd party idp
+            $providerId = LoginMethod::getId($provider);
+            if(!is_null($providerId)) {
+                $user = User::where(['provider_id' => $providerId, 'username' => $username])::first();
+                if(!is_null($user)) {
+                    return $user;
+                }
+            }
+        }
+        return null;
     }
 }

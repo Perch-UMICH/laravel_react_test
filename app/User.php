@@ -17,7 +17,11 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name',
+        'username',
+        'email',
+        'password',
+        'login_method_id',
     ];
 
     /**
@@ -26,7 +30,8 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password',
+        'remember_token',
     ];
 
     public function student() {
@@ -41,5 +46,8 @@ class User extends Authenticatable
         return $this->belongsToMany('App\Lab', 'lab_user','user_id', 'lab_id')->withPivot('role');
     }
 
+    public function loginMethod() {
+        return $this->belongsTo('App\LoginMethod', 'login_method_id');
+    }
 
 }
