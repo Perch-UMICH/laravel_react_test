@@ -46,6 +46,7 @@ class StudentController extends Controller
             $student->tags;
             $student->work_experiences;
             $student->class_experiences;
+            $student->lab_list;
             $student_data[$student->id] = $student;
         }
         return $this->outputJSON($student_data, 'Students retrieved');
@@ -59,6 +60,7 @@ class StudentController extends Controller
         $student->tags;
         $student->work_experiences;
         $student->class_experiences;
+        $student->lab_list;
         return $this->outputJSON($student,"Student retrieved");
     }
 
@@ -195,24 +197,24 @@ class StudentController extends Controller
 
     // Courses:
 
-    public function school_courses(Student $student) {
-        $courses = $student->school_courses()->wherePivot('student_id', $student->id)->get();
-        return $this->outputJSON($courses,"School courses retrieved");
-    }
-
-    public function add_school_courses(Request $request, Student $student) {
-        $input = $request->all();
-        $ids = $input['course_ids'];
-        $student->school_courses()->sync($ids);
-        return $this->outputJSON(null,"Added courses");
-    }
-
-    public function remove_school_courses(Request $request, Student $student) {
-        $input = $request->all();
-        $ids = $input['course_ids'];
-        $student->school_courses()->detach($ids);
-        return $this->outputJSON(null,"Removed courses");
-    }
+//    public function school_courses(Student $student) {
+//        $courses = $student->school_courses()->wherePivot('student_id', $student->id)->get();
+//        return $this->outputJSON($courses,"School courses retrieved");
+//    }
+//
+//    public function add_school_courses(Request $request, Student $student) {
+//        $input = $request->all();
+//        $ids = $input['course_ids'];
+//        $student->school_courses()->sync($ids);
+//        return $this->outputJSON(null,"Added courses");
+//    }
+//
+//    public function remove_school_courses(Request $request, Student $student) {
+//        $input = $request->all();
+//        $ids = $input['course_ids'];
+//        $student->school_courses()->detach($ids);
+//        return $this->outputJSON(null,"Removed courses");
+//    }
 
     // Searched Labs:
 

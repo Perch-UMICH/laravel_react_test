@@ -83,12 +83,14 @@ class SearchController extends Controller
         $departments = $input['departments']; // depts
         $keyword = $input['keyword'];
 
-        $projects = Position::with(['urop_position','departments','lab'])->orderBy('lab_id')->get();
+        $projects = Position::with(['urop_position','departments'])->orderBy('lab_id')->get();
+        $labs = [];
         $selected = [];
         $selected_keywords = [];
 
         if (empty($commitments) && empty($skills) && empty($areas) && empty($departments) && empty($keyword)) {
-            return $this->outputJSON(['results' => $projects, 'keyword_location' => $selected_keywords], "Search performed");
+            $labs = Lab::with(['positions.urop_position','positions.departments'])->get();
+            return $this->outputJSON(['results' => $labs, 'keyword_location' => $selected_keywords], "Search performed");
         }
 
         // $l->positions()->whereHas('departments', function($query) {$query->where('name','Chemistry');})->get()
@@ -126,6 +128,24 @@ class SearchController extends Controller
             if ($has_commitment || $has_skill || $has_area || $has_department || $has_keyword) {
                 $selected[] = $p;
                 $selected_keywords[] = $loc;
+            }
+        }
+
+        // Pull labs
+        $labs = [];
+        $i = 0;
+        foreach ($selected as $s) {
+            if (empty($labs)) {
+                $labs[] = $s->lab->toArray();
+                $labs[$i]['positions'][] = $s->toArray();
+            }
+            else if ($labs[$i]['id'] == $s->lab->id) {
+                $labs[$i]['positions'][] = $s->toArray();
+            }
+            else {
+                $labs[] = $s->lab->toArray();
+                $i++;
+                $labs[$i]['positions'][] = $s->toArray();
             }
         }
 
