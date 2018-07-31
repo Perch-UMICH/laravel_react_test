@@ -18,5 +18,6 @@ class DatabaseSeeder extends Seeder
 //        $this->call(LabConnectionsSeeder::class);
 //        $this->call(StudentConnectionsSeeder::class);
         $this->call(UROPSeeder::class);
+        $this->call(LoginMethodsTableSeeder::class);
     }
 }

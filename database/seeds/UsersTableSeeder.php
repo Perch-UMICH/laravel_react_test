@@ -22,6 +22,7 @@ class UsersTableSeeder extends Seeder
         $student->name = 'akshayro';
         $student->email = 'akshayro@umich.edu';
         $student->password = bcrypt('password');
+        $student->login_method_id = 1;
         $student->is_student = true;
         $student->is_faculty = false;
         $student->save();
@@ -44,6 +45,7 @@ class UsersTableSeeder extends Seeder
         $student->name = 'perch';
         $student->email = 'student@perch.com';
         $student->password = bcrypt('test');
+        $student->login_method_id = 1;
         $student->is_student = true;
         $student->is_faculty = false;
         $student->save();
@@ -64,6 +66,7 @@ class UsersTableSeeder extends Seeder
         $prof->name = 'anishii';
         $prof->email = 'anishii@umich.edu';
         $prof->password = bcrypt('password');
+        $prof->login_method_id = 1;
         $prof->is_student = false;
         $prof->is_faculty = true;
         $prof->save();
@@ -82,6 +85,7 @@ class UsersTableSeeder extends Seeder
         $prof->name = 'perch_faculty';
         $prof->email = 'faculty@perch.com';
         $prof->password = bcrypt('test');
+        $prof->login_method_id = 1;
         $prof->is_student = false;
         $prof->is_faculty = true;
         $prof->save();
