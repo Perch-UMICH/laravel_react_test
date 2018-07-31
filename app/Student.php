@@ -40,7 +40,7 @@ class Student extends Model
 
     public function lab_list()
     {
-        return $this->belongsToMany('App\Lab', 'student_lab');
+        return $this->belongsToMany('App\Lab', 'lab_student');
     }
 
     public function responses()
