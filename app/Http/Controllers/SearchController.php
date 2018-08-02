@@ -102,30 +102,35 @@ class SearchController extends Controller
             $commitment = $p->min_time_commitment;
             $desc = $p->description;
 
-            $class = $urop->urop_tags->where('type', 'Classification')->first();
+            $class = $urop->urop_tags->where('type', 'Classification')->all();
             if ($class) $class = $class->name;
-            $cat = $urop->urop_tags->where('type', 'SubCategory')->first();
+            $cat = $urop->urop_tags->where('type', 'SubCategory')->all();
             if ($cat) $cat = $cat->name;
 
             $dept = $p->departments;
             if ($dept != null) $dept = $dept->pluck('name')[0];
 
-            $has_commitment = (!empty($commitments) && in_array(strtolower($commitment), array_map('strtolower', $commitments)));
-            $has_skill = ($cat && !empty($skills) && in_array(strtolower($cat), array_map('strtolower', $skills)));
-            $has_area = ($class && !empty($areas) && in_array(strtolower($class), array_map('strtolower', $areas)));
-            $has_department = (!empty($departments) && in_array(strtolower($dept), array_map('strtolower', $departments)));
+            $has_commitment = (empty($commitments)
+                || in_array(strtolower($commitment), array_map('strtolower', $commitments)));
+            $has_skill = (empty($skills)
+                || ($cat && in_array(strtolower($cat), array_map('strtolower', $skills))));
+            $has_area = (empty($areas)
+                || ($class && in_array(strtolower($class), array_map('strtolower', $areas))));
+            $has_department = (empty($departments)
+                || in_array(strtolower($dept), array_map('strtolower', $departments)));
 
-            $has_keyword = false;
+            $has_keyword = true;
             $loc = null;
-
-            $loc = stripos($desc, $keyword);
-            if ($loc !== false) {
-                $has_keyword = true;
-            } else {
-                $has_keyword = false;
+            if ($keyword) {
+                $loc = stripos($desc, $keyword);
+                if ($loc !== false) {
+                    $has_keyword = true;
+                } else {
+                    $has_keyword = false;
+                }
             }
 
-            if ($has_commitment || $has_skill || $has_area || $has_department || $has_keyword) {
+            if (($has_area && $has_department) && ($has_commitment && $has_skill && $has_keyword)) {
                 $selected[] = $p;
                 $selected_keywords[] = $loc;
             }

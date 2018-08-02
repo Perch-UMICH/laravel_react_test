@@ -11,6 +11,7 @@ use App\LoginMethod;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Validator;
 use Lcobucci\JWT\Parser;
+use App\Controllers\Auth\IdpGrant;
 
 class UserController extends Controller
 {
@@ -178,7 +179,7 @@ class UserController extends Controller
         if ($user == null) {
             return $this->outputJSON(null,"Error: invalid user_id");
         }
-        $student = $user->student;
+        $student = $user->student()->with('skills','tags','work_experiences','class_experiences','lab_list')->get();
         if ($student != null) {
             return $this->outputJSON($student,"Retrieved student profile of user " . $user->email);
         }

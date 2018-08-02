@@ -52,9 +52,9 @@ class Student extends Model
     {
         return $this->hasMany('App\WorkExperience');
     }
-
-    public function class_experiences()
+    
+    public function education_experiences()
     {
-        return $this->belongsToMany('App\ClassExperience', 'class_experience_student');
+        return $this->hasMany('App\EducationExperience');
     }
 }

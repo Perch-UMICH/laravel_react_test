@@ -25,12 +25,10 @@ class CreateStudentsTable extends Migration
             $table->string('year')->nullable();
 
             $table->text('bio')->nullable();
-            $table->string('major')->nullable(); // normalize
-            $table->double('gpa')->nullable();
-            $table->text('experiences')->nullable();
-
-            // comma separated list
-            $table->string('classes')->nullable(); // normalize
+//            $table->string('major')->nullable(); // normalize
+//            $table->double('gpa')->nullable();
+//            $table->text('experiences')->nullable();
+//            $table->string('classes')->nullable(); // normalize
 
             $table->string('linkedin_link')->nullable();
             $table->string('website_link')->nullable();
