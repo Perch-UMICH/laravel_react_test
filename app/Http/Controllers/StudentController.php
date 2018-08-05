@@ -16,6 +16,8 @@ use App\Lab;
 use Storage;
 use App\WorkExperience;
 use App\ClassExperience;
+use App\EduExperience;
+use App\University;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
@@ -45,7 +47,7 @@ class StudentController extends Controller
             $student->skills;
             $student->tags;
             $student->work_experiences;
-            $student->class_experiences;
+            $student->edu_experiences;
             $student->lab_list;
             $student_data[$student->id] = $student;
         }
@@ -56,23 +58,16 @@ class StudentController extends Controller
     // Get Student based on student_id
     public function show(Student $student)
     {
-        $student->skills;
-        $student->tags;
-        $student->work_experiences;
-        $student->class_experiences;
-        $student->lab_list;
-        return $this->outputJSON($student,"Student retrieved");
+        $s = $student->toArray();
+        $s['skills'] = $student->skills;
+        $s['tags'] = $student->tags;
+        $s['work_experiences'] = $student->work_experiences;
+        $s['edu_experiences'] = $student->edu_experiences()->with('classes','majors','university')->get();
+        $s['lab_list'] = $student->lab_list;
+
+        return $this->outputJSON($s,"Student retrieved");
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -118,6 +113,21 @@ class StudentController extends Controller
         $student->update($input);
         $student->save();
 
+        // Skills
+        if ($request->has('skill_ids')) {
+            $this->sync_skills($request, $student);
+        }
+        // Tags
+        if ($request->has('tag_ids')) {
+            $this->sync_tags($request, $student);
+        }
+
+        $student->skills;
+        $student->tags;
+        $student->lab_list;
+        $student->work_experiences;
+        $student->edu_experiences;
+
         return $this->outputJSON($student, 'Student profile updated');
     }
 
@@ -155,7 +165,12 @@ class StudentController extends Controller
     public function sync_skills(Request $request, Student $student) {
         $input = $request->all();
         $ids = $input['skill_ids'];
-        $student->skills()->sync($ids);
+        if ($ids[0] == 0) {
+            $student->skills()->detach();
+        }
+        else {
+            $student->skills()->sync($ids);
+        }
         return $this->outputJSON(null,"Synced skills");
     }
 
@@ -184,7 +199,12 @@ class StudentController extends Controller
     public function sync_tags(Request $request, Student $student) {
         $input = $request->all();
         $ids = $input['tag_ids'];
-        $student->tags()->sync($ids);
+        if ($ids[0] == 0) {
+            $student->tags()->detach();
+        }
+        else {
+            $student->tags()->sync($ids);
+        }
         return $this->outputJSON(null,"Synced tags");
     }
 
@@ -228,7 +248,12 @@ class StudentController extends Controller
     public function sync_lab_list(Request $request, Student $student) {
         $input = $request->all();
         $ids = $input['lab_ids'];
-        $student->labs()->sync($ids);
+        if ($ids[0] == 0) {
+            $student->lab_list()->detach();
+        }
+        else {
+            $student->labs()->sync($ids);
+        }
         return $this->outputJSON(null,"Synced labs");
     }
 
@@ -345,9 +370,10 @@ class StudentController extends Controller
 
     // Experiences
 
-    public function create_and_add_work_experiences(Request $request, Student $student) {
+    public function create_and_sync_work_experiences(Request $request, Student $student) {
         $input = $request->all();
         $experiences = $input['work_experiences'];
+
         foreach ($experiences as $e) {
             $work = new WorkExperience($e);
             $student->work_experiences()->save($work);
@@ -358,29 +384,46 @@ class StudentController extends Controller
 
     public function remove_work_experiences(Request $request, Student $student) {
         $input = $request->all();
-        $ids = $input['ids'];
+        $ids = $input['work_experience_ids'];
         WorkExperience::destroy($ids);
         return $this->outputJSON($student, 'Deleted work experiences from student');
     }
 
-    public function add_class_experiences(Request $request, Student $student) {
+    public function create_and_sync_edu_experiences(Request $request, Student $student) {
         $input = $request->all();
-        $experiences = $input['class_experiences'];
+        $input = array_filter($input);
+
+        $experiences = $input['edu_experiences'];
+
         foreach ($experiences as $e) {
-            $class = ClassExperience::where('title', $e->title);
-            if ($class == null) {
-                $class = new ClassExperience($e);
-                $class->save();
-            }
-            $student->class_experiences()->attach($class->id);
+            $edu_exp = EduExperience::create($e);
+            $major_ids = $e->major_ids;
+            $class_experience_ids = $e->class_experience_ids;
+            $edu_exp->majors()->syncWithoutDetaching($major_ids);
+            $edu_exp->classes()->syncWithoutDetaching($class_experience_ids);
         }
-        return $this->outputJSON($student, 'Added class experience to student');
+
+        return $this->outputJSON($student,"Added edu experiences",200);
     }
 
-    public function remove_class_experiences(Request $request, Student $student) {
-        $input = $request->all();
-        $ids = $input['ids'];
-        $student->class_experiences()->detach($ids);
-        return $this->outputJSON($student, 'Deleted class experiences from student');
-    }
+//    public function add_class_experiences(Request $request, Student $student) {
+//        $input = $request->all();
+//        $experiences = $input['class_experiences'];
+//        foreach ($experiences as $e) {
+//            $class = ClassExperience::where('title', $e->title);
+//            if ($class == null) {
+//                $class = new ClassExperience($e);
+//                $class->save();
+//            }
+//            $student->class_experiences()->attach($class->id);
+//        }
+//        return $this->outputJSON($student, 'Added class experience to student');
+//    }
+//
+//    public function remove_class_experiences(Request $request, Student $student) {
+//        $input = $request->all();
+//        $ids = $input['ids'];
+//        $student->class_experiences()->detach($ids);
+//        return $this->outputJSON($student, 'Deleted class experiences from student');
+//    }
 }

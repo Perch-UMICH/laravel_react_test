@@ -179,13 +179,19 @@ class UserController extends Controller
         if ($user == null) {
             return $this->outputJSON(null,"Error: invalid user_id");
         }
-        $student = $user->student()->with('skills','tags','work_experiences','class_experiences','lab_list')->get();
-        if ($student != null) {
-            return $this->outputJSON($student,"Retrieved student profile of user " . $user->email);
-        }
-        else {
+        $student = $user->student;
+
+        if (!$student) {
             return $this->outputJSON(null,"Error: " . $user->email . " does not have a student profile");
         }
+
+        $s = $student->toArray();
+        $s['skills'] = $student->skills;
+        $s['tags'] = $student->tags;
+        $s['work_experiences'] = $student->work_experiences;
+        $s['edu_experiences'] = $student->edu_experiences()->with('classes','majors','university')->get();
+        $s['lab_list'] = $student->lab_list;
+        return $this->outputJSON($s,"Retrieved student profile of user " . $user->email);
     }
 
     public function get_faculty_profile(User $user) {

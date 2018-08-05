@@ -9,13 +9,10 @@ class Student extends Model
     protected $fillable = [
         'first_name',
         'last_name',
-        'email',
+        'contact_email',
+        'contact_phone',
         'year',
         'bio',
-        'major',
-        'gpa',
-        'classes',
-        'experiences',
         'linkedin_link',
         'website_link',
         'profilepic_path',
@@ -52,9 +49,9 @@ class Student extends Model
     {
         return $this->hasMany('App\WorkExperience');
     }
-    
-    public function education_experiences()
+
+    public function edu_experiences()
     {
-        return $this->hasMany('App\EducationExperience');
+        return $this->hasMany('App\EduExperience');
     }
 }
