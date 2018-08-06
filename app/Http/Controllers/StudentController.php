@@ -95,6 +95,15 @@ class StudentController extends Controller
         $user->student()->save($student);
         $user->save();
 
+        // Skills
+        if ($request->has('skill_ids')) {
+            $this->sync_skills($request, $student);
+        }
+        // Tags
+        if ($request->has('tag_ids')) {
+            $this->sync_tags($request, $student);
+        }
+
         return $this->outputJSON($student, 'Student profile created');
     }
 

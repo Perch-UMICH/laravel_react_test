@@ -33,7 +33,7 @@ class UsersTableSeeder extends Seeder
         $profile->first_name = 'Akshay';
         $profile->last_name = 'Rao';
 //        $profile->major = 'Physics';
-        $profile->year = 'Junior';
+//        $profile->year = 'Junior';
 //        $profile->gpa = '4.0';
         $profile->contact_email = $student->email;
 //        $profile->classes = 'MCDB 423|CHEM 215/216';
@@ -54,7 +54,7 @@ class UsersTableSeeder extends Seeder
         $profile->user_id = $student->id;
         $profile->first_name = 'Perch';
         $profile->last_name = 'User';
-        $profile->year = 'Freshman';
+//        $profile->year = 'Freshman';
 //        $profile->major = 'Biology';
         $profile->contact_email = $student->email;
 //        $profile->classes = 'EECS 281|EECS 388';
