@@ -110,7 +110,7 @@ Route::group(['middleware' => 'auth:api'], function(){
         //
 
         // Experiences
-        Route::post('students/{student}/work_experiences', 'StudentController@create_and_add_work_experiences');
+        Route::post('students/{student}/work_experiences', 'StudentController@create_and_add_work_experience');
         Route::put('students/{student}/work_experiences', 'StudentController@remove_work_experiences');
 
         Route::post('students/{student}/edu_experiences', 'EduExperienceController@store');
@@ -119,8 +119,8 @@ Route::group(['middleware' => 'auth:api'], function(){
         //
 
         // Lab list
-        Route::post('student/{student}/lab_list', 'StudentController@add_to_lab_list');
-        Route::put('student/{student}/lab_list', 'StudentController@remove_from_lab_list');
+        Route::post('students/{student}/position_list', 'StudentController@add_to_position_list');
+        Route::put('students/{student}/position_list', 'StudentController@remove_from_position_list');
 
         Route::post('students/{student}/resume', 'StudentController@add_resume');
 

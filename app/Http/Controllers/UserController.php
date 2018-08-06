@@ -112,9 +112,9 @@ class UserController extends Controller
             return $this->outputJSON(null,"Email already taken", 404);
         }
         $input['password'] = bcrypt($input['password']);
-        $input['login_method_id'] = LoginMethod::getId('password');
+//        $input['login_method_id'] = LoginMethod::getId('password');
         $user = User::create($input);
-        $token['token'] = $user->createToken('token')->accessToken;
+        $token = $user->createToken('token')->accessToken;
 
         Auth::attempt(['email' => request('email'), 'password' => request('password')]);
 
@@ -190,7 +190,7 @@ class UserController extends Controller
         $s['tags'] = $student->tags;
         $s['work_experiences'] = $student->work_experiences;
         $s['edu_experiences'] = $student->edu_experiences()->with('classes','majors','university')->get();
-        $s['lab_list'] = $student->lab_list;
+        $s['position_list'] = $student->position_list()->with('departments','skills','tags','lab')->get();
         return $this->outputJSON($s,"Retrieved student profile of user " . $user->email);
     }
 

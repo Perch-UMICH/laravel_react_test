@@ -102,10 +102,8 @@ class SearchController extends Controller
             $commitment = $p->min_time_commitment;
             $desc = $p->description;
 
-            $class = $urop->urop_tags->where('type', 'Classification')->all();
-            if ($class) $class = $class->name;
-            $cat = $urop->urop_tags->where('type', 'SubCategory')->all();
-            if ($cat) $cat = $cat->name;
+            $classes = $urop->urop_tags->where('type', 'Classification')->pluck('name')->all();
+            $cats = $urop->urop_tags->where('type', 'SubCategory')->pluck('name')->all();
 
             $dept = $p->departments;
             if ($dept != null) $dept = $dept->pluck('name')[0];
@@ -113,9 +111,9 @@ class SearchController extends Controller
             $has_commitment = (empty($commitments)
                 || in_array(strtolower($commitment), array_map('strtolower', $commitments)));
             $has_skill = (empty($skills)
-                || ($cat && in_array(strtolower($cat), array_map('strtolower', $skills))));
+                || (!empty($cats) && (array_intersect(array_map('strtolower', $cats), array_map('strtolower', $skills)) == count($cats))));
             $has_area = (empty($areas)
-                || ($class && in_array(strtolower($class), array_map('strtolower', $areas))));
+                || (!empty($classes) && (array_intersect(array_map('strtolower', $classes), array_map('strtolower', $areas)) == count($classes))));
             $has_department = (empty($departments)
                 || in_array(strtolower($dept), array_map('strtolower', $departments)));
 

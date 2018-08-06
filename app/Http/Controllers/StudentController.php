@@ -48,7 +48,7 @@ class StudentController extends Controller
             $student->tags;
             $student->work_experiences;
             $student->edu_experiences;
-            $student->lab_list;
+            $student->position_list;
             $student_data[$student->id] = $student;
         }
         return $this->outputJSON($student_data, 'Students retrieved');
@@ -63,7 +63,7 @@ class StudentController extends Controller
         $s['tags'] = $student->tags;
         $s['work_experiences'] = $student->work_experiences;
         $s['edu_experiences'] = $student->edu_experiences()->with('classes','majors','university')->get();
-        $s['lab_list'] = $student->lab_list;
+        $s['position_list'] = $student->position_list()->with('departments','skills','tags','lab')->get();
 
         return $this->outputJSON($s,"Student retrieved");
     }
@@ -116,7 +116,7 @@ class StudentController extends Controller
      */
     public function update(Request $request, Student $student)
     {
-
+        // TODO check for issues with empty arrays
         $input = $request->all();
         $input = array_filter($input);
         $student->update($input);
@@ -133,7 +133,7 @@ class StudentController extends Controller
 
         $student->skills;
         $student->tags;
-        $student->lab_list;
+        $student->position_list;
         $student->work_experiences;
         $student->edu_experiences;
 
@@ -249,36 +249,36 @@ class StudentController extends Controller
 
 
     // Get favorited labs of student, based on student_id
-    public function lab_list(Student $student) {
-        $labs = $student->labs()->wherePivot('student_id', $student->id)->get();
+    public function position_list(Student $student) {
+        $labs = $student->position_list()->wherePivot('student_id', $student->id)->get();
         return $this->outputJSON($labs,"Labs retrieved");
     }
 
-    public function sync_lab_list(Request $request, Student $student) {
+    public function sync_position_list(Request $request, Student $student) {
         $input = $request->all();
-        $ids = $input['lab_ids'];
+        $ids = $input['position_ids'];
         if ($ids[0] == 0) {
-            $student->lab_list()->detach();
+            $student->position_list()->detach();
         }
         else {
-            $student->labs()->sync($ids);
+            $student->position_list()->sync($ids);
         }
-        return $this->outputJSON(null,"Synced labs");
+        return $this->outputJSON(null,"Synced positions");
     }
 
-    public function add_to_lab_list(Request $request, Student $student) {
+    public function add_to_position_list(Request $request, Student $student) {
         $input = $request->all();
-        $ids = $input['lab_ids'];
-        $student->labs()->syncWithoutDetaching($ids);
-        return $this->outputJSON(null,"Added labs");
+        $ids = $input['position_ids'];
+        $student->position_list()->syncWithoutDetaching($ids);
+        return $this->outputJSON(null,"Added positions");
     }
 
-    public function remove_from_lab_list(Request $request, Student $student)
+    public function remove_from_position_list(Request $request, Student $student)
     {
         $input = $request->all();
-        $ids = $input['lab_ids'];
-        $student->labs()->detach($ids);
-        return $this->outputJSON(null, "Removed labs");
+        $ids = $input['position_ids'];
+        $student->position_list()->detach($ids);
+        return $this->outputJSON(null, "Removed positions");
     }
 
 
@@ -379,14 +379,13 @@ class StudentController extends Controller
 
     // Experiences
 
-    public function create_and_sync_work_experiences(Request $request, Student $student) {
+    public function create_and_add_work_experience(Request $request, Student $student) {
         $input = $request->all();
-        $experiences = $input['work_experiences'];
+        $e = $input['work_experience'];
 
-        foreach ($experiences as $e) {
-            $work = new WorkExperience($e);
-            $student->work_experiences()->save($work);
-        }
+        $work = new WorkExperience($e);
+        $student->work_experiences()->save($work);
+
         $student->work_experiences;
         return $this->outputJSON($student, 'Added work experiences to student');
     }
@@ -394,26 +393,30 @@ class StudentController extends Controller
     public function remove_work_experiences(Request $request, Student $student) {
         $input = $request->all();
         $ids = $input['work_experience_ids'];
+        foreach ($ids as $id) {
+            $work_exp = WorkExperience::find($id);
+            if (!$work_exp) return $this->outputJSON(null,"Error: invalid work_experience id",404);
+        }
         WorkExperience::destroy($ids);
         return $this->outputJSON($student, 'Deleted work experiences from student');
     }
 
-    public function create_and_sync_edu_experiences(Request $request, Student $student) {
-        $input = $request->all();
-        $input = array_filter($input);
-
-        $experiences = $input['edu_experiences'];
-
-        foreach ($experiences as $e) {
-            $edu_exp = EduExperience::create($e);
-            $major_ids = $e->major_ids;
-            $class_experience_ids = $e->class_experience_ids;
-            $edu_exp->majors()->syncWithoutDetaching($major_ids);
-            $edu_exp->classes()->syncWithoutDetaching($class_experience_ids);
-        }
-
-        return $this->outputJSON($student,"Added edu experiences",200);
-    }
+//    public function create_and_sync_edu_experiences(Request $request, Student $student) {
+//        $input = $request->all();
+//        $input = array_filter($input);
+//
+//        $experiences = $input['edu_experiences'];
+//
+//        foreach ($experiences as $e) {
+//            $edu_exp = EduExperience::create($e);
+//            $major_ids = $e->major_ids;
+//            $class_experience_ids = $e->class_experience_ids;
+//            $edu_exp->majors()->syncWithoutDetaching($major_ids);
+//            $edu_exp->classes()->syncWithoutDetaching($class_experience_ids);
+//        }
+//
+//        return $this->outputJSON($student,"Added edu experiences",200);
+//    }
 
 //    public function add_class_experiences(Request $request, Student $student) {
 //        $input = $request->all();
