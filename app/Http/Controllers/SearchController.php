@@ -106,7 +106,9 @@ class SearchController extends Controller
             $cats = $urop->urop_tags->where('type', 'SubCategory')->pluck('name')->all();
 
             $dept = $p->departments;
-            if ($dept != null) $dept = $dept->pluck('name')[0];
+            if ($dept != null) $dept = $dept->pluck('name');
+            if (is_array($dept) && !empty($dept)) $dept = $dept[0];
+            else $dept = null;
 
             $has_commitment = (empty($commitments)
                 || in_array(strtolower($commitment), array_map('strtolower', $commitments)));
