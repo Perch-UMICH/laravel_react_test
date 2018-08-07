@@ -154,6 +154,7 @@ Specific tasks and responsibilities include:
         $lab = Lab::find(2);
         $lab->members()->sync([4 => ['role' => 1], 1 => ['role' => 3]]);
     }
+
     // Seeds db with excel file containing projects
     public function pb_db_seeder()
     {
@@ -161,17 +162,14 @@ Specific tasks and responsibilities include:
         $reader = Excel::load($file);
         $data = $reader->get();
 
+        $titles = [];
         foreach ($data as $d) {
-            // Check for project duplicate
-            $projs = Position::all();
-            $titles = [];
-            foreach ($projs as $p) {
-                $titles[] = $p->title;
-            }
-            if (!in_array($d['projtitle'], $titles)) {
+            if (!in_array(trim($d['projtitle']), $titles)) {
                 $pos = new Position();
                 $pos->title = trim($d['projtitle']);
+                $titles[] = $pos->title;
                 $pos->description = $d['projdescr'];
+                if ($pos->description == null) $pos->description = "No description";
 
                 $hrs = $d['hrsperweek'];
                 if ($hrs == 0) {
