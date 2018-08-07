@@ -390,6 +390,20 @@ class StudentController extends Controller
         return $this->outputJSON($student, 'Added work experiences to student');
     }
 
+    public function update_work_experience(Request $request, Student $student) {
+        $input = $request->all();
+        $id = $input['work_experience_id'];
+        $e = $input['updated_work_experience'];
+
+        $work_exp = WorkExperience::find($id);
+        if (!$work_exp) return $this->outputJSON(null,"Error: invalid work_experience id",404);
+
+        $work_exp->update($e);
+        $work_exp->save();
+
+        return $this->outputJSON($work_exp, 'Updated work experience');
+    }
+
     public function remove_work_experiences(Request $request, Student $student) {
         $input = $request->all();
         $ids = $input['work_experience_ids'];
@@ -398,6 +412,7 @@ class StudentController extends Controller
             if (!$work_exp) return $this->outputJSON(null,"Error: invalid work_experience id",404);
         }
         WorkExperience::destroy($ids);
+        $student->work_experiences;
         return $this->outputJSON($student, 'Deleted work experiences from student');
     }
 

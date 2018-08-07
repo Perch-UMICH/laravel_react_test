@@ -111,7 +111,8 @@ Route::group(['middleware' => 'auth:api'], function(){
 
         // Experiences
         Route::post('students/{student}/work_experiences', 'StudentController@create_and_add_work_experience');
-        Route::put('students/{student}/work_experiences', 'StudentController@remove_work_experiences');
+        Route::put('students/{student}/work_experiences', 'StudentController@update_work_experience');
+        Route::post('students/{student}/work_experiences/delete', 'StudentController@remove_work_experiences');
 
         Route::post('students/{student}/edu_experiences', 'EduExperienceController@store');
         Route::put('students/{student}/edu_experiences', 'EduExperienceController@update');
