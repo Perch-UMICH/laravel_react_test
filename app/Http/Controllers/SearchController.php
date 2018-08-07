@@ -113,9 +113,9 @@ class SearchController extends Controller
             $has_commitment = (empty($commitments)
                 || in_array(strtolower($commitment), array_map('strtolower', $commitments)));
             $has_skill = (empty($skills)
-                || (!empty($cats) && (array_intersect(array_map('strtolower', $cats), array_map('strtolower', $skills)) > 0)));
+                || (!empty($cats) && (count(array_intersect(array_map('strtolower', $cats), array_map('strtolower', $skills))) > 0)));
             $has_area = (empty($areas)
-                || (!empty($classes) && (array_intersect(array_map('strtolower', $classes), array_map('strtolower', $areas)) > 0)));
+                || (!empty($classes) && (count(array_intersect(array_map('strtolower', $classes), array_map('strtolower', $areas))) > 0)));
             $has_department = (empty($departments)
                 || in_array(strtolower($dept), array_map('strtolower', $departments)));
 
