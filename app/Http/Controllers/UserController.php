@@ -38,14 +38,15 @@ class UserController extends Controller
      */
     public function login(Request $request)
     {
-//        $validator = $request->validate([
-//            'email' => 'required|email',
-//            'password' => 'required',
-//        ]);
-//
-//        if ($validator->fails()) {
-//            return response()->json(['errors'=>$validator->errors()]);
-//        }
+
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors'=>$validator->errors()]);
+        }
 
         $input = $request->all();
         $user = User::where('email', $input['email'])->first();
@@ -94,12 +95,12 @@ class UserController extends Controller
      */
     public function register(Request $request)
     {
-//        $validator = $request->validate([
-//            'name' => 'required',
-//            'email' => 'required|email',
-//            'password' => 'required',
-//            'password_confirmation' => 'required|same:password',
-//        ]);
+        $validator = $request->validate([
+            'name' => 'required',
+            'email' => 'required|email',
+            'password' => 'required',
+            'password_confirmation' => 'required|same:password',
+        ]);
 
         $input = $request->all();
         if ($input['password'] != $input['password_confirmation']) {
