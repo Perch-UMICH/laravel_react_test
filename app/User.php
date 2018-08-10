@@ -54,5 +54,10 @@ class User extends Authenticatable
         return $this->belongsTo('App\LoginMethod', 'login_method_id');
     }
 
+    public function files() {
+        return $this->belongsToMany('App\File','file_user');
+
+    }
+
 
 }
