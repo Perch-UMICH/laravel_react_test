@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use App\Student;
 use App\Faculty;
 use App\Lab;
@@ -37,7 +38,7 @@ class ProfilepicController extends Controller
      */
     public function store(Request $request)
     {
-        $path = $request->file('image')->store('images');
+        $path = Storage::disk('s3')->putFile('profile_pics', $request->file('image'));
         $type = $request->get('type');
         if ($type == 'student') {
             $student_id = $request->get('id');
