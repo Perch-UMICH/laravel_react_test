@@ -39,4 +39,8 @@ class Lab extends Model
         return $this->hasMany('App\AppQuestion');
     }
 
+    public function files() {
+        return $this->hasMany('App\File');
+    }
+
 }
