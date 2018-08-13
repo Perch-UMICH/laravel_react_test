@@ -55,9 +55,17 @@ class User extends Authenticatable
     }
 
     public function files() {
-        return $this->belongsToMany('App\File','file_user');
-
+        return $this->hasMany('App\File');
     }
 
+    public function resume()
+    {
+        return $this->hasManyThrough('App\ResumeFileType', 'App\File');
+    }
+
+    public function profile_pic()
+    {
+        return $this->hasManyThrough('App\ProfilePicFileType', 'App\File');
+    }
 
 }
