@@ -50,6 +50,7 @@ class CreateStudentsTable extends Migration
      */
     public function down()
     {
+        Schema::dropIfExists('application_responses');
         Schema::dropIfExists('students');
     }
 }
