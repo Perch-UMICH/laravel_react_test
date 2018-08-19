@@ -431,7 +431,7 @@ class LabController extends Controller
         $input = $request->all();
 
         $position = Position::find($input['position_id']);
-        if ($position ===null)
+        if (!$position)
             return $this->outputJSON(null,"Error: invalid position_id");
 
         $application = new Application();
