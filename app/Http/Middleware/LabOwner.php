@@ -17,6 +17,8 @@ class LabOwner
     {
         // Grab user from token
         $user = $request->user();
+        if ($user->is_admin) return $next($request);
+
         // Grab lab id
         $lab_id = $request->route()->parameter('lab')->id;
 

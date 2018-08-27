@@ -24,6 +24,8 @@ class CreateUsersTable extends Migration
             $table->string('google_id')->nullable();
             $table->boolean('is_student')->nullable();
             $table->boolean('is_faculty')->nullable();
+
+            $table->boolean('is_admin')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

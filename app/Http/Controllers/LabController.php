@@ -377,11 +377,21 @@ class LabController extends Controller
 
     // Positions:
 
+    public function position(Request $request, Lab $lab) {
+        $position = Position::find($request->route()->parameter('position'))->with('application.questions')->first();
+        if (!$position)
+            return $this->outputJSON(null,"Error: invalid position_id");
+
+        $intended_lab = $position->lab;
+
+        if ($lab->id != $intended_lab->id)
+            return $this->outputJSON(null,"Error: position of id " . $position->id . " does not belong to a lab this user is admin of");
+
+        return $this->outputJSON($position,"Position from lab retrieved");
+    }
+
     public function positions(Lab $lab) {
         $positions = $lab->positions()->get();
-        foreach ($positions as $p) {
-            $p->application;
-        }
         return $this->outputJSON($positions,"Positions from lab retrieved");
     }
 
@@ -394,7 +404,7 @@ class LabController extends Controller
         return $this->outputJSON($position,"Created position " . $position->title . " and added to lab " . $lab->name);
     }
 
-    public function update_position(Request $request) {
+    public function update_position(Request $request, Lab $lab) {
         $input = $request->all();
         $input = array_filter($input);
 
@@ -415,7 +425,7 @@ class LabController extends Controller
     // Applications:
     // Takes position_id as input
 
-    public function application(Request $request) {
+    public function application(Request $request, Lab $lab) {
         $input = $request->all();
         $pos = Position::find($input['position_id']);
         $application = $pos->application;
@@ -426,13 +436,18 @@ class LabController extends Controller
         return $this->outputJSON($app, 'Application retrieved');
     }
 
-    public function create_application(Request $request)
+    public function create_application(Request $request, Lab $lab)
     {
         $input = $request->all();
 
         $position = Position::find($input['position_id']);
         if (!$position)
             return $this->outputJSON(null,"Error: invalid position_id");
+
+        $intended_lab = $position->lab;
+
+        if ($lab->id != $intended_lab->id)
+            return $this->outputJSON(null,"Error: position of id " . $position->id . " does not belong to a lab this user is admin of");
 
         $application = new Application();
         $application->save();
@@ -455,12 +470,17 @@ class LabController extends Controller
         return $this->outputJSON($application,"Created application and added to position " . $position->title);
     }
 
-    public function update_application(Request $request) {
+    public function update_application(Request $request, Lab $lab) {
         $input = $request->all();
 
         $position = Position::find($input['position_id']);
-        if ($position ===null)
+        if ($position === null)
             return $this->outputJSON(null,"Error: invalid position_id");
+
+        $intended_lab = $position->lab;
+
+        if ($lab->id != $intended_lab->id)
+            return $this->outputJSON(null,"Error: position of id " . $position->id . " does not belong to a lab this user is admin of");
 
         $application = $position->application;
         // Remove old questions
@@ -487,26 +507,21 @@ class LabController extends Controller
 
     // App Responses:
 
-    public function app_responses(Request $request) {
+    public function app_responses(Request $request, Lab $lab) {
         $input = $request->all();
         $position = Position::find($input['position_id']);
         if ($position ===null)
             return $this->outputJSON(null,"Error: invalid position_id");
 
+        $intended_lab = $position->lab;
+
+        if ($lab->id != $intended_lab->id)
+            return $this->outputJSON(null,"Error: position of id " . $position->id . " does not belong to a lab this user is admin of");
+
         $application = $position->application;
         if (!$application) return $this->outputJSON(null, 'Error: position has no application associated with it');
-        $responses = $application->responses;
+        $responses = $application->responses()->with('answers')->get();
 
-        $response_data = [];
-        $count = 0;
-        foreach ($responses as $response) {
-            if ($response->sent) {
-                $response_data[$count] = Collection::make();
-                $response_data[$count]->put('base', $response);
-                $response_data[$count]->put('answers', $response->answers);
-                $count++;
-            }
-        }
-        return $this->outputJSON($response_data, 'Retrieved responses to this application');
+        return $this->outputJSON($responses, 'Retrieved responses to this application');
     }
 }

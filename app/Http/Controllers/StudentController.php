@@ -292,7 +292,7 @@ class StudentController extends Controller
     public function create_app_response(Request $request, Student $student) {
         $input = $request->all();
         $position = Position::where('id', $input['position_id'])->first();    // Position this is responding to
-        $response_strings = $input['answers'];                                // Response strings
+        $response_strings = $input['responses'];                                // Response strings
 
         if (!$position) return $this->outputJSON(null, 'Error: Invalid position_id', 400);
         $application = $position->application;
@@ -327,23 +327,23 @@ class StudentController extends Controller
 
     public function update_app_response(Request $request, Student $student) {
         $input = $request->all();
-        $resp = $input['application_response'];
-        $response_strings = $resp['answers'];   // Updated response strings
         $applicationResponse = ApplicationResponse::find($input['application_response_id']);
+        $resp = $input['application_response'];
+        $response_strings = $resp['responses'];   // Updated response strings
 
         if (!$applicationResponse) return $this->outputJSON(null, 'Error: application_response_id is invalid');
         if ($applicationResponse->student->id != $student->id)  return $this->outputJSON(null, 'Error: student of id ' . $student->id . ' does not own this application response');
 
-        $responses = $applicationResponse->responses;
+        $answers = $applicationResponse->answers;
 
         $count = 0;
-        foreach ($responses as $r) {
-            $r->response = $response_strings[$count];
-            $r->save();
+        foreach ($answers as $a) {
+            $a->response = $response_strings[$count];
+            $a->save();
             $count++;
         }
 
-        $applicationResponse->responses;
+        $applicationResponse->answers;
 
         return $this->outputJSON($applicationResponse, 'Response updated');
     }

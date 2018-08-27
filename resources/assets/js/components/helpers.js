@@ -9,6 +9,7 @@ import FormData from 'form-data'
 
 axios.defaults.headers.common = {};
 axios.defaults.baseURL = 'http://18.211.86.64:8000/';
+//axios.defaults.baseURL = 'http://localhost:8000';
 
 axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 axios.defaults.headers.common['Accept'] = 'application/json';
@@ -100,10 +101,10 @@ export function loginUser(email, password) {
                 sessionStorage.setItem('student_id', response.data.result.user.student.id);
                 // sessionStorage.setItem('faculty_id', null);
             }
-            else if (response.data.result.user.is_faculty) {
+            if (response.data.result.user.is_faculty) {
                 // sessionStorage.setItem('student_id', null);
                 sessionStorage.setItem('faculty_id', response.data.result.user.faculty.id); // EMI HAS CHANGED THIS! FROM HERE TILL...
-                sessionStorage.setItem('lab_id', response.data.result.user.labs[0].id);
+                //sessionStorage.setItem('lab_id', response.data.result.user.labs[0].id);
                 // getUserLabs(response.data.result.user.id).then(resp => {
                 //     console.log(resp);
                 //     // sessionStorage.setItem('lab_id', somethin_good);
@@ -1331,9 +1332,10 @@ export function getAllLabPositions(lab_id) {
         })
 }
 
-export function getLabPosition(position_id) {
+export function getLabPosition(lab_id, position_id) {
     console.log('Getting position');
-    return axios.get('api/positions/' + position_id)
+
+    return axios.get('api/labs/' + lab_id + '/position/' + position_id)
         .then(response => {
             return respond(response.status, response.data);
         })
@@ -1342,52 +1344,52 @@ export function getLabPosition(position_id) {
         })
 }
 
-// RESTRICTED: lab_id
-export function createLabPosition(title, description, time_commitment, open_slots) {
-    console.log('Creating position for lab');
-
-    let lab_id = sessionStorage.getItem('lab_id');
-
-    return axios.post('api/labs/' + lab_id + '/positions', {title, description, time_commitment, open_slots})
-        .then(response => {
-            return respond(response.status, response.data);
-        })
-        .catch(error => {
-            return error_handle(error);
-        })
-}
-
-// RESTRICTED: lab_id
-export function updateLabPosition(position_id, title, description, time_commitment, open_slots) {
-    console.log('Updating position');
-
-    let lab_id = sessionStorage.getItem('lab_id');
-    return axios.post('api/labs/' + lab_id + '/positions/update', {position_id, title, description, time_commitment, open_slots})
-        .then(response => {
-            return respond(response.status, response.data);
-        })
-        .catch(error => {
-            return error_handle(error);
-        })
-}
-
-// RESTRICTED: lab_id
-export function deleteLabPosition(position_ids) {
-    console.log('Deleting positions');
-
-    let lab_id = sessionStorage.getItem('lab_id');
-    let payload = {
-        position_ids: position_ids
-    };
-
-    return axios.post('api/labs/' + lab_id + '/positions/delete', payload)
-        .then(response => {
-            return respond(response.status, response.data);
-        })
-        .catch(error => {
-            return error_handle(error);
-        })
-}
+// // RESTRICTED: lab_id
+// export function createLabPosition(title, description, time_commitment, open_slots) {
+//     console.log('Creating position for lab');
+//
+//     let lab_id = sessionStorage.getItem('lab_id');
+//
+//     return axios.post('api/labs/' + lab_id + '/positions', {title, description, time_commitment, open_slots})
+//         .then(response => {
+//             return respond(response.status, response.data);
+//         })
+//         .catch(error => {
+//             return error_handle(error);
+//         })
+// }
+//
+// // RESTRICTED: lab_id
+// export function updateLabPosition(position_id, title, description, time_commitment, open_slots) {
+//     console.log('Updating position');
+//
+//     let lab_id = sessionStorage.getItem('lab_id');
+//     return axios.post('api/labs/' + lab_id + '/positions/update', {position_id, title, description, time_commitment, open_slots})
+//         .then(response => {
+//             return respond(response.status, response.data);
+//         })
+//         .catch(error => {
+//             return error_handle(error);
+//         })
+// }
+//
+// // RESTRICTED: lab_id
+// export function deleteLabPosition(position_ids) {
+//     console.log('Deleting positions');
+//
+//     let lab_id = sessionStorage.getItem('lab_id');
+//     let payload = {
+//         position_ids: position_ids
+//     };
+//
+//     return axios.post('api/labs/' + lab_id + '/positions/delete', payload)
+//         .then(response => {
+//             return respond(response.status, response.data);
+//         })
+//         .catch(error => {
+//             return error_handle(error);
+//         })
+// }
 
 // Applications
 // Application of questions attached to an open lab position
@@ -1395,23 +1397,23 @@ export function deleteLabPosition(position_ids) {
 // position_id - (integer)
 // questions - (array of strings)
 
-export function getApplicationFromPosition(position_id) {
-    console.log('Getting application');
-
-    return axios.get('api/positions/' + position_id + '/application')
-        .then(response => {
-            return respond(response.status, response.data);
-        })
-        .catch(error => {
-            return error_handle(error);
-        })
-}
+// export function getApplicationFromPosition(position_id) {
+//     console.log('Getting application');
+//
+//     return axios.get('api/positions/' + position_id + '/application')
+//         .then(response => {
+//             return respond(response.status, response.data);
+//         })
+//         .catch(error => {
+//             return error_handle(error);
+//         })
+// }
 
 // RESTRICTED: lab_id
-export function createApplication(application) {
+export function createApplication(lab_id, application) {
     console.log('Creating application');
 
-    let lab_id = sessionStorage.getItem('lab_id');
+    // let lab_id = sessionStorage.getItem('lab_id');
 
     // let payload = {
     //     position_id: position_id,
@@ -1428,10 +1430,10 @@ export function createApplication(application) {
 }
 
 // RESTRICTED: lab_id
-export function updateApplication(application) {
+export function updateApplication(lab_id, application) {
     console.log('Creating application');
 
-    let lab_id = sessionStorage.getItem('lab_id');
+    // let lab_id = sessionStorage.getItem('lab_id');
 
     // let payload = {
     //     position_id: position_id,
@@ -1449,9 +1451,9 @@ export function updateApplication(application) {
 
 // Gets ApplicationResponses to a particular position
 // RESTRICTED: lab_id
-export function getLabPositionApplicants(position_id) {
+export function getLabPositionApplicants(lab_id, position_id) {
 
-    let lab_id = sessionStorage.getItem('lab_id');
+    // let lab_id = sessionStorage.getItem('lab_id');
 
     console.log('Getting application responses');
     return axios.post('api/labs/' + lab_id + '/positions/responses', {position_id})
@@ -1467,7 +1469,7 @@ export function getLabPositionApplicants(position_id) {
 // Response to an application for a position, created by a student
 // Object with contains:
 // position_id
-// answers - (array of strings)
+// responses - (array of strings)
 // NOTE: 'create' allows a student to start an application, but it must be 'submitted' for the lab to see
 
 // RESTRICTED: student_id
@@ -1479,7 +1481,7 @@ export function createApplicationResponse(application_response) {
     // let payload = {
     //     student_id: student_id,
     //     position_id: position_id,
-    //     answers: answers
+    //     responses: responses
     // };
 
     return axios.post('api/students/' + student_id + '/responses', application_response)

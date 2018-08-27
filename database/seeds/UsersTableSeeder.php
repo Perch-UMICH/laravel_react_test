@@ -17,6 +17,21 @@ class UsersTableSeeder extends Seeder
         DB::table('users')->delete();
         DB::table('students')->delete();
 
+        // Create admin
+        $admin = new User();
+        $admin->name = 'rodriguez';
+        $admin->email = 'info@perchresearch.com';
+        $admin->password = bcrypt('perchperchperch');
+        $admin->is_student = true;
+        $admin->is_faculty = true;
+        $admin->is_admin = true;
+        $admin->save();
+
+        $admin_student = new Student();
+        $admin->student()->save($admin_student);
+        $admin_faculty = new Faculty();
+        $admin->faculty()->save($admin_faculty);
+
         // Create student user
         $student = new User();
         $student->name = 'akshayro';

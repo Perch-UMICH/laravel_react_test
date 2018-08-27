@@ -5,6 +5,7 @@ use App\Position;
 use App\UropPosition;
 use App\Department;
 use App\UropTag;
+use App\Application;
 
 use Illuminate\Database\Seeder;
 
@@ -216,6 +217,10 @@ Specific tasks and responsibilities include:
                     $lab->save();
                 }
                 $lab->positions()->save($pos);
+
+                // Create empty application
+                $app = new Application();
+                $pos->application()->save($app);
 
                 // Normalize departments
                 $depts_in = explode(', ', $urop->dept);

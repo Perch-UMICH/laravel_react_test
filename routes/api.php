@@ -262,13 +262,14 @@ Route::get('preferences', 'LabPreferenceController@index');
 
 // POSITIONS //
 Route::get('labs/{lab}/positions', 'LabController@positions'); // get all from lab
+Route::get('labs/{lab}/position/{position}', 'LabController@position'); // get single from lab
 //Route::post('labs/{lab}/positions', 'LabController@create_position'); // create for lab
 //Route::post('labs/{lab}/positions/update', 'LabController@update_position'); // create for lab
 //Route::post('labs/{lab}/positions/delete', 'LabController@delete_positions'); // delete (also deletes application)
 
 
 // Applications
-Route::get('positions/{position}/application', 'PositionController@application'); // get from position
+//Route::get('positions/{position}/application', 'PositionController@application'); // get from position
 //Route::post('labs/{lab}/applications', 'LabController@create_application');
 //Route::post('labs/{lab}/applications/update', 'LabController@update_application');
 //Route::get('labs/{lab}/positions/responses', 'LabController@app_responses'); // Get all responses to an application
