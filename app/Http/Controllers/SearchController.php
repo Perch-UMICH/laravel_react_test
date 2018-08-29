@@ -83,20 +83,21 @@ class SearchController extends Controller
         $departments = $input['departments']; // depts
         $keyword = $input['keyword'];
 
-        $projects = Position::with(['urop_position','departments'])->orderBy('lab_id')->get();
-        $labs = [];
         $selected = [];
         $selected_keywords = [];
 
         if (empty($commitments) && empty($skills) && empty($areas) && empty($departments) && empty($keyword)) {
-            $labs = Lab::with(['positions.urop_position','positions.departments'])->get();
-            return $this->outputJSON(['results' => $labs, 'keyword_location' => $selected_keywords], "Search performed");
+            //$labs = Lab::with(['positions.urop_position','positions.departments'])->get();
+            $selected = Position::all()->pluck('id');
+            return $this->outputJSON(['results' => $selected, 'keyword_location' => $selected_keywords], "Search performed");
         }
 
         // $l->positions()->whereHas('departments', function($query) {$query->where('name','Chemistry');})->get()
 
 
         // CURRENTLY DOESN'T ACCOUNT FOR PROJS WITH MULTIPLE CLASSES AND SUBCATS
+        // $projects = Position::with(['urop_position','departments'])->orderBy('lab_id')->get();
+        $projects = Position::with(['urop_position','departments'])->get();
         foreach ($projects as $p) {
             $urop = $p->urop_position;
             $commitment = $p->min_time_commitment;
@@ -131,10 +132,20 @@ class SearchController extends Controller
             }
 
             if (($has_area && $has_department) && ($has_commitment && $has_skill && $has_keyword)) {
-                $selected[] = $p;
+                $selected[] = $p->id;
                 $selected_keywords[] = $loc;
             }
         }
+
+        return $this->outputJSON($selected,"Search performed");
+    }
+
+    public function retrieve_search_data(Request $request)
+    {
+        $input = $request->all();
+        $ids = $input['position_ids'];
+
+        $selected = Position::whereIn('id', $ids)->with(['urop_position','departments'])->get();
 
         // Pull labs
         $labs = [];
@@ -154,6 +165,7 @@ class SearchController extends Controller
             }
         }
 
-        return $this->outputJSON(['results' => $labs, 'keyword_location' => $selected_keywords],"Search performed");
+        return $this->outputJSON(['results' => $labs],"Search results retrieved");
     }
+
 }

@@ -1609,7 +1609,7 @@ export function getSearchData() {
 // Areas, Skills, Commitments, Departments: use getSearchData to obtain possible queries, and use those queries exactly (case sensitive)
 // Keywords: can be any string, will search for exact match
 
-// Returns array of matching projects, along with the location of the searched keyword in the "description" of the project
+// Returns array of ids of matching projects
 export function labSearch(areas, skills, commitments, departments, keyword) {
     console.log('Performing search');
 
@@ -1622,6 +1622,21 @@ export function labSearch(areas, skills, commitments, departments, keyword) {
     };
 
     return axios.post('api/search', payload)
+        .then(response => {
+            return respond(response.status, response.data);
+        })
+        .catch(error => {
+            return error_handle(error);
+        })
+}
+
+// Retrieves position data based on ids from labSearch
+export function getSearchResults(position_ids) {
+    let payload = {
+        position_ids: position_ids
+    };
+
+    return axios.post('api/retrieve_search_data', payload)
         .then(response => {
             return respond(response.status, response.data);
         })

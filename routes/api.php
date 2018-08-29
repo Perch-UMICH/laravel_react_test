@@ -55,6 +55,7 @@ Route::group(['middleware' => 'auth:api'], function(){
     // Search
     Route::get('search_data', 'SearchController@get_search_data_urop');
     Route::post('search', 'SearchController@search_urop');
+    Route::post('search/results', 'SearchController@retrieve_search_data');
 
     Route::post('skills/match','SkillController@search_matching_skills');
     Route::post('tags/match','TagController@search_matching_tags');
