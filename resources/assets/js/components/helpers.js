@@ -197,11 +197,10 @@ export function isFaculty() {
 
 // Users
 // Base user type on website
-// Required:
+// user:
 // name - (string) username
 // email - (string) sign up email
-// google_id - (int) unique id associated with google account
-// Optional:
+// password - (string)
 // is_student - (bool)
 // is_faculty - (bool)
 
@@ -242,13 +241,13 @@ export function deleteUser() {
 }
 
 // RESTRICTED: user_id
-export function updateUser(name, email, password, is_student, is_faculty) {
+export function updateUser(user) {
     console.log('Updating user');
 
-    let _method = 'PUT';
     let user_id = sessionStorage.getItem('user_id');
+    user._method = 'PUT';
 
-    return axios.post('api/users/' + user_id, {_method, name, email, password, is_student, is_faculty})
+    return axios.post('api/users/' + user_id, user)
         .then(response => {
             return respond(response.status, response.data);
         })
@@ -294,6 +293,10 @@ export function getUserLabs(user_id) {
 
 // USER FILES //
 
+// file:
+// formData - (formData object)
+// type - (string)
+
 // RESTRICTED: user_id
 // Possible types:
 // 'resume'
@@ -302,16 +305,19 @@ export function getUserLabs(user_id) {
 // let formData = new FormData();
 // formData.append('file', fileInputElement.files[0])
 // uploadUserFile(formData, 'resume');
-export function uploadUserFile(formData, type) {
-    if (type !== 'resume' && type !== 'profile_pic') {
+
+// Can currently only hold one of each file type per account
+// Uploading a new file overwrites the old one of same type
+export function uploadUserFile(file) {
+    if (file.type !== 'resume' && file.type !== 'profile_pic') {
         console.log('Error: invalid type parameter');
         return;
     }
 
     let user_id = sessionStorage.getItem('user_id');
 
-    return axios.post('api/users/' + user_id + '/' + type,
-        formData,
+    return axios.post('api/users/' + user_id + '/' + file.type,
+        file.formData,
         {
             headers: {
                 'Content-Type': 'multipart/form-data'
@@ -346,26 +352,18 @@ export function getUserFile(type) {
 
 // Students
 // Student profile
-// Required:
-//  user_id - (int, foreign) id of User associated with this profile
-//  first_name - (string)
-//  last_name - (string)
-//  email - (string)
-//  year - (string)
-// Optional:
-// experiences - (string, comma separated) names of past research experiences (lab names)
-// classes - (string, comma separated) names of relevant classes
-// bio - (text) short bio on student goals
-// major - (string) degree pursuing
-// gpa - (double)
-// linkedin_user - (string) link to linkedin user profile
-// belongs_to_lab_id - (int, foreign) id of lab on site that student current belongs to
-// faculty_endorsements - (text) names of endorsing professors
-// Associations
-// Users
-// Skills
-// Tags
-// Labs ("favorited")d
+
+// student:
+// first_name - (string)
+// last_name - (string)
+// contact_email - (string)
+// contact_phone - (string)
+// bio - (string)
+// linkedin_link - (string)
+// website_link - (string)
+// is_urop_student - (bool)
+// skill_ids - (array of ints)
+// tag_ids - (array of ints)
 
 export function getAllStudents() {
     console.log('Getting students');
@@ -389,11 +387,12 @@ export function getStudent(student_id) {
         })
 }
 
-export function createStudent(user_id, first_name, last_name, contact_email, contact_phone, bio, linkedin_link, website_link, is_urop_student, skill_ids, tag_ids) {
+export function createStudent(user_id, student) {
     console.log('Creating student');
-    return axios.post('api/students', {user_id, first_name, last_name, contact_email, contact_phone, bio, linkedin_link, website_link, is_urop_student, skill_ids, tag_ids})
+    student.user_id = user_id;
+    return axios.post('api/students', student)
         .then(response => {
-            sessionStorage.setItem('student_id', response.data.result.id) // CHANGED BY BENJI
+            sessionStorage.setItem('student_id', response.data.result.id); // CHANGED BY BENJI
             return respond(response.status, response.data);
         })
         .catch(error => {
@@ -403,12 +402,12 @@ export function createStudent(user_id, first_name, last_name, contact_email, con
 
 // RESTRICTED: student_id
 // NOTE: skill_ids and tag_ids must be an array of integer ids
-export function updateStudent(first_name, last_name, contact_email, contact_phone, bio, linkedin_link, website_link, is_urop_student, skill_ids, tag_ids) {
+export function updateStudent(updated_student) {
     console.log('Updating student');
 
     let student_id = sessionStorage.getItem('student_id');
-    let _method = 'PUT';
-    return axios.post('api/students/' + student_id, {_method, student_id, first_name, last_name, contact_email, contact_phone, bio, linkedin_link, website_link, is_urop_student, skill_ids, tag_ids})
+    updated_student._method = 'PUT';
+    return axios.post('api/students/' + student_id, updated_student)
         .then(response => {
             return respond(response.status, response.data);
         })
@@ -594,29 +593,21 @@ export function removeFromStudentPositionList(position_ids) {
 
 // Edu Experiences
 // Description of education at a school/university
-// university_name: (string) name of university
-// start_date: (string)
-// end_date: (string)
-// current: (bool) student is currently at this university
-// class_experiences: (string) (array) names of classes student took (are taking) at this uni
-// majors: (string) (array) names of subjects they majored (are majoring) in
+
+// edu_experience:
+// university_name - (string) name of university
+// start_date - (string)
+// end_date - (string)
+// current - (bool) student is currently at this university
+// class_experience_names - (array of strings) names of classes student took (are taking) at this uni
+// major_names - (array of strings) names of subjects they majored (are majoring) in
 
 // RESTRICTED: student_id
-export function addEduExperienceToStudent(university_name, start_date, end_date, current, year, gpa, class_experience_names, major_names) {
-    console.log('Adding edu experiences to student')
+export function addEduExperienceToStudent(edu_experience) {
+    console.log('Adding edu experiences to student');
 
     let student_id = sessionStorage.getItem('student_id');
-    let payload = {
-        university_name: university_name,
-        start_date: start_date,
-        end_date: end_date,
-        current: current,
-        year: year,
-        gpa: gpa,
-        class_experience_names: class_experience_names,
-        major_names: major_names
-    };
-    return axios.post('api/students/' + student_id + '/edu_experiences', payload)
+    return axios.post('api/students/' + student_id + '/edu_experiences', edu_experience)
         .then(response => {
             return respond(response.status, response.data);
         })
@@ -626,23 +617,14 @@ export function addEduExperienceToStudent(university_name, start_date, end_date,
 }
 
 // RESTRICTED: student_id
-export function updateEduExperienceOfStudent(edu_experience_id, university_name, start_date, end_date, current, year, gpa, class_experience_names, major_names) {
+export function updateEduExperienceOfStudent(edu_experience_id, updated_edu_experience) {
     console.log('Adding edu experiences to student');
 
     let student_id = sessionStorage.getItem('student_id');
-    let payload = {
-        edu_experience_id: edu_experience_id,
-        university_name: university_name,
-        start_date: start_date,
-        end_date: end_date,
-        current: current,
-        year: year,
-        gpa: gpa,
-        class_experience_names: class_experience_names,
-        major_names: major_names,
-        _method: 'PUT'
-    };
-    return axios.post('api/students/' + student_id + '/edu_experiences', payload)
+    updated_edu_experience.edu_experience_id = edu_experience_id;
+    updated_edu_experience._method = 'PUT';
+
+    return axios.post('api/students/' + student_id + '/edu_experiences', updated_edu_experience)
         .then(response => {
             return respond(response.status, response.data);
         })
@@ -779,16 +761,13 @@ export function removeWorkExperiencesFromStudent(work_experience_ids) {
 
 // Faculties
 // Faculty profile
-// Required:
-// user_id - (int, foreign) id of User associated with this profile
+
+// faculty:
 // first_name - (string)
 // last_name - (string)
-// email - (string) contact email address
-// Optional:
+// contact_email - (string) contact email address
 // title - (string) title of position in university (e.g. PI, assistant prof, grad student)
-// Associations
-// Users
-// Labs
+
 
 export function getAllFaculties() {
     console.log('Getting all faculty');
@@ -812,9 +791,11 @@ export function getFaculty(faculty_id) {
         })
 }
 
-export function createFaculty(user_id, first_name, last_name, title, contact_email) {
+export function createFaculty(user_id, faculty) {
     console.log('Creating faculty');
-    return axios.post('api/faculties', {user_id, first_name, last_name, title, contact_email}) /// EMI CHANGED THIS: "[]" to "{}"
+
+    faculty.user_id = user_id;
+    return axios.post('api/faculties', faculty)
         .then(response => {
             sessionStorage.setItem('faculty_id', response.data.result.id)
             return respond(response.status, response.data);
@@ -824,10 +805,10 @@ export function createFaculty(user_id, first_name, last_name, title, contact_ema
         })
 }
 
-export function updateFaculty(faculty_id, first_name, last_name, title, contact_email) {
+export function updateFaculty(faculty_id, updated_faculty) {
     console.log('Updating faculty');
-    let _method = 'PUT';
-    return axios.post('api/faculties/' + faculty_id, {_method, faculty_id, first_name, last_name, title, contact_email})
+    updated_faculty._method = 'PUT';
+    return axios.post('api/faculties/' + faculty_id, updated_faculty)
         .then(response => {
             return respond(response.status, response.data);
         })
@@ -1668,6 +1649,7 @@ export function exists(item) {
 
 /// CHANGED BY EMI
 
+// Create a deep copy of any array/object
 export function deepCopy(object) {
     var output, value, key;
     output = Array.isArray(object) ? [] : {};
@@ -1676,4 +1658,14 @@ export function deepCopy(object) {
         output[key] = (typeof value === "object") ? deepCopy(value) : value;
     }
     return output;
+}
+
+// Check if external link contains 'http:' or 'https:'; if not, add.
+export function primeExternalLink(url) {
+    if (url && typeof url === 'string') {
+        if (url.includes('http:') || url.includes('https:')) {
+            return url;
+        }
+        return('http://' + url);
+    }
 }

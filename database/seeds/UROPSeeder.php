@@ -6,6 +6,7 @@ use App\UropPosition;
 use App\Department;
 use App\UropTag;
 use App\Application;
+use App\User;
 
 use Illuminate\Database\Seeder;
 
@@ -217,6 +218,16 @@ Specific tasks and responsibilities include:
                     $lab->save();
                 }
                 $lab->positions()->save($pos);
+
+                // Create faculty user based on sponsor
+                $user = new User();
+                $username = snake_case($d['name'], ' ');
+                $user->name = $username;
+                $user->email = $username . '@email.com';
+                $user->password = 'testpass';
+                $user->save();
+
+                $lab->members()->sync([$user->id => ['role' => 1]]);
 
                 // Create empty application
                 $app = new Application();

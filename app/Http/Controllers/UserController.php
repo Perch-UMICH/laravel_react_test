@@ -105,9 +105,6 @@ class UserController extends Controller
         if ($input['password'] != $input['password_confirmation']) {
             return $this->outputJSON(null,"Passwords do not match", 404);
         }
-        if (User::where('name', $input['name'])->first() != null) {
-            return $this->outputJSON(null,"Name already taken", 404);
-        }
         if (User::where('email', $input['email'])->first() != null) {
             return $this->outputJSON(null,"Email already taken", 404);
         }
