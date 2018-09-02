@@ -21,7 +21,11 @@ if (sessionStorage.token){
 // HELPER HELPERS //
 
 function respond(status, data) {
-    return {'status':status, 'data':data.result, 'msg': data.message}
+    return {'status': status, 'data': data.result, 'msg': data.message}
+}
+
+function error_respond(error) {
+    return {'status': error.response.status, 'error': error.response.data.error.message, 'exception': error.response.data.error.exception}
 }
 
 // 0 is a made up error code for non-server-related issues
@@ -29,15 +33,21 @@ function error_handle(error) {
     if (error.response) {
         // The request was made and the server responded with a status code
         // that falls out of the range of 2xx
-        return respond(error.response.status, error.response.data);
+        //return respond(error.response.status, error.response);
+        if (error.response.data.error)
+            return error_respond(error);
+        else
+            return error.response.data;
     } else if (error.request) {
         // The request was made but no response was received
         // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
         // http.ClientRequest in node.js
-        return respond(0, error.request)
+        //return respond(0, error.request)
+        return error;
     } else {
         // Something happened in setting up the request that triggered an Error
-        return respond(0, error.message)
+        //return respond(0, error.message)
+        return error;
     }
 }
 
@@ -832,23 +842,16 @@ export function deleteFaculty(faculty_id) {
 
 // Labs
 // Lab page
-// Required:
+
+// lab:
 // name - (string)
-// department - (string)
-// description - (text) short description of lab goals
-// Optional:
-// publications - (text) description of recent publications
-// url - (string) url to official lab page
-// location - (string) location at university
+// description - (string)
+// publications - (string)
+// url - (string)
+// location - (string)
 // contact_phone - (string)
 // contact_email - (string)
-// gpa - (float) desired GPA of applicants
-// weeklyCommitment - (int) hours/week of commitment expected
-// Associations
-// Skills
-// Tags
-// Students
-// Faculties
+// labpic_path - (string)
 
 export function getAllLabs() {
     console.log('Getting all labs');
@@ -898,9 +901,10 @@ export function getLabData(lab_id, skilltag_data, preferences_data, position_dat
 }
 //
 
-export function createLab(faculty_id, name, location, description, publications, url, contact_phone, contact_email) {
+export function createLab(faculty_id, lab) {
     console.log('Creating lab');
-    return axios.post('api/labs', {faculty_id, name, location, description, publications, url, contact_phone, contact_email})
+    lab.faculty_id = faculty_id;
+    return axios.post('api/labs', lab)
         .then(response => {
             sessionStorage.setItem('lab_id', response.data.result.id) // CHANGED BY BENJI
             return respond(response.status, response.data);
@@ -910,12 +914,12 @@ export function createLab(faculty_id, name, location, description, publications,
         })
 }
 
-// RESTRICTED: lab_id
-export function updateLab(name, location, description, publications, url, contact_phone, contact_email) {
+// RESTRICTED: authenticated faculty member + lab owner
+export function updateLab(lab_id, updated_lab) {
     console.log('Updating lab');
-    let lab_id = sessionStorage.getItem('lab_id');
     let _method = 'PUT';
-    return axios.post('api/labs/' + lab_id, {_method, lab_id, name, location, description, publications, url, contact_phone, contact_email})
+    updated_lab._method = 'PUT';
+    return axios.post('api/labs/' + lab_id, updated_lab)
         .then(response => {
             return respond(response.status, response.data);
         })
@@ -924,11 +928,10 @@ export function updateLab(name, location, description, publications, url, contac
         })
 }
 
-// RESTRICTED: lab_id
-export function deleteLab() {
+// RESTRICTED: authenticated faculty member + lab owner
+export function deleteLab(lab_id) {
     console.log('Deleting lab');
 
-    let lab_id = sessionStorage.getItem('lab_id');
     return axios.delete('api/labs/' + lab_id)
         .then(response => {
             return respond(response.status, response.data);
@@ -952,11 +955,10 @@ export function getLabSkills(lab_id) {
         })
 }
 
-// RESTRICTED: lab_id
-export function addSkillsToLab(skill_ids, position_id) {
+// RESTRICTED: authenticated faculty member + lab owner
+export function addSkillsToLab(lab_id, skill_ids, position_id) {
     console.log('Adding skills to lab');
 
-    let lab_id = sessionStorage.getItem('lab_id');
     let payload = {
         skill_ids: skill_ids,
         position_id: position_id
@@ -970,11 +972,10 @@ export function addSkillsToLab(skill_ids, position_id) {
         })
 }
 
-// RESTRICTED: lab_id
-export function syncSkillsToLab(skill_ids, position_id) {
+// RESTRICTED: authenticated faculty member + lab owner
+export function syncSkillsToLab(lab_id, skill_ids, position_id) {
     console.log('Syncing skills to lab');
 
-    let lab_id = sessionStorage.getItem('lab_id');
     let payload = {
         skill_ids: skill_ids,
         position_id: position_id
@@ -988,11 +989,10 @@ export function syncSkillsToLab(skill_ids, position_id) {
         })
 }
 
-// RESTRICTED: lab_id
-export function removeSkillsFromLab(skill_ids, position_id) {
+// RESTRICTED: authenticated faculty member + lab owner
+export function removeSkillsFromLab(lab_id, skill_ids, position_id) {
     console.log('Removing skills from lab');
 
-    let lab_id = sessionStorage.getItem('lab_id');
     let payload = {
         skill_ids: skill_ids,
         position_id: position_id,
@@ -1019,11 +1019,10 @@ export function getLabTags(lab_id) {
         })
 }
 
-// RESTRICTED: lab_id
-export function addTagsToLab(tag_ids, position_id) {
+// RESTRICTED: authenticated faculty member + lab owner
+export function addTagsToLab(lab_id, tag_ids, position_id) {
     console.log('Adding tags to lab');
 
-    let lab_id = sessionStorage.getItem('lab_id');
     let payload = {
         tag_ids: tag_ids,
         position_id: position_id
@@ -1037,11 +1036,10 @@ export function addTagsToLab(tag_ids, position_id) {
         })
 }
 
-// RESTRICTED: lab_id
-export function syncTagsToLab(tag_ids, position_id) {
+// RESTRICTED: authenticated faculty member + lab owner
+export function syncTagsToLab(lab_id, tag_ids, position_id) {
     console.log('Syncing tags to lab');
 
-    let lab_id = sessionStorage.getItem('lab_id');
     let payload = {
         tag_ids: tag_ids,
         position_id: position_id
@@ -1055,11 +1053,10 @@ export function syncTagsToLab(tag_ids, position_id) {
         })
 }
 
-// RESTRICTED: lab_id
-export function removeTagsFromLab(tag_ids, position_id) {
+// RESTRICTED: authenticated faculty member + lab owner
+export function removeTagsFromLab(lab_id, tag_ids, position_id) {
     console.log('Removing tag from lab');
 
-    let lab_id = sessionStorage.getItem('lab_id');
     let payload = {
         tag_ids: tag_ids,
         position_id: position_id,
@@ -1390,7 +1387,7 @@ export function getLabPosition(lab_id, position_id) {
 //         })
 // }
 
-// RESTRICTED: lab_id
+// RESTRICTED: authenticated faculty member + lab owner
 export function createApplication(lab_id, application) {
     console.log('Creating application');
 
@@ -1410,7 +1407,7 @@ export function createApplication(lab_id, application) {
         })
 }
 
-// RESTRICTED: lab_id
+// RESTRICTED: authenticated faculty member + lab owner
 export function updateApplication(lab_id, application) {
     console.log('Creating application');
 
@@ -1643,9 +1640,9 @@ export function returnToProfile() {
         window.location = `/prof-page/${getCurrentLabId()}`;
 }
 
-export function exists(item) {
-    return item ? true : false;
-}
+// export function exists(item) {
+//     return item ? true : false;
+// }
 
 /// CHANGED BY EMI
 
@@ -1668,4 +1665,15 @@ export function primeExternalLink(url) {
         }
         return('http://' + url);
     }
+}
+
+
+// TODO ADDED BY BENJI
+export function exists(input) {
+    let type = typeof input
+    if (!input)
+        return false
+    if (type == 'object' && !input.length)
+        return false
+    return true
 }
