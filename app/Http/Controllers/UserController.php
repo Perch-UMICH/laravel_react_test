@@ -16,9 +16,6 @@ use App\Controllers\Auth\IdpGrant;
 class UserController extends Controller
 {
 
-
-    public $successStatus = 200;
-
     public function index()
     {
         $users = User::all();
