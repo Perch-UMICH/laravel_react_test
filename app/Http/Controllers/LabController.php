@@ -144,14 +144,7 @@ class LabController extends Controller
 
         $lab_data = Collection::make();
         $lab_data->put('data', $lab);
-
-//        if ($input['skilltag_data']) {
-//            $skills = $lab->skills()->wherePivot('lab_id', $lab->id)->get();
-//            $tags = $lab->tags()->wherePivot('lab_id', $lab->id)->get();
-//            $lab_data->put('skills', $skills);
-//            $lab_data->put('tags', $tags);
-//
-//        }
+        
         if ($input['position_data']) {
             $positions = $lab->positions()->get();
             $lab_data->put('positions', $positions);
