@@ -43,4 +43,8 @@ class Lab extends Model
         return $this->hasMany('App\File');
     }
 
+    public function applications() {
+        return $this->hasManyThrough('App\Application','App\Position');
+    }
+
 }
