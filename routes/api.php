@@ -20,6 +20,10 @@ use Illuminate\Support\Facades\Auth;
 //});
 
 
+// CHALLENGE //
+
+Route::get('challenge_project_data', 'LabController@challenge_project_data');
+
 // ACCOUNTS //
 
 // User Registration:

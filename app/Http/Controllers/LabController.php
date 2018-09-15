@@ -144,7 +144,7 @@ class LabController extends Controller
 
         $lab_data = Collection::make();
         $lab_data->put('data', $lab);
-        
+
         if ($input['position_data']) {
             $positions = $lab->positions()->get();
             $lab_data->put('positions', $positions);
@@ -516,5 +516,26 @@ class LabController extends Controller
         $responses = $application->responses()->with('answers')->get();
 
         return $this->outputJSON($responses, 'Retrieved responses to this application');
+    }
+
+
+    // Challenge:
+
+    public function challenge_project_data() {
+
+        $positions = Position::all()->random(10);
+
+        $poses = [];
+
+        foreach ($positions as $p)
+        {
+            $pos = (object)array();
+            $pos->title = $p->title;
+            $pos->description = $p->description;
+            $pos->duties = $p->duties;
+            $poses[] = $pos;
+        }
+
+        return $this->outputJSON($poses, 'Retrieved positions');
     }
 }
