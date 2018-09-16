@@ -532,8 +532,8 @@ class LabController extends Controller
             $pos = (object)array();
             $pos->id = $p->id;
             $pos->title = $p->title;
-            $pos->description = $p->description;
-            $pos->duties = $p->duties;
+            $pos->description = str_replace("_x000D_","",$p->description);
+            $pos->duties = str_replace("_x000D_","",$p->duties);
             $pos->time_commitment = $p->min_time_commitment;
             $pos->classification = $p->urop_position->classification;
             $poses[] = $pos;
