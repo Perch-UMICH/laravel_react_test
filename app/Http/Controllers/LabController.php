@@ -530,9 +530,12 @@ class LabController extends Controller
         foreach ($positions as $p)
         {
             $pos = (object)array();
+            $pos->id = $p->id;
             $pos->title = $p->title;
             $pos->description = $p->description;
             $pos->duties = $p->duties;
+            $pos->time_commitment = $p->min_time_commitment;
+            $pos->classification = $p->urop_position->classification;
             $poses[] = $pos;
         }
 
