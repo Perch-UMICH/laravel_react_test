@@ -19,16 +19,6 @@ class TagController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -36,7 +26,17 @@ class TagController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $tag = Tag::where('name', $request['name']);
+        if ($tag) {
+            return $this->outputJSON($tag, 'Error: tag of this name already exists');
+        }
+
+        $tag = new Tag([
+            'name' => $request->get('name'),
+            'description' => $request->get('description'),
+        ]);
+        $tag->save();
+        return $this->outputJSON($tag, 'Tag definition created');
     }
 
     /**
@@ -48,17 +48,6 @@ class TagController extends Controller
     public function show(Tag $tag)
     {
         return $this->outputJSON($tag, 'Retrieved tag');
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Tag  $tag
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Tag $tag)
-    {
-        //
     }
 
     /**
@@ -81,6 +70,24 @@ class TagController extends Controller
      */
     public function destroy(Tag $tag)
     {
-        //
+        $tag->delete();
+        return $this->outputJSON(null, 'Tag definition deleted');
+    }
+
+    // Searches for tags that are a close match to the requested name
+    public function search_matching_tags(Request $request)
+    {
+        $input = $request->all();
+        $query = $input['query'];
+        $tags = Tag::all()->pluck('name')->toArray();
+        $selected = $this->exact_match($query, $tags);
+
+        $tags = [];
+        foreach ($selected as $s) {
+            $tag = Tag::where('name',$s);
+            $tags[] = $tag;
+        }
+
+        return $this->outputJSON($tags, 'Returned closest matching tags');
     }
 }

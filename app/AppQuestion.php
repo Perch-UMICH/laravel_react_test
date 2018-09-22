@@ -12,10 +12,6 @@ class AppQuestion extends Model
         return $this->belongsTo('App\Application');
     }
 
-    public function lab() {
-        return $this->belongsTo('App\Lab');
-    }
-
     public function is_public() {
         return ($this->lab_id == null);
     }

@@ -22,6 +22,7 @@ class UsersTableSeeder extends Seeder
         $student->name = 'akshayro';
         $student->email = 'akshayro@umich.edu';
         $student->password = bcrypt('password');
+        $student->login_method_id = 1;
         $student->is_student = true;
         $student->is_faculty = false;
         $student->save();
@@ -42,8 +43,9 @@ class UsersTableSeeder extends Seeder
         // Create additional users
         $student = new User();
         $student->name = 'perch';
-        $student->email = 'test@perch.com';
+        $student->email = 'student@perch.com';
         $student->password = bcrypt('test');
+        $student->login_method_id = 1;
         $student->is_student = true;
         $student->is_faculty = false;
         $student->save();
@@ -64,6 +66,7 @@ class UsersTableSeeder extends Seeder
         $prof->name = 'anishii';
         $prof->email = 'anishii@umich.edu';
         $prof->password = bcrypt('password');
+        $prof->login_method_id = 1;
         $prof->is_student = false;
         $prof->is_faculty = true;
         $prof->save();
@@ -73,7 +76,7 @@ class UsersTableSeeder extends Seeder
         $profile->first_name = "Akira";
         $profile->last_name = "Nishii";
         $profile->title = "MD, PhD";
-        $profile->email = "anishii@umich.edu";
+        $profile->contact_email = "anishii@umich.edu";
 
         $profile->save();
 
@@ -82,6 +85,7 @@ class UsersTableSeeder extends Seeder
         $prof->name = 'perch_faculty';
         $prof->email = 'faculty@perch.com';
         $prof->password = bcrypt('test');
+        $prof->login_method_id = 1;
         $prof->is_student = false;
         $prof->is_faculty = true;
         $prof->save();
@@ -91,7 +95,7 @@ class UsersTableSeeder extends Seeder
         $profile->first_name = "Perch";
         $profile->last_name = "Faculty";
         $profile->title = "Graduate Researcher";
-        $profile->email = "faculty@perch.com";
+        $profile->contact_email = "faculty@perch.com";
         $profile->save();
     }
 }

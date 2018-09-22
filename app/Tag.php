@@ -13,4 +13,8 @@ class Tag extends Model
     public function labs() {
         return $this->belongsToMany('App\Lab', 'lab_tag');
     }
+
+    public function positions() {
+        return $this->belongsToMany('App\Position', 'position_tag');
+    }
 }
