@@ -8,8 +8,10 @@ import axios from 'axios';
 import FormData from 'form-data'
 
 axios.defaults.headers.common = {};
-axios.defaults.baseURL = 'http://18.211.86.64:8000/';
-//axios.defaults.baseURL = 'http://localhost:8000';
+
+axios.defaults.baseURL = 'https://perchresearch.com:3000/';          // Dev
+//axios.defaults.baseURL = 'http://18.211.86.64:8000/';     // Production
+//axios.defaults.baseURL = 'http://localhost:8000';         // Local
 
 axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 axios.defaults.headers.common['Accept'] = 'application/json';
@@ -200,7 +202,7 @@ export function isLab() {
 }
 
 export function isFaculty() {
-    return sessionStorage.getItem('lab_id') != null;
+    return sessionStorage.getItem('faculty_id') != null; // changed by benji
 }
 
 // USERS //
@@ -1614,7 +1616,7 @@ export function getSearchResults(position_ids) {
         position_ids: position_ids
     };
 
-    return axios.post('api/retrieve_search_data', payload)
+    return axios.post('api/search/results', payload)
         .then(response => {
             return respond(response.status, response.data);
         })
