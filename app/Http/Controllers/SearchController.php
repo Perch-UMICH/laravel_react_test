@@ -102,6 +102,8 @@ class SearchController extends Controller
             $urop = $p->urop_position;
             $commitment = $p->min_time_commitment;
             $desc = $p->description;
+            $p_title = $p->title;
+            $l_title = $p->lab->name;
 
             $classes = $urop->urop_tags->where('type', 'Classification')->pluck('name')->all();
             $cats = $urop->urop_tags->where('type', 'SubCategory')->pluck('name')->all();
@@ -123,8 +125,10 @@ class SearchController extends Controller
             $has_keyword = true;
             $loc = null;
             if ($keyword) {
-                $loc = stripos($desc, $keyword);
-                if ($loc !== false) {
+                $loc_desc = stripos($desc, $keyword);
+                $loc_p_title = stripos($p_title, $keyword);
+                $loc_l_title = stripos($l_title, $keyword);
+                if ($loc_desc !== false || $loc_p_title !== false || $loc_l_title !== false ) {
                     $has_keyword = true;
                 } else {
                     $has_keyword = false;
