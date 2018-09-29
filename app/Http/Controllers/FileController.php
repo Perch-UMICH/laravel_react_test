@@ -50,7 +50,10 @@ class FileController extends Controller
         }
     }
 
-    public function get_user_resume(User $user, Request $request) {
+    public function get_user_resume(Request $request) {
+        $input = $request->all();
+        $u_id = $input['user_id'];
+        $user = User::find($u_id);
         $resume = $user->resume()->first();
         $resume->file;
 
@@ -98,9 +101,10 @@ class FileController extends Controller
         }
     }
 
-    public function get_user_profile_pic(User $user, Request $request) {
-        $user = $request->route('user');
-        $user = User::find($user);
+    public function get_user_profile_pic(Request $request) {
+        $input = $request->all();
+        $u_id = $input['user_id'];
+        $user = User::find($u_id);
         $pic = $user->profile_pic()->first();
         $pic->file;
 
