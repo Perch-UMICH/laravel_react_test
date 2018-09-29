@@ -52,7 +52,7 @@ class FileController extends Controller
 
     public function get_user_resume(Request $request) {
         $user = $request->route('user');
-        //$user = User::find($user);
+        $user = User::find($user);
         $resume = $user->resume()->first();
         $resume->file;
 
@@ -102,7 +102,7 @@ class FileController extends Controller
 
     public function get_user_profile_pic(Request $request) {
         $user = $request->route('user');
-        //$user = User::find($user);
+        $user = User::find($user);
         $pic = $user->profile_pic()->first();
         $pic->file;
 
