@@ -106,13 +106,12 @@ class LabController extends Controller
         $input = $request->all();
         $input = array_filter($input);
 
-//        $lab = Lab::where('name', $request['name']);
-//        if ($lab !== null) {
-//            return $this->outputJSON($lab, 'Error: lab with this name already exists');
-//        }
-
         $lab = new Lab($input);
         $lab->save();
+
+        // Make user owner of this group
+        $user = $request->user();
+        $lab->members()->syncWithoutDetaching([$user->id => ['role' => 1]]);
 
         return $this->outputJSON($lab, 'Lab page created');
     }

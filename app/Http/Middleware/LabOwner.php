@@ -27,7 +27,7 @@ class LabOwner
         if ($lab == null) {
             return response()->json(['message' => 'Access denied: user is not a member of this lab.'], 401);
         }
-        if ($lab->pivot->role != 1) {
+        if ($lab->pivot->role != 1 && $lab->pivot->role != 2) {
             return response()->json(['message' => 'Access denied: user is not an admin of this lab.'], 401);
         }
 
