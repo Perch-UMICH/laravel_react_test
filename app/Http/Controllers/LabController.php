@@ -113,6 +113,8 @@ class LabController extends Controller
         $user = $request->user();
         $lab->members()->syncWithoutDetaching([$user->id => ['role' => 1]]);
 
+        $lab->members;
+
         return $this->outputJSON($lab, 'Lab page created');
     }
 
