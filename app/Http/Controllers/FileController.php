@@ -100,7 +100,8 @@ class FileController extends Controller
     }
 
     public function get_user_profile_pic(Request $request) {
-        $user = $request->route()->parameter('user');
+        $user = $request->route()->parameter('user')->id;
+        $user = User::find($user);
         $pic = $user->profile_pic()->first();
         $pic->file;
 
