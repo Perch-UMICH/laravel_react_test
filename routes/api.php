@@ -67,8 +67,8 @@ Route::group(['middleware' => 'auth:api'], function(){
     // File upload
     Route::post('users/{user}/profile_pic', 'FileController@add_profile_pic_to_user');
     Route::post('users/{user}/resume', 'FileController@add_resume_to_user');
-    Route::get('users/{user}/profile_pic', 'FileController@get_user_profile_pic');
-    Route::get('users/{user}/resume', 'FileController@get_user_resume');
+    Route::put('users/{user}/profile_pic', 'FileController@get_user_profile_pic');
+    Route::put('users/{user}/resume', 'FileController@get_user_resume');
 
     // Lab edits
     // MUST BE LOGGED IN + BE LAB OWNER
