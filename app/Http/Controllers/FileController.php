@@ -28,7 +28,7 @@ class FileController extends Controller
         $user = $request->user();
 
         $request->validate([
-            'resume'   => 'mimes:doc,pdf,docx,zip',
+            'file' => 'mimes:doc,pdf,docx,zip',
         ]);
 
         // Delete old resume
