@@ -11,6 +11,8 @@ use App\ResumeFileType;
 use App\ProfilePicFileType;
 use App\LabPicFileType;
 
+use Illuminate\Validation\Validator;
+
 class FileController extends Controller
 {
     // Types:
@@ -83,7 +85,7 @@ class FileController extends Controller
         $validator = Validator::make($request->all(), [
             'file' => 'image',
         ]);
-        
+
         // Delete old propic
         $pic = $user->profile_pic()->first();
         if ($pic) $pic->delete();
