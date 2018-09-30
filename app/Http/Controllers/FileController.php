@@ -82,7 +82,7 @@ class FileController extends Controller
     public function add_profile_pic_to_user(Request $request) {
         $user = $request->user();
 
-        $validator = Validator::make($request->all(), [
+        $request->validate([
             'file' => 'image',
         ]);
 
