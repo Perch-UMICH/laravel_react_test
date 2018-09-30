@@ -27,6 +27,10 @@ class FileController extends Controller
     public function add_resume_to_user(Request $request) {
         $user = $request->user();
 
+        $request->validate([
+            'resume'   => 'mimes:doc,pdf,docx,zip',
+        ]);
+
         // Delete old resume
         $resume = $user->resume()->first();
         if ($resume) {
