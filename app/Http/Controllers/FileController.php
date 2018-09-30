@@ -11,7 +11,7 @@ use App\ResumeFileType;
 use App\ProfilePicFileType;
 use App\LabPicFileType;
 
-use Illuminate\Validation\Validator;
+use Illuminate\Support\Facades\Validator;
 
 class FileController extends Controller
 {
