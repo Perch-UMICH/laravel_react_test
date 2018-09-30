@@ -361,6 +361,17 @@ class LabController extends Controller
         return $this->outputJSON(null,"Added " . count($ids) . " members to lab");
     }
 
+    public function update_member(Request $request, Lab $lab) {
+        $input = $request->all();
+        $id = $input['user_id'];
+        $role = $input['role_id'];
+
+        $lab->members()->updateExistingPivot([$id, ['role' => $role]]);
+        $member = $lab->members()->where('id', $id)->get();
+
+        return $this->outputJSON($member,"Updated membership");
+    }
+
     public function remove_members(Request $request, Lab $lab) {
         $input = $request->all();
         $ids = $input['user_ids'];

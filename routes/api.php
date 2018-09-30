@@ -77,6 +77,7 @@ Route::group(['middleware' => 'auth:api'], function(){
         Route::delete('labs/{lab}', 'LabController@destroy');
 
         Route::post('labs/{lab}/members', 'LabController@add_members');
+        Route::post('labs/{lab}/members/update', 'LabController@update_member');
         Route::put('labs/{lab}/members', 'LabController@remove_members');
 
         Route::post('labs/{lab}/skills', 'LabController@add_skill');
