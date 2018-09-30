@@ -80,6 +80,10 @@ class FileController extends Controller
     public function add_profile_pic_to_user(Request $request) {
         $user = $request->user();
 
+        $validator = Validator::make($request->all(), [
+            'file' => 'image',
+        ]);
+        
         // Delete old propic
         $pic = $user->profile_pic()->first();
         if ($pic) $pic->delete();
