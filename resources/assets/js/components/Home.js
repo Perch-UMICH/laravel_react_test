@@ -4,7 +4,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom';
 import axios from 'axios'
-import {uploadPic, uploadResume} from './helpers.js'
+import {uploadUserFile} from './helpers.js'
 import FormData from 'form-data'
 
 
@@ -14,21 +14,22 @@ class Home extends React.Component {
 
     }
 
-    sendImage() {
-        uploadPic('student', 1, 'fileToUpload')
+    sendFile() {
+        loginUser('akshayro@umich.edu','password').then( function(resp) {
+            let file = document.getElementById('fileToUpload').files[0];
+            let formData = new FormData();
+            formData.append('file', file);
+            uploadUserFile(formData, 'resume');
+        })
     }
 
-    sendResume() {
-        uploadResume(1, 'fileToUpload');
-    }
 
     render() {
         return (
             <div>
                 <h1>Home page</h1>
                     <input type="file" name="fileToUpload" id="fileToUpload"></input>
-                    <button onClick={this.sendImage}>Submit Pic</button>
-                    <button onClick={this.sendResume}>Submit Resume</button>
+                    <button onClick={this.sendFile}>Submit File</button>
             </div>
         )
     }

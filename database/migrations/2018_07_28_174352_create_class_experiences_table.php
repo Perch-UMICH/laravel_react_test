@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateMajorsTable extends Migration
+class CreateClassExperiencesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,10 @@ class CreateMajorsTable extends Migration
      */
     public function up()
     {
-        Schema::create('majors', function (Blueprint $table) {
+        Schema::create('class_experiences', function (Blueprint $table) {
             $table->increments('id');
 
-//            $table->integer('department_id')->unsigned()->nullable();
+//            $table->integer('department_id')->unsigned()->index()->nullable();
 //            $table->foreign('department_id')->references('id')->on('departments')->onDelete('cascade');
 
             $table->string('name')->nullable();
@@ -32,6 +32,6 @@ class CreateMajorsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('majors');
+        Schema::dropIfExists('class_experiences');
     }
 }

@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateMajorsTable extends Migration
+class CreateFilesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,14 @@ class CreateMajorsTable extends Migration
      */
     public function up()
     {
-        Schema::create('majors', function (Blueprint $table) {
+        Schema::create('files', function (Blueprint $table) {
             $table->increments('id');
 
-//            $table->integer('department_id')->unsigned()->nullable();
-//            $table->foreign('department_id')->references('id')->on('departments')->onDelete('cascade');
+            $table->integer('user_id')->unsigned()->index();
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
 
-            $table->string('name')->nullable();
+            $table->string('path')->nullable();
+            $table->string('url')->nullable();
 
             $table->timestamps();
         });
@@ -32,6 +33,6 @@ class CreateMajorsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('majors');
+        Schema::dropIfExists('files');
     }
 }

@@ -32,6 +32,7 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'admin'
     ];
 
     public function student() {
@@ -54,5 +55,18 @@ class User extends Authenticatable
         return $this->belongsTo('App\LoginMethod', 'login_method_id');
     }
 
+    public function files() {
+        return $this->hasMany('App\File');
+    }
+
+    public function resume()
+    {
+        return $this->hasManyThrough('App\ResumeFileType', 'App\File');
+    }
+
+    public function profile_pic()
+    {
+        return $this->hasManyThrough('App\ProfilePicFileType', 'App\File');
+    }
 
 }

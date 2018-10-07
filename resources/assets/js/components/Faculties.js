@@ -2,7 +2,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom';
 import axios from 'axios'
-import {getAllFaculties, getFaculty, getFacultyLabs} from './helpers'
+import {getAllFaculties, getFaculty} from './helpers'
 
 
 class Faculties extends React.Component {

@@ -106,13 +106,14 @@ class LabController extends Controller
         $input = $request->all();
         $input = array_filter($input);
 
-        $lab = Lab::where('name', $request['name']);
-        if ($lab !== null) {
-            return $this->outputJSON($lab, 'Error: lab with this name already exists');
-        }
-
         $lab = new Lab($input);
         $lab->save();
+
+        // Make user owner of this group
+        $user = $request->user();
+        $lab->members()->syncWithoutDetaching([$user->id => ['role' => 1]]);
+
+        $lab->members;
 
         return $this->outputJSON($lab, 'Lab page created');
     }
@@ -145,13 +146,6 @@ class LabController extends Controller
         $lab_data = Collection::make();
         $lab_data->put('data', $lab);
 
-//        if ($input['skilltag_data']) {
-//            $skills = $lab->skills()->wherePivot('lab_id', $lab->id)->get();
-//            $tags = $lab->tags()->wherePivot('lab_id', $lab->id)->get();
-//            $lab_data->put('skills', $skills);
-//            $lab_data->put('tags', $tags);
-//
-//        }
         if ($input['position_data']) {
             $positions = $lab->positions()->get();
             $lab_data->put('positions', $positions);
@@ -367,6 +361,28 @@ class LabController extends Controller
         return $this->outputJSON(null,"Added " . count($ids) . " members to lab");
     }
 
+    public function update_member(Request $request, Lab $lab) {
+        $input = $request->all();
+        $id = $input['user_id'];
+        $role = $input['role_id'];
+
+//        // Check for user removing themselves
+//        $user = $request->user();
+//        $user_mem = $lab->members()->where('id', $user->id)->get();
+
+        $mem = $lab->members()->where('id', $id)->get();
+
+        if ($mem->pivot->role == 1)
+        {
+            return $this->outputJSON($mem,"Error: you can't remove the owner from the lab", 500);
+        }
+
+        $lab->members()->updateExistingPivot($id, ['role' => $role]);
+        $member = $lab->members()->where('id', $id)->get();
+
+        return $this->outputJSON($member,"Updated membership");
+    }
+
     public function remove_members(Request $request, Lab $lab) {
         $input = $request->all();
         $ids = $input['user_ids'];
@@ -377,11 +393,21 @@ class LabController extends Controller
 
     // Positions:
 
+    public function position(Request $request, Lab $lab) {
+        $position = Position::find($request->route()->parameter('position'))->with('application.questions')->first();
+        if (!$position)
+            return $this->outputJSON(null,"Error: invalid position_id");
+
+        $intended_lab = $position->lab;
+
+        if ($lab->id != $intended_lab->id)
+            return $this->outputJSON(null,"Error: position of id " . $position->id . " does not belong to a lab this user is admin of");
+
+        return $this->outputJSON($position,"Position from lab retrieved");
+    }
+
     public function positions(Lab $lab) {
         $positions = $lab->positions()->get();
-        foreach ($positions as $p) {
-            $p->application;
-        }
         return $this->outputJSON($positions,"Positions from lab retrieved");
     }
 
@@ -394,7 +420,7 @@ class LabController extends Controller
         return $this->outputJSON($position,"Created position " . $position->title . " and added to lab " . $lab->name);
     }
 
-    public function update_position(Request $request) {
+    public function update_position(Request $request, Lab $lab) {
         $input = $request->all();
         $input = array_filter($input);
 
@@ -415,7 +441,7 @@ class LabController extends Controller
     // Applications:
     // Takes position_id as input
 
-    public function application(Request $request) {
+    public function application(Request $request, Lab $lab) {
         $input = $request->all();
         $pos = Position::find($input['position_id']);
         $application = $pos->application;
@@ -426,13 +452,18 @@ class LabController extends Controller
         return $this->outputJSON($app, 'Application retrieved');
     }
 
-    public function create_application(Request $request)
+    public function create_application(Request $request, Lab $lab)
     {
         $input = $request->all();
 
         $position = Position::find($input['position_id']);
-        if ($position ===null)
+        if (!$position)
             return $this->outputJSON(null,"Error: invalid position_id");
+
+        $intended_lab = $position->lab;
+
+        if ($lab->id != $intended_lab->id)
+            return $this->outputJSON(null,"Error: position of id " . $position->id . " does not belong to a lab this user is admin of");
 
         $application = new Application();
         $application->save();
@@ -455,12 +486,17 @@ class LabController extends Controller
         return $this->outputJSON($application,"Created application and added to position " . $position->title);
     }
 
-    public function update_application(Request $request) {
+    public function update_application(Request $request, Lab $lab) {
         $input = $request->all();
 
         $position = Position::find($input['position_id']);
-        if ($position ===null)
+        if ($position === null)
             return $this->outputJSON(null,"Error: invalid position_id");
+
+        $intended_lab = $position->lab;
+
+        if ($lab->id != $intended_lab->id)
+            return $this->outputJSON(null,"Error: position of id " . $position->id . " does not belong to a lab this user is admin of");
 
         $application = $position->application;
         // Remove old questions
@@ -487,26 +523,45 @@ class LabController extends Controller
 
     // App Responses:
 
-    public function app_responses(Request $request) {
+    public function app_responses(Request $request, Lab $lab) {
         $input = $request->all();
         $position = Position::find($input['position_id']);
         if ($position ===null)
             return $this->outputJSON(null,"Error: invalid position_id");
 
+        $intended_lab = $position->lab;
+
+        if ($lab->id != $intended_lab->id)
+            return $this->outputJSON(null,"Error: position of id " . $position->id . " does not belong to a lab this user is admin of");
+
         $application = $position->application;
         if (!$application) return $this->outputJSON(null, 'Error: position has no application associated with it');
-        $responses = $application->responses;
+        $responses = $application->responses()->with('answers')->get();
 
-        $response_data = [];
-        $count = 0;
-        foreach ($responses as $response) {
-            if ($response->sent) {
-                $response_data[$count] = Collection::make();
-                $response_data[$count]->put('base', $response);
-                $response_data[$count]->put('answers', $response->answers);
-                $count++;
-            }
+        return $this->outputJSON($responses, 'Retrieved responses to this application');
+    }
+
+
+    // Challenge:
+
+    public function challenge_project_data() {
+
+        $positions = Position::all()->random(10);
+
+        $poses = [];
+
+        foreach ($positions as $p)
+        {
+            $pos = (object)array();
+            $pos->id = $p->id;
+            $pos->title = $p->title;
+            $pos->description = str_replace("_x000D_","",$p->description);
+            $pos->duties = str_replace("_x000D_","",$p->duties);
+            $pos->time_commitment = $p->min_time_commitment;
+            $pos->classification = $p->urop_position->classification;
+            $poses[] = $pos;
         }
-        return $this->outputJSON($response_data, 'Retrieved responses to this application');
+
+        return $this->outputJSON($poses, 'Retrieved positions');
     }
 }

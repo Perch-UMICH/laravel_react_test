@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateMajorsTable extends Migration
+class CreateProfilePicFileTypesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,13 @@ class CreateMajorsTable extends Migration
      */
     public function up()
     {
-        Schema::create('majors', function (Blueprint $table) {
+        Schema::create('profile_pic_file_types', function (Blueprint $table) {
             $table->increments('id');
 
-//            $table->integer('department_id')->unsigned()->nullable();
-//            $table->foreign('department_id')->references('id')->on('departments')->onDelete('cascade');
+            $table->integer('file_id')->unsigned()->unique()->index();
+            $table->foreign('file_id')->references('id')->on('files')->onDelete('cascade');
 
-            $table->string('name')->nullable();
+            $table->boolean('current');
 
             $table->timestamps();
         });
@@ -32,6 +32,6 @@ class CreateMajorsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('majors');
+        Schema::dropIfExists('profile_pic_file_types');
     }
 }

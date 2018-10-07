@@ -21,16 +21,14 @@ class CreateStudentsTable extends Migration
 
             $table->string('first_name')->nullable();
             $table->string('last_name')->nullable();
-            $table->string('email')->nullable();
-            $table->string('year')->nullable();
+            $table->string('contact_email')->nullable();
+            $table->string('contact_phone')->nullable();
 
             $table->text('bio')->nullable();
-            $table->string('major')->nullable(); // normalize
-            $table->double('gpa')->nullable();
-            $table->text('experiences')->nullable();
-
-            // comma separated list
-            $table->string('classes')->nullable(); // normalize
+//            $table->string('major')->nullable(); // normalize
+//            $table->double('gpa')->nullable();
+//            $table->text('experiences')->nullable();
+//            $table->string('classes')->nullable(); // normalize
 
             $table->string('linkedin_link')->nullable();
             $table->string('website_link')->nullable();
@@ -52,6 +50,7 @@ class CreateStudentsTable extends Migration
      */
     public function down()
     {
+        Schema::dropIfExists('application_responses');
         Schema::dropIfExists('students');
     }
 }

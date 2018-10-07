@@ -19,11 +19,13 @@ class CreateUsersTable extends Migration
             $table->string('username')->nullable();
             $table->string('email')->unique();
             $table->string('password')->nullable();
-            $table->unsignedTinyInteger('login_method_id');
-            $table->foreign('login_method_id')->references('id')->on('login_methods');
+//            $table->unsignedTinyInteger('login_method_id');
+//            $table->foreign('login_method_id')->references('id')->on('login_methods');
             $table->string('google_id')->nullable();
             $table->boolean('is_student')->nullable();
             $table->boolean('is_faculty')->nullable();
+
+            $table->boolean('is_admin')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

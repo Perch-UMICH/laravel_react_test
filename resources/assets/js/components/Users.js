@@ -7,7 +7,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom';
 import axios from 'axios'
-import {getAllUsers, passwordResetEmail} from './helpers'
+import {getAllUsers} from './helpers'
 
 // Makes get request to server for all users on site
 class Users extends React.Component {
