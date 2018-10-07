@@ -94,8 +94,7 @@ class SearchController extends Controller
                 if (!empty($projs))
                     $results[$l->id] = $projs;
             }
-            $selected = Position::all()->pluck('id');
-            return $this->outputJSON(['results' => $selected, 'keyword_location' => $selected_keywords], "Search performed");
+            return $this->outputJSON(['results' => $results, 'keyword_location' => $selected_keywords], "Search performed");
         }
 
         // $l->positions()->whereHas('departments', function($query) {$query->where('name','Chemistry');})->get()
@@ -150,7 +149,7 @@ class SearchController extends Controller
         }
 
 
-        return $this->outputJSON($selected,"Search performed");
+        return $this->outputJSON($results,"Search performed");
     }
 
     public function retrieve_search_data(Request $request)
