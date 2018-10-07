@@ -111,6 +111,7 @@ class IdpGrant extends AbstractGrant
     {
         $idp = $this->getRequestParameter('idp', $request);
         $token = $this->getRequestParameter('idpToken', $request);
+        throw OAuthServerException::invalidRequest('token: ' . $token);
         $register = $this->getRequestParameter('register', $request);
         if($idp === "google") {
             $client = new \Google_Client(['client_id' => env('GOOGLE_CLIENT_ID')]);
