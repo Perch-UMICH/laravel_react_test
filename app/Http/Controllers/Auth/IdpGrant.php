@@ -116,7 +116,12 @@ class IdpGrant extends AbstractGrant
             $client = new \Google_Client(['client_id' => env('GOOGLE_CLIENT_ID')]);
 
             // Google verifies 'iss' (google's source signature) and 'exp' (the token expiration)
-            $payload = $client->verifyIdToken($token);
+            try{
+                $payload = $client->verifyIdToken($token);
+            } catch(Exception $e) {
+                throw OAuthServerException::invalidRequest('token: ' . $token);
+            }
+
             if($payload) {
                 $username = $payload('sub');
                 $email = $payload('email');
@@ -160,6 +165,7 @@ class IdpGrant extends AbstractGrant
         }
         return $user;
     }
+
     public function getIdentifier()
     {
         return 'idp';
