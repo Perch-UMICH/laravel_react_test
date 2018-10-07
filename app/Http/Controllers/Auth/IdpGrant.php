@@ -160,6 +160,7 @@ class IdpGrant extends AbstractGrant
         }
         return $user;
     }
+    
     public function getIdentifier()
     {
         return 'idp';

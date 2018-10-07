@@ -162,6 +162,7 @@ return [
         App\Providers\RouteServiceProvider::class,
         //Aws\Laravel\AwsServiceProvider::class,
         Laravel\Passport\PassportServiceProvider::class,
+        App\Providers\CustomGrantProvider::class,
         Maatwebsite\Excel\ExcelServiceProvider::class,
 
     ],
