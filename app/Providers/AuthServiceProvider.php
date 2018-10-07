@@ -26,17 +26,15 @@ class AuthServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot()
-    {
+    public function boot() {
         $this->registerPolicies();
 
-        // Moved to CustomGrantProvider 7 Oct 2018
-        // app(AuthorizationServer::class)->enableGrantType(
-        //     new IdpGrant(
-        //         $this->app->make(UserRepository::class),
-        //         $this->app->make(RefreshTokenRepository::class)
-        //     ), Passport::tokensExpireIn()
-        // );
+        app(AuthorizationServer::class)->enableGrantType(
+            new IdpGrant(
+                $this->app->make(UserRepository::class),
+                $this->app->make(RefreshTokenRepository::class)
+            ), Passport::tokensExpireIn()
+        );
 
         Passport::routes();
         Passport::tokensExpireIn();
