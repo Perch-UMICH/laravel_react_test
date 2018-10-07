@@ -85,9 +85,15 @@ class SearchController extends Controller
 
         $selected = [];
         $selected_keywords = [];
+        $results = [];
 
         if (empty($commitments) && empty($skills) && empty($areas) && empty($departments) && empty($keyword)) {
-            //$labs = Lab::with(['positions.urop_position','positions.departments'])->get();
+            $labs = Lab::all();
+            foreach ($labs as $l) {
+                $projs = $l->positions->pluck('id')->toArray();
+                if (!empty($projs))
+                    $results[$l->id] = $projs;
+            }
             $selected = Position::all()->pluck('id');
             return $this->outputJSON(['results' => $selected, 'keyword_location' => $selected_keywords], "Search performed");
         }
@@ -136,10 +142,13 @@ class SearchController extends Controller
             }
 
             if (($has_area && $has_department) && ($has_commitment && $has_skill && $has_keyword)) {
-                $selected[] = $p->id;
-                $selected_keywords[] = $loc;
+                $l_id = $p->lab->id;
+                $results[$l_id][] = $p;
+                //$selected[] = $p->id;
+                //$selected_keywords[] = $loc;
             }
         }
+
 
         return $this->outputJSON($selected,"Search performed");
     }

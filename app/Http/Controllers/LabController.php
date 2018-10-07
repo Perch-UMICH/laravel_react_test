@@ -366,6 +366,17 @@ class LabController extends Controller
         $id = $input['user_id'];
         $role = $input['role_id'];
 
+//        // Check for user removing themselves
+//        $user = $request->user();
+//        $user_mem = $lab->members()->where('id', $user->id)->get();
+
+        $mem = $lab->members()->where('id', $id)->get();
+
+        if ($mem->pivot->role == 1)
+        {
+            return $this->outputJSON($mem,"Error: you can't remove the owner from the lab", 500);
+        }
+
         $lab->members()->updateExistingPivot($id, ['role' => $role]);
         $member = $lab->members()->where('id', $id)->get();
 
