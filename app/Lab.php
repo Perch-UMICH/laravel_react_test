@@ -7,13 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 class Lab extends Model
 {
     protected $fillable =
-        ['name',
-        'description',
-        'publications',
-        'url','location',
-        'contact_phone',
-        'contact_email',
-        'labpic_path'];
+        [
+            'name',
+            'description',
+            'publications',
+            'url',
+            'location',
+            'contact_phone',
+            'contact_email',
+            'labpic_path'
+        ];
 
 
     public function members() {
@@ -24,12 +27,24 @@ class Lab extends Model
         return $this->belongsToMany('App\LabPreference', 'lab_preference_lab');
     }
 
+    public function university() {
+        return $this->belongsTo('App\University');
+    }
+
     public function positions() {
         return $this->hasMany('App\Position');
     }
 
     public function questions() {
         return $this->hasMany('App\AppQuestion');
+    }
+
+    public function files() {
+        return $this->hasMany('App\File');
+    }
+
+    public function applications() {
+        return $this->hasManyThrough('App\Application','App\Position');
     }
 
 }

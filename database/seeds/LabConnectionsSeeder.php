@@ -117,11 +117,6 @@ class LabConnectionsSeeder extends Seeder
         $pos->duties = 'The path to a completed system will likely take several years, but each year (06-07 being the first) affords some UROP opportunities.  Microcontroller programming, verification of vendor specifications, circuit board design and fabrication, laboratory and field testing are some activities that will involve students.';
         $pos->min_qual = 'Sophomore standing preferred; completion of Engr 100 preferred.
 Students:  when applying, send me by email 1. your resume, so I understand your interests, 2. an unofficial transcript, so I can understand your educational background, and 3. your schedule, to help me schedule an appointment';
-        $pos->benefits = '-product design, test and evaluation
--literature search (material properties)
--lab skills (soldering, drill press, etc)
--engineering documentation techniques
--possibly some programming';
         $pos->filled = false;
 
         $lab = Lab::find(2);

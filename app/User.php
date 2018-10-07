@@ -32,6 +32,7 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'admin'
     ];
 
     public function student() {
@@ -45,9 +46,27 @@ class User extends Authenticatable
     public function labs() {
         return $this->belongsToMany('App\Lab', 'lab_user','user_id', 'lab_id')->withPivot('role');
     }
+  
+    public function university() {
+        return $this->belongsToMany('App\University','university_user');
+    }
 
     public function loginMethod() {
         return $this->belongsTo('App\LoginMethod', 'login_method_id');
+    }
+
+    public function files() {
+        return $this->hasMany('App\File');
+    }
+
+    public function resume()
+    {
+        return $this->hasManyThrough('App\ResumeFileType', 'App\File');
+    }
+
+    public function profile_pic()
+    {
+        return $this->hasManyThrough('App\ProfilePicFileType', 'App\File');
     }
 
 }

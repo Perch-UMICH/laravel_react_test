@@ -17,12 +17,27 @@ class UsersTableSeeder extends Seeder
         DB::table('users')->delete();
         DB::table('students')->delete();
 
+        // Create admin
+        $admin = new User();
+        $admin->name = 'rodriguez';
+        $admin->email = 'info@perchresearch.com';
+        $admin->password = bcrypt('perchperchperch');
+        $admin->is_student = true;
+        $admin->is_faculty = true;
+        $admin->is_admin = true;
+        $admin->save();
+
+        $admin_student = new Student();
+        $admin->student()->save($admin_student);
+        $admin_faculty = new Faculty();
+        $admin->faculty()->save($admin_faculty);
+
         // Create student user
         $student = new User();
         $student->name = 'akshayro';
         $student->email = 'akshayro@umich.edu';
         $student->password = bcrypt('password');
-        $student->login_method_id = 1;
+//        $student->login_method_id = 1;
         $student->is_student = true;
         $student->is_faculty = false;
         $student->save();
@@ -32,12 +47,12 @@ class UsersTableSeeder extends Seeder
         $profile->user_id = $student->id;
         $profile->first_name = 'Akshay';
         $profile->last_name = 'Rao';
-        $profile->major = 'Physics';
-        $profile->year = 'Junior';
-        $profile->gpa = '4.0';
-        $profile->email = $student->email;
-        $profile->classes = 'MCDB 423|CHEM 215/216';
-        $profile->experiences = 'Dr. Kataoka\'s Alchemy Lab (Fall 2016 - Fall 2017)|U of M Neuroimaging Lab (Summer 2017)';
+//        $profile->major = 'Physics';
+//        $profile->year = 'Junior';
+//        $profile->gpa = '4.0';
+        $profile->contact_email = $student->email;
+//        $profile->classes = 'MCDB 423|CHEM 215/216';
+//        $profile->experiences = 'Dr. Kataoka\'s Alchemy Lab (Fall 2016 - Fall 2017)|U of M Neuroimaging Lab (Summer 2017)';
         $profile->save();
 
         // Create additional users
@@ -45,7 +60,7 @@ class UsersTableSeeder extends Seeder
         $student->name = 'perch';
         $student->email = 'student@perch.com';
         $student->password = bcrypt('test');
-        $student->login_method_id = 1;
+//        $student->login_method_id = 1;
         $student->is_student = true;
         $student->is_faculty = false;
         $student->save();
@@ -54,11 +69,11 @@ class UsersTableSeeder extends Seeder
         $profile->user_id = $student->id;
         $profile->first_name = 'Perch';
         $profile->last_name = 'User';
-        $profile->year = 'Freshman';
-        $profile->major = 'Biology';
-        $profile->email = $student->email;
-        $profile->classes = 'EECS 281|EECS 388';
-        $profile->experiences = 'U of M HCI Lab (Summer 2017)';
+//        $profile->year = 'Freshman';
+//        $profile->major = 'Biology';
+        $profile->contact_email = $student->email;
+//        $profile->classes = 'EECS 281|EECS 388';
+//        $profile->experiences = 'U of M HCI Lab (Summer 2017)';
         $profile->save();
 
         // Create faculty user
@@ -66,7 +81,7 @@ class UsersTableSeeder extends Seeder
         $prof->name = 'anishii';
         $prof->email = 'anishii@umich.edu';
         $prof->password = bcrypt('password');
-        $prof->login_method_id = 1;
+//        $prof->login_method_id = 1;
         $prof->is_student = false;
         $prof->is_faculty = true;
         $prof->save();
@@ -85,7 +100,7 @@ class UsersTableSeeder extends Seeder
         $prof->name = 'perch_faculty';
         $prof->email = 'faculty@perch.com';
         $prof->password = bcrypt('test');
-        $prof->login_method_id = 1;
+//        $prof->login_method_id = 1;
         $prof->is_student = false;
         $prof->is_faculty = true;
         $prof->save();

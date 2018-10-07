@@ -9,13 +9,10 @@ class Student extends Model
     protected $fillable = [
         'first_name',
         'last_name',
-        'email',
+        'contact_email',
+        'contact_phone',
         'year',
         'bio',
-        'major',
-        'gpa',
-        'classes',
-        'experiences',
         'linkedin_link',
         'website_link',
         'profilepic_path',
@@ -38,6 +35,10 @@ class Student extends Model
         return $this->belongsToMany('App\Tag', 'student_tag');
     }
 
+    public function position_list()
+    {
+        return $this->belongsToMany('App\Position', 'position_student');
+    }
 
     public function responses()
     {
@@ -49,8 +50,8 @@ class Student extends Model
         return $this->hasMany('App\WorkExperience');
     }
 
-    public function class_experiences()
+    public function edu_experiences()
     {
-        return $this->belongsToMany('App\ClassExperience', 'class_experience_student');
+        return $this->hasMany('App\EduExperience');
     }
 }

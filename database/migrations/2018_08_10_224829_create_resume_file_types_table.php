@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateSchoolCoursesTable extends Migration
+class CreateResumeFileTypesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,13 @@ class CreateSchoolCoursesTable extends Migration
      */
     public function up()
     {
-        Schema::create('school_courses', function (Blueprint $table) {
+        Schema::create('resume_file_types', function (Blueprint $table) {
             $table->increments('id');
 
-            $table->string('title')->nullable();
-            $table->string('description')->nullable();
+            $table->integer('file_id')->unsigned()->unique()->index();
+            $table->foreign('file_id')->references('id')->on('files')->onDelete('cascade');
+
+            $table->boolean('current');
 
             $table->timestamps();
         });
@@ -30,6 +32,6 @@ class CreateSchoolCoursesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('school_courses');
+        Schema::dropIfExists('resume_file_types');
     }
 }

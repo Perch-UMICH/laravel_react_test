@@ -20,6 +20,10 @@ use Illuminate\Support\Facades\Auth;
 //});
 
 
+// CHALLENGE //
+
+Route::get('challenge_project_data', 'LabController@challenge_project_data');
+
 // ACCOUNTS //
 
 // User Registration:
@@ -55,9 +59,16 @@ Route::group(['middleware' => 'auth:api'], function(){
     // Search
     Route::get('search_data', 'SearchController@get_search_data_urop');
     Route::post('search', 'SearchController@search_urop');
+    Route::post('search/results', 'SearchController@retrieve_search_data');
 
     Route::post('skills/match','SkillController@search_matching_skills');
     Route::post('tags/match','TagController@search_matching_tags');
+
+    // File upload
+    Route::post('users/{user}/profile_pic', 'FileController@add_profile_pic_to_user');
+    Route::post('users/{user}/resume', 'FileController@add_resume_to_user');
+    Route::put('users/{user}/profile_pic', 'FileController@get_user_profile_pic');
+    Route::put('users/{user}/resume', 'FileController@get_user_resume');
 
     // Lab edits
     // MUST BE LOGGED IN + BE LAB OWNER
@@ -66,6 +77,7 @@ Route::group(['middleware' => 'auth:api'], function(){
         Route::delete('labs/{lab}', 'LabController@destroy');
 
         Route::post('labs/{lab}/members', 'LabController@add_members');
+        Route::post('labs/{lab}/members/update', 'LabController@update_member');
         Route::put('labs/{lab}/members', 'LabController@remove_members');
 
         Route::post('labs/{lab}/skills', 'LabController@add_skill');
@@ -110,15 +122,18 @@ Route::group(['middleware' => 'auth:api'], function(){
         //
 
         // Experiences
-        Route::post('students/{student}/work_experiences', 'StudentController@create_and_add_work_experiences');
-        Route::put('students/{student}/work_experiences', 'StudentController@remove_work_experiences');
+        Route::post('students/{student}/work_experiences', 'StudentController@create_and_add_work_experience');
+        Route::put('students/{student}/work_experiences', 'StudentController@update_work_experience');
+        Route::post('students/{student}/work_experiences/delete', 'StudentController@remove_work_experiences');
 
-        Route::post('students/{student}/class_experiences', 'StudentController@add_class_experiences');
-        Route::put('students/{student}/class_experiences', 'StudentController@remove_class_experiences');
+        Route::post('students/{student}/edu_experiences', 'EduExperienceController@store');
+        Route::put('students/{student}/edu_experiences', 'EduExperienceController@update');
+        Route::post('students/{student}/edu_experiences/delete', 'EduExperienceController@delete');
         //
 
-        Route::post('students/{student}/courses/school', 'StudentController@add_school_courses');
-        Route::put('students/{student}/courses/school', 'StudentController@remove_school_courses');
+        // Lab list
+        Route::post('students/{student}/position_list', 'StudentController@add_to_position_list');
+        Route::put('students/{student}/position_list', 'StudentController@remove_from_position_list');
 
         Route::post('students/{student}/resume', 'StudentController@add_resume');
 
@@ -146,8 +161,6 @@ Route::group(['middleware' => 'auth:api'], function(){
     Route::post('tags', 'TagController@store');
     Route::put('tags/{tag}', 'TagController@update');
 
-    // School Courses
-    Route::get('courses/school', 'SchoolCourseController@index');
 
     // MISC //
 
@@ -255,13 +268,14 @@ Route::get('preferences', 'LabPreferenceController@index');
 
 // POSITIONS //
 Route::get('labs/{lab}/positions', 'LabController@positions'); // get all from lab
+Route::get('labs/{lab}/position/{position}', 'LabController@position'); // get single from lab
 //Route::post('labs/{lab}/positions', 'LabController@create_position'); // create for lab
 //Route::post('labs/{lab}/positions/update', 'LabController@update_position'); // create for lab
 //Route::post('labs/{lab}/positions/delete', 'LabController@delete_positions'); // delete (also deletes application)
 
 
 // Applications
-Route::get('positions/{position}/application', 'PositionController@application'); // get from position
+//Route::get('positions/{position}/application', 'PositionController@application'); // get from position
 //Route::post('labs/{lab}/applications', 'LabController@create_application');
 //Route::post('labs/{lab}/applications/update', 'LabController@update_application');
 //Route::get('labs/{lab}/positions/responses', 'LabController@app_responses'); // Get all responses to an application

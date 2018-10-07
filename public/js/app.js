@@ -600,11 +600,11 @@ if (false) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (immutable) */ __webpack_exports__["q"] = isLoggedIn;
+/* harmony export (immutable) */ __webpack_exports__["n"] = isLoggedIn;
 /* unused harmony export verifyLogin */
-/* harmony export (immutable) */ __webpack_exports__["u"] = registerUser;
-/* harmony export (immutable) */ __webpack_exports__["r"] = loginUser;
-/* harmony export (immutable) */ __webpack_exports__["s"] = logoutCurrentUser;
+/* harmony export (immutable) */ __webpack_exports__["q"] = registerUser;
+/* harmony export (immutable) */ __webpack_exports__["o"] = loginUser;
+/* harmony export (immutable) */ __webpack_exports__["p"] = logoutCurrentUser;
 /* unused harmony export sendPasswordResetEmail */
 /* unused harmony export resetPasswordFromEmail */
 /* unused harmony export getCurrentUserId */
@@ -624,7 +624,7 @@ if (false) {
 /* harmony export (immutable) */ __webpack_exports__["e"] = getAllStudents;
 /* unused harmony export getStudent */
 /* unused harmony export createStudent */
-/* harmony export (immutable) */ __webpack_exports__["w"] = updateStudent;
+/* harmony export (immutable) */ __webpack_exports__["s"] = updateStudent;
 /* unused harmony export deleteStudent */
 /* unused harmony export getStudentSkills */
 /* unused harmony export addSkillsToStudent */
@@ -633,27 +633,31 @@ if (false) {
 /* unused harmony export getStudentTags */
 /* harmony export (immutable) */ __webpack_exports__["a"] = addTagsToStudent;
 /* unused harmony export syncTagsToStudent */
-/* harmony export (immutable) */ __webpack_exports__["v"] = removeTagsFromStudent;
-/* unused harmony export getStudentFavLabs */
-/* unused harmony export addFavLabsToStudent */
-/* unused harmony export removeFavLabsFromStudent */
+/* harmony export (immutable) */ __webpack_exports__["r"] = removeTagsFromStudent;
+/* unused harmony export addToStudentLabList */
+/* unused harmony export removeFromStudentLabList */
+/* unused harmony export createAndAddEduExperiencesToStudent */
+/* unused harmony export updateEduExperiencesToStudent */
+/* unused harmony export removeEduExperiencesFromStudent */
+/* unused harmony export addWorkExperiencesToStudent */
+/* unused harmony export removeWorkExperiencesFromStudent */
 /* harmony export (immutable) */ __webpack_exports__["b"] = getAllFaculties;
-/* harmony export (immutable) */ __webpack_exports__["h"] = getFaculty;
+/* harmony export (immutable) */ __webpack_exports__["g"] = getFaculty;
 /* unused harmony export createFaculty */
 /* unused harmony export updateFaculty */
 /* unused harmony export deleteFaculty */
 /* harmony export (immutable) */ __webpack_exports__["d"] = getAllLabs;
-/* harmony export (immutable) */ __webpack_exports__["j"] = getLab;
+/* harmony export (immutable) */ __webpack_exports__["h"] = getLab;
 /* unused harmony export getAllLabData */
 /* unused harmony export getLabData */
 /* unused harmony export createLab */
 /* unused harmony export updateLab */
 /* unused harmony export deleteLab */
-/* harmony export (immutable) */ __webpack_exports__["n"] = getLabSkills;
+/* harmony export (immutable) */ __webpack_exports__["k"] = getLabSkills;
 /* unused harmony export addSkillsToLab */
 /* unused harmony export syncSkillsToLab */
 /* unused harmony export removeSkillsFromLab */
-/* harmony export (immutable) */ __webpack_exports__["o"] = getLabTags;
+/* harmony export (immutable) */ __webpack_exports__["l"] = getLabTags;
 /* unused harmony export addTagsToLab */
 /* unused harmony export syncTagsToLab */
 /* unused harmony export removeTagsFromLab */
@@ -662,27 +666,29 @@ if (false) {
 /* unused harmony export removeMembersFromLab */
 /* unused harmony export getAllSkills */
 /* unused harmony export getSkill */
+/* unused harmony export createSkill */
+/* unused harmony export searchMatchingSkills */
 /* unused harmony export getAllTags */
 /* unused harmony export getTag */
-/* unused harmony export getAllPreferences */
-/* unused harmony export getAllSchoolCourses */
+/* unused harmony export createTag */
+/* unused harmony export searchMatchingTags */
 /* harmony export (immutable) */ __webpack_exports__["c"] = getAllLabPositions;
-/* harmony export (immutable) */ __webpack_exports__["k"] = getLabPosition;
+/* harmony export (immutable) */ __webpack_exports__["i"] = getLabPosition;
 /* unused harmony export createLabPosition */
 /* unused harmony export updateLabPosition */
 /* unused harmony export deleteLabPosition */
-/* harmony export (immutable) */ __webpack_exports__["p"] = getPositionApplication;
+/* harmony export (immutable) */ __webpack_exports__["m"] = getPositionApplication;
 /* unused harmony export createApplication */
 /* unused harmony export updateApplication */
-/* harmony export (immutable) */ __webpack_exports__["l"] = getLabPositionApplicants;
+/* harmony export (immutable) */ __webpack_exports__["j"] = getLabPositionApplicants;
 /* unused harmony export createApplicationResponse */
 /* unused harmony export updateApplicationResponse */
 /* unused harmony export submitApplicationResponse */
 /* unused harmony export deleteApplicationResponse */
 /* unused harmony export getStudentPendingResponses */
 /* unused harmony export submitUserFeedback */
-/* harmony export (immutable) */ __webpack_exports__["x"] = uploadPic;
-/* harmony export (immutable) */ __webpack_exports__["y"] = uploadResume;
+/* harmony export (immutable) */ __webpack_exports__["t"] = uploadPic;
+/* harmony export (immutable) */ __webpack_exports__["u"] = uploadResume;
 /* unused harmony export getSearchData */
 /* unused harmony export labSearch */
 /* unused harmony export permissionCheck */
@@ -713,6 +719,29 @@ if (sessionStorage.token) {
     __WEBPACK_IMPORTED_MODULE_2_axios___default.a.defaults.headers.common['Authorization'] = 'Bearer ' + sessionStorage.getItem('token');
 }
 
+// HELPER HELPERS //
+
+function respond(status, data) {
+    return { 'status': status, 'data': data.result, 'msg': data.message };
+}
+
+// 0 is a made up error code for non-server-related issues
+function error_handle(error) {
+    if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        return respond(error.response.status, error.response.data);
+    } else if (error.request) {
+        // The request was made but no response was received
+        // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+        // http.ClientRequest in node.js
+        return respond(0, error.request);
+    } else {
+        // Something happened in setting up the request that triggered an Error
+        return respond(0, error.message);
+    }
+}
+
 // AUTHENTICATION //
 
 function isLoggedIn() {
@@ -726,12 +755,9 @@ function isLoggedIn() {
 
 function verifyLogin() {
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/verify').then(function (response) {
-        console.log(response.data);
-        return true;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.error(error);
-        console.error('User not verified');
-        return false;
+        return error_handle(error);
     });
 }
 
@@ -742,13 +768,9 @@ function registerUser(name, email, password, password_confirmation) {
         password: password,
         password_confirmation: password_confirmation
     }).then(function (response) {
-        console.log(response.data.message);
-        // redirect to login
-        return response.data;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.error('Error in registration');
-        console.error(error);
-        return false;
+        return error_handle(error);
     });
 }
 
@@ -767,8 +789,8 @@ function loginUser(email, password) {
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/login', {
         email: email, password: password
     }).then(function (response) {
-        console.log(response);
         sessionStorage.setItem('token', response.data.result.token);
+        __WEBPACK_IMPORTED_MODULE_2_axios___default.a.defaults.headers.common['Authorization'] = 'Bearer ' + sessionStorage.getItem('token');
         sessionStorage.setItem('user_id', response.data.result.user.id);
         if (response.data.result.user.is_student) {
             // Save student id
@@ -783,12 +805,9 @@ function loginUser(email, password) {
             //     // sessionStorage.setItem('lab_id', somethin_good);
             // }); // ... HERE!
         }
-        console.log('Successfully logged in');
-        return response.data;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.error('Log in unsuccessful');
-        console.error(error);
-        return false;
+        return error_handle(error);
     });
 }
 
@@ -801,15 +820,9 @@ function logoutCurrentUser() {
     sessionStorage.clear();
 
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/logout').then(function (response) {
-        // cookie.remove('perch_api_key');
-        // cookie.remove('perch_user_id');
-        console.log(response.data.message);
-        // sessionStorage.removeItem('token');
-        return true;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.error(error);
-        console.error('Could not logout');
-        return false;
+        return error_handle(error);
     });
 }
 
@@ -883,20 +896,18 @@ function isFaculty() {
 function getAllUsers() {
     console.log('Getting users');
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('api/users').then(function (response) {
-        return response.data;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
 function getUser(user_id) {
     console.log('Getting user');
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('api/users/' + user_id).then(function (response) {
-        return response.data;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
@@ -904,11 +915,11 @@ function getUser(user_id) {
 function deleteUser() {
     console.log('Deleting user');
     var user_id = sessionStorage.getItem('user_id');
+    sessionStorage.clear();
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.delete('api/users/' + user_id).then(function (response) {
-        return response.data;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
@@ -920,30 +931,27 @@ function updateUser(name, email, password, is_student, is_faculty) {
     var user_id = sessionStorage.getItem('user_id');
 
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/users/' + user_id, { _method: _method, name: name, email: email, password: password, is_student: is_student, is_faculty: is_faculty }).then(function (response) {
-        return response.data;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
 function getStudentFromUser(user_id) {
     console.log('Getting student');
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('api/users/' + user_id + '/student').then(function (response) {
-        return response.data;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
 function getFacultyFromUser(user_id) {
     console.log('Getting faculty');
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('api/users/' + user_id + '/faculty').then(function (response) {
-        return response.data;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
@@ -952,10 +960,9 @@ function getUserLabs(user_id) {
     console.log('Getting user labs');
 
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('api/users/' + user_id + '/labs').then(function (response) {
-        return response.data;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
@@ -982,53 +989,47 @@ function getUserLabs(user_id) {
 // Users
 // Skills
 // Tags
-// Labs ("favorited")
+// Labs ("favorited")d
 
 function getAllStudents() {
     console.log('Getting students');
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('api/students').then(function (response) {
-        return response.data;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
 function getStudent(student_id) {
     console.log('Getting student');
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('api/students/' + student_id).then(function (response) {
-        console.log(response.data.message);
-        return response.data.result;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
-function createStudent(user_id, first_name, last_name, email, year, bio, major, gpa, classes, experiences, linkedin_link, website_link, is_urop_student) {
+function createStudent(user_id, first_name, last_name, contact_email, contact_phone, bio, linkedin_link, website_link, is_urop_student, skill_ids, tag_ids) {
     console.log('Creating student');
-    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/students', { user_id: user_id, first_name: first_name, last_name: last_name, email: email, year: year, bio: bio, major: major, gpa: gpa, classes: classes, experiences: experiences, linkedin_link: linkedin_link, website_link: website_link, is_urop_student: is_urop_student }).then(function (response) {
+    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/students', { user_id: user_id, first_name: first_name, last_name: last_name, contact_email: contact_email, contact_phone: contact_phone, bio: bio, linkedin_link: linkedin_link, website_link: website_link, is_urop_student: is_urop_student, skill_ids: skill_ids, tag_ids: tag_ids }).then(function (response) {
         sessionStorage.setItem('student_id', response.data.result.id); // CHANGED BY BENJI
-        console.log(response.data.message);
-        return response.data.result;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
 // RESTRICTED: student_id
-function updateStudent(first_name, last_name, email, year, bio, major, gpa, classes, experiences, linkedin_link, website_link, is_urop_student) {
+// NOTE: skill_ids and tag_ids must be an array of integer ids
+function updateStudent(first_name, last_name, contact_email, contact_phone, bio, linkedin_link, website_link, is_urop_student, skill_ids, tag_ids) {
     console.log('Updating student');
 
     var student_id = sessionStorage.getItem('student_id');
     var _method = 'PUT';
-    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/students/' + student_id, { _method: _method, student_id: student_id, first_name: first_name, last_name: last_name, major: major, year: year, gpa: gpa, email: email, bio: bio, experiences: experiences, classes: classes, faculty_endorsement_id: faculty_endorsement_id }).then(function (response) {
-        console.log(response.data.message);
-        return response.data.result;
+    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/students/' + student_id, { _method: _method, student_id: student_id, first_name: first_name, last_name: last_name, contact_email: contact_email, contact_phone: contact_phone, bio: bio, linkedin_link: linkedin_link, website_link: website_link, is_urop_student: is_urop_student, skill_ids: skill_ids, tag_ids: tag_ids }).then(function (response) {
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
@@ -1038,22 +1039,18 @@ function deleteStudent() {
 
     var student_id = sessionStorage.getItem('student_id');
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.delete('api/students/' + student_id).then(function (response) {
-        console.log(response.data.message);
-        return response.data.result;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
 function getStudentSkills(student_id) {
     console.log('Getting student skills');
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('api/students/' + student_id + '/skills').then(function (response) {
-        console.log(response.data.message);
-        return response.data.result;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
@@ -1066,11 +1063,9 @@ function addSkillsToStudent(skill_ids) {
         skill_ids: skill_ids
     };
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/students/' + student_id + '/skills', payload).then(function (response) {
-        console.log(response.data.message);
-        return response.data.result;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
@@ -1083,11 +1078,9 @@ function syncSkillsToStudent(skill_ids) {
         skill_ids: skill_ids
     };
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/students/' + student_id + '/skills/sync', payload).then(function (response) {
-        console.log(response.data.message);
-        return response.data.result;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
@@ -1101,22 +1094,18 @@ function removeSkillsFromStudent(skill_ids) {
         _method: 'PUT'
     };
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/students/' + student_id + '/skills', payload).then(function (response) {
-        console.log(response.data.message);
-        return response.data.result;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
 function getStudentTags(student_id) {
     console.log('Getting student tags');
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('api/students/' + student_id + '/tags').then(function (response) {
-        console.log(response.data.message);
-        return response.data.result;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
@@ -1129,11 +1118,9 @@ function addTagsToStudent(tag_ids) {
         tag_ids: tag_ids
     };
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/students/' + student_id + '/tags', payload).then(function (response) {
-        console.log(response.data.message);
-        return response.data.result;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
@@ -1146,11 +1133,9 @@ function syncTagsToStudent(tag_ids) {
         tag_ids: tag_ids
     };
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/students/' + student_id + '/tags/sync', payload).then(function (response) {
-        console.log(response.data.message);
-        return response.data.result;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
@@ -1164,59 +1149,149 @@ function removeTagsFromStudent(tag_ids) {
         _method: 'PUT'
     };
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/students/' + student_id + '/tags', payload).then(function (response) {
-        console.log(response.data.message);
-        return response.data.result;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
-function getStudentFavLabs(student_id) {
-    console.log('Getting student favorite labs');
-    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('api/students/' + student_id + '/labs').then(function (response) {
-        console.log(response.data.message);
-        return response.data.result;
-    }).catch(function (error) {
-        console.log(error);
-        return [];
-    });
-}
-
+// Lab list
 // RESTRICTED: student_id
-function addFavLabsToStudent(lab_ids) {
-    console.log('Adding favorite lab to student');
-
+// NOTE: lab_ids must be an array of integer ids
+function addToStudentLabList(lab_ids) {
     var student_id = sessionStorage.getItem('student_id');
     var payload = {
-        tag_ids: lab_ids
+        lab_ids: lab_ids
     };
-    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/students/' + student_id + '/labs', payload).then(function (response) {
-        console.log(response.data.message);
-        return response.data.result;
+    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/students/' + student_id + '/lab_list', payload).then(function (response) {
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
-// RESTRICTED: student_id
-function removeFavLabsFromStudent(lab_ids) {
-    console.log('Removing favorite lab from student');
-
+function removeFromStudentLabList(lab_ids) {
     var student_id = sessionStorage.getItem('student_id');
     var payload = {
-        tag_ids: lab_ids,
+        lab_ids: lab_ids,
         _method: 'PUT'
     };
-    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/students/' + student_id + '/labs', payload).then(function (response) {
-        console.log(response.data.message);
-        return response.data.result;
+    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/students/' + student_id + '/lab_list', payload).then(function (response) {
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
+
+// Edu Experiences
+// Description of education at a school/university
+// university_name: (string) name of university
+// start_date: (string)
+// end_date: (string)
+// current: (bool) student is currently at this university
+// class_experiences: (string) (array) names of classes student took (are taking) at this uni
+// majors: (string) (array) names of subjects they majored (are majoring) in
+
+// RESTRICTED: student_id
+function createAndAddEduExperiencesToStudent(university_name, start_date, end_date, current, year, gpa, class_experience_names, major_names) {
+    console.log('Adding edu experiences to student');
+
+    var student_id = sessionStorage.getItem('student_id');
+    var payload = {
+        university_name: university_name,
+        start_date: start_date,
+        end_date: end_date,
+        current: current,
+        year: year,
+        gpa: gpa,
+        class_experience_names: class_experience_names,
+        major_names: major_names
+    };
+    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/students/' + student_id + '/edu_experiences', payload).then(function (response) {
+        return respond(response.status, response.data);
+    }).catch(function (error) {
+        return error_handle(error);
+    });
+}
+
+// RESTRICTED: student_id
+function updateEduExperiencesToStudent(edu_experience_id, university_name, start_date, end_date, current, year, gpa, class_experience_names, major_names) {
+    console.log('Adding edu experiences to student');
+
+    var student_id = sessionStorage.getItem('student_id');
+    var payload = {
+        edu_experience_id: edu_experience_id,
+        university_name: university_name,
+        start_date: start_date,
+        end_date: end_date,
+        current: current,
+        year: year,
+        gpa: gpa,
+        class_experience_names: class_experience_names,
+        major_names: major_names,
+        _method: 'PUT'
+    };
+    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/students/' + student_id + '/edu_experiences', payload).then(function (response) {
+        return respond(response.status, response.data);
+    }).catch(function (error) {
+        return error_handle(error);
+    });
+}
+
+// RESTRICTED: student_id
+function removeEduExperiencesFromStudent(edu_experience_ids) {
+    console.log('Removing edu experiences from student');
+
+    var student_id = sessionStorage.getItem('student_id');
+    var payload = {
+        edu_experience_ids: edu_experience_ids,
+        _method: 'PUT'
+    };
+    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/students/' + student_id + '/edu_experiences', payload).then(function (response) {
+        return respond(response.status, response.data);
+    }).catch(function (error) {
+        return error_handle(error);
+    });
+}
+
+// Work Experiences
+// Student work experience
+//  title - (string)
+//  description - (string)
+//  start_date - (string)
+//  end_date - (string)
+
+// RESTRICTED: student_id
+// NOTE: Input should be an array of objects formatted like:
+// {title: 'string',description: 'string',start_date: 'string',end_date: 'string'}
+function addWorkExperiencesToStudent(work_experiences) {
+    var student_id = sessionStorage.getItem('student_id');
+    var payload = {
+        work_experiences: work_experiences
+    };
+    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/students/' + student_id + '/work_experiences', payload).then(function (response) {
+        return respond(response.status, response.data);
+    }).catch(function (error) {
+        return error_handle(error);
+    });
+}
+
+// RESTRICTED: student_id
+// NOTE: work_experience_ids must be an array of integer ids
+function removeWorkExperiencesFromStudent(work_experience_ids) {
+    var student_id = sessionStorage.getItem('student_id');
+    var payload = {
+        work_experience_ids: work_experience_ids,
+        _method: 'PUT'
+    };
+    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/students/' + student_id + '/work_experiences', payload).then(function (response) {
+        return respond(response.status, response.data);
+    }).catch(function (error) {
+        return error_handle(error);
+    });
+}
+
+//
 
 // export function getStudentSchoolCourses(student_id) {
 //     console.log('Getting student school courses');
@@ -1284,21 +1359,18 @@ function removeFavLabsFromStudent(lab_ids) {
 function getAllFaculties() {
     console.log('Getting all faculty');
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('api/faculties').then(function (response) {
-        return response.data;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
 function getFaculty(faculty_id) {
     console.log('Getting faculty');
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('api/faculties/' + faculty_id).then(function (response) {
-        console.log(response.data.message);
-        return response.data.result;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
@@ -1306,13 +1378,10 @@ function createFaculty(user_id, first_name, last_name, title, contact_email) {
     console.log('Creating faculty');
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/faculties', { user_id: user_id, first_name: first_name, last_name: last_name, title: title, contact_email: contact_email }) /// EMI CHANGED THIS: "[]" to "{}"
     .then(function (response) {
-        console.log(response);
         sessionStorage.setItem('faculty_id', response.data.result.id);
-        console.log(response.data.message);
-        return response.data.result;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
@@ -1320,22 +1389,18 @@ function updateFaculty(faculty_id, first_name, last_name, title, contact_email) 
     console.log('Updating faculty');
     var _method = 'PUT';
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/faculties/' + faculty_id, { _method: _method, faculty_id: faculty_id, first_name: first_name, last_name: last_name, title: title, contact_email: contact_email }).then(function (response) {
-        console.log(response.data.message);
-        return response.data.result;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
 function deleteFaculty(faculty_id) {
     console.log('Deleting faculty');
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.delete('api/faculties/' + faculty_id).then(function (response) {
-        console.log(response.data.message);
-        return response.data.result;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
@@ -1364,21 +1429,18 @@ function deleteFaculty(faculty_id) {
 function getAllLabs() {
     console.log('Getting all labs');
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('api/labs').then(function (response) {
-        return response.data;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
 function getLab(lab_id) {
     console.log('Getting lab');
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('api/labs/' + lab_id).then(function (response) {
-        console.log(response.data.message);
-        return response.data.result;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
@@ -1388,35 +1450,29 @@ function getLab(lab_id) {
 function getAllLabData(skilltag_data, preferences_data, position_data, application_data, student_data, faculty_data) {
     console.log('Getting all lab data');
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/labs/all', { skilltag_data: skilltag_data, preferences_data: preferences_data, position_data: position_data, application_data: application_data, student_data: student_data, faculty_data: faculty_data }).then(function (response) {
-        console.log(response.data.message);
-        return response.data.result;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
 function getLabData(lab_id, skilltag_data, preferences_data, position_data, application_data, student_data, faculty_data) {
     console.log('Getting lab data');
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/labs/' + lab_id, { skilltag_data: skilltag_data, preferences_data: preferences_data, position_data: position_data, application_data: application_data, student_data: student_data, faculty_data: faculty_data }).then(function (response) {
-        console.log(response.data.message);
-        return response.data.result;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 //
 
 function createLab(faculty_id, name, location, description, publications, url, contact_phone, contact_email) {
     console.log('Creating lab');
-    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/labs', { faculty_id: faculty_id, name: name, department: department, location: location, description: description, publications: publications, url: url, gpa: gpa, weeklyCommitment: weeklyCommitment, contact_phone: contact_phone, contact_email: contact_email }).then(function (response) {
+    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/labs', { faculty_id: faculty_id, name: name, location: location, description: description, publications: publications, url: url, contact_phone: contact_phone, contact_email: contact_email }).then(function (response) {
         sessionStorage.setItem('lab_id', response.data.result.id); // CHANGED BY BENJI
-        console.log(response.data.message);
-        return response.data.result;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
@@ -1425,12 +1481,10 @@ function updateLab(name, location, description, publications, url, contact_phone
     console.log('Updating lab');
     var lab_id = sessionStorage.getItem('lab_id');
     var _method = 'PUT';
-    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/labs/' + lab_id, { _method: _method, lab_id: lab_id, name: name, department: department, location: location, description: description, publications: publications, url: url, gpa: gpa, weeklyCommitment: weeklyCommitment, contact_phone: contact_phone, contact_email: contact_email }).then(function (response) {
-        console.log(response.data.message);
-        return response.data.result;
+    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/labs/' + lab_id, { _method: _method, lab_id: lab_id, name: name, location: location, description: description, publications: publications, url: url, contact_phone: contact_phone, contact_email: contact_email }).then(function (response) {
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
@@ -1440,11 +1494,9 @@ function deleteLab() {
 
     var lab_id = sessionStorage.getItem('lab_id');
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.delete('api/labs/' + lab_id).then(function (response) {
-        console.log(response.data.message);
-        return response.data.result;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
@@ -1453,11 +1505,9 @@ function deleteLab() {
 function getLabSkills(lab_id) {
     console.log('Getting lab skills');
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('api/labs/' + lab_id + '/skills').then(function (response) {
-        console.log(response.data.message);
-        return response.data.result;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
@@ -1471,11 +1521,9 @@ function addSkillsToLab(skill_ids, position_id) {
         position_id: position_id
     };
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/labs/' + lab_id + '/skills', payload).then(function (response) {
-        console.log(response.data.message);
-        return response.data.result;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
@@ -1489,11 +1537,9 @@ function syncSkillsToLab(skill_ids, position_id) {
         position_id: position_id
     };
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/labs/' + lab_id + '/skills/sync', payload).then(function (response) {
-        console.log(response.data.message);
-        return response.data.result;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
@@ -1508,22 +1554,18 @@ function removeSkillsFromLab(skill_ids, position_id) {
         _method: 'PUT'
     };
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/labs/' + lab_id + '/skills', payload).then(function (response) {
-        console.log(response.data.message);
-        return response.data.result;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
 function getLabTags(lab_id) {
     console.log('Getting lab tags');
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('api/labs/' + lab_id + '/tags').then(function (response) {
-        console.log(response.data.message);
-        return response.data.result;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
@@ -1537,11 +1579,9 @@ function addTagsToLab(tag_ids, position_id) {
         position_id: position_id
     };
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/labs/' + lab_id + '/tags', payload).then(function (response) {
-        console.log(response.data.message);
-        return response.data.result;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
@@ -1555,11 +1595,9 @@ function syncTagsToLab(tag_ids, position_id) {
         position_id: position_id
     };
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/labs/' + lab_id + '/tags/sync', payload).then(function (response) {
-        console.log(response.data.message);
-        return response.data.result;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
@@ -1574,11 +1612,9 @@ function removeTagsFromLab(tag_ids, position_id) {
         _method: 'PUT'
     };
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/labs/' + lab_id + '/tags', payload).then(function (response) {
-        console.log(response.data.message);
-        return response.data.result;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
@@ -1645,10 +1681,9 @@ function removeTagsFromLab(tag_ids, position_id) {
 function getLabMembers(lab_id) {
     console.log('Getting lab members');
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('api/labs/' + lab_id + '/members').then(function (response) {
-        return response.data;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
@@ -1664,10 +1699,9 @@ function addMembersToLab(user_ids, role_ids) {
     };
 
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/labs/' + lab_id + '/members', payload).then(function (response) {
-        return response.data;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
@@ -1682,10 +1716,9 @@ function removeMembersFromLab(user_ids) {
     };
 
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/labs/' + lab_id + '/members', payload).then(function (response) {
-        return response.data;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
@@ -1698,21 +1731,39 @@ function removeMembersFromLab(user_ids) {
 function getAllSkills() {
     console.log('Getting all skills');
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('api/skills').then(function (response) {
-        return response.data;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
 function getSkill(skill_id) {
     console.log('Getting skill');
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('api/skills/' + skill_id).then(function (response) {
-        console.log(response.data.message);
-        return response.data.result;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
+    });
+}
+
+function createSkill(name, description) {
+    var payload = {
+        name: name,
+        description: description
+    };
+
+    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/skills/', payload).then(function (response) {
+        return respond(response.status, response.data);
+    }).catch(function (error) {
+        return error_handle(error);
+    });
+}
+
+function searchMatchingSkills(query) {
+    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/skills/match', query).then(function (response) {
+        return respond(response.status, response.data);
+    }).catch(function (error) {
+        return error_handle(error);
     });
 }
 
@@ -1723,49 +1774,39 @@ function getSkill(skill_id) {
 function getAllTags() {
     console.log('Getting all tags');
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('api/tags').then(function (response) {
-        return response.data;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
 function getTag(tag_id) {
     console.log('Getting tag');
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('api/tags/' + tag_id).then(function (response) {
-        console.log(response.data.message);
-        return response.data.result;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
-// Preferences
-// Lab preferences for applicants
-// type - (string)
-// title - (string)
-function getAllPreferences() {
-    console.log('Getting all preferences');
-    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('api/preferences').then(function (response) {
-        return response.data;
+function createTag(name, description) {
+    var payload = {
+        name: name,
+        description: description
+    };
+
+    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/skills/', payload).then(function (response) {
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
-// School Courses
-// University courses
-// title - (string)
-// description - (string)
-function getAllSchoolCourses() {
-    console.log('Getting all school courses');
-    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('api/courses/school').then(function (response) {
-        return response.data;
+function searchMatchingTags(query) {
+    return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/tags/match', query).then(function (response) {
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
@@ -1784,22 +1825,18 @@ function getAllSchoolCourses() {
 function getAllLabPositions(lab_id) {
     console.log('Getting all lab positions');
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('api/labs/' + lab_id + '/positions').then(function (response) {
-        console.log(response.data.message);
-        return response.data.result;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
 function getLabPosition(position_id) {
     console.log('Getting position');
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('api/positions/' + position_id).then(function (response) {
-        console.log(response.data.message);
-        return response.data.result;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
@@ -1810,11 +1847,9 @@ function createLabPosition(title, description, time_commitment, open_slots) {
     var lab_id = sessionStorage.getItem('lab_id');
 
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/labs/' + lab_id + '/positions', { title: title, description: description, time_commitment: time_commitment, open_slots: open_slots }).then(function (response) {
-        console.log(response.data.message);
-        return response.data.result;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
@@ -1824,11 +1859,9 @@ function updateLabPosition(position_id, title, description, time_commitment, ope
 
     var lab_id = sessionStorage.getItem('lab_id');
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/labs/' + lab_id + '/positions/update', { position_id: position_id, title: title, description: description, time_commitment: time_commitment, open_slots: open_slots }).then(function (response) {
-        console.log(response.data.message);
-        return response.data.result;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
@@ -1842,11 +1875,9 @@ function deleteLabPosition(position_ids) {
     };
 
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/labs/' + lab_id + '/positions/delete', payload).then(function (response) {
-        console.log(response.data.message);
-        return response.data.result;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
@@ -1859,11 +1890,9 @@ function getPositionApplication(position_id) {
     console.log('Getting application');
 
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('api/positions/' + position_id + '/application').then(function (response) {
-        console.log(response.data.message);
-        return response.data.result;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
@@ -1879,11 +1908,9 @@ function createApplication(position_id, questions) {
     };
 
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/labs/' + lab_id + '/applications', payload).then(function (response) {
-        console.log(response.data.message);
-        return response.data.result;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
@@ -1899,11 +1926,9 @@ function updateApplication(position_id, questions) {
     };
 
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/labs/' + lab_id + '/applications/update', payload).then(function (response) {
-        console.log(response.data.message);
-        return response.data.result;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
@@ -1915,11 +1940,9 @@ function getLabPositionApplicants(position_id) {
 
     console.log('Getting application responses');
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/labs/' + lab_id + '/positions/responses', { position_id: position_id }).then(function (response) {
-        console.log(response.data.message);
-        return response.data.result;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
@@ -1943,11 +1966,9 @@ function createApplicationResponse(position_id, answers) {
     };
 
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/students/' + student_id + '/responses', payload).then(function (response) {
-        console.log(response.data.message);
-        return response.data.result;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
@@ -1964,11 +1985,9 @@ function updateApplicationResponse(application_response_id, answers) {
     };
 
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/students/' + student_id + '/responses/update', payload).then(function (response) {
-        console.log(response.data.message);
-        return response.data.result;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
@@ -1984,11 +2003,9 @@ function submitApplicationResponse(application_response_id) {
     };
 
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/students/' + student_id + '/responses/update', payload).then(function (response) {
-        console.log(response.data.message);
-        return response.data.result;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
@@ -2004,11 +2021,9 @@ function deleteApplicationResponse(application_response_id) {
     };
 
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/students/' + student_id + '/responses/delete', payload).then(function (response) {
-        console.log(response.data.message);
-        return response.data.result;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
@@ -2023,11 +2038,9 @@ function getStudentPendingResponses() {
     };
 
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('api/students/' + student_id + '/responses', payload).then(function (response) {
-        console.log(response.data.message);
-        return response.data.result;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
@@ -2042,11 +2055,9 @@ function submitUserFeedback(user_id, url, feedback) {
     console.log('Submitting feedback');
 
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/feedback', { user_id: user_id, url: url, feedback: feedback }).then(function (response) {
-        console.log(response.data.message);
-        return response.data.result;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
@@ -2067,10 +2078,9 @@ function uploadPic(type, id, input_element_id) {
     };
 
     __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/pics', formData, config).then(function (response) {
-        console.log(response.data.message);
-        console.log(response.data.result);
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
+        return error_handle(error);
     });
 }
 
@@ -2089,10 +2099,9 @@ function uploadResume(student_id, input_element_id) {
     };
 
     __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/students/' + student_id + '/resume', formData, config).then(function (response) {
-        console.log(response.data.message);
-        console.log(response.data.result);
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
+        return error_handle(error);
     });
 }
 
@@ -2100,11 +2109,9 @@ function uploadResume(student_id, input_element_id) {
 function getSearchData() {
     console.log('Retrieving search data');
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('api/search_data').then(function (response) {
-        console.log(response.data.message);
-        return response.data.result;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
@@ -2114,23 +2121,21 @@ function getSearchData() {
 // Keywords: can be any string, will search for exact match
 
 // Returns array of matching projects, along with the location of the searched keyword in the "description" of the project
-function labSearch(areas, skills, commitments, departments, keywords) {
+function labSearch(areas, skills, commitments, departments, keyword) {
     console.log('Performing search');
 
     var payload = {
-        tags: areas,
+        areas: areas,
         skills: skills,
         commitments: commitments,
         departments: departments,
-        keywords: keywords
+        keyword: keyword
     };
 
     return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('api/search', payload).then(function (response) {
-        console.log(response.data.message);
-        return response.data.result;
+        return respond(response.status, response.data);
     }).catch(function (error) {
-        console.log(error);
-        return [];
+        return error_handle(error);
     });
 }
 
@@ -2566,7 +2571,7 @@ module.exports = warning;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__HashRouter__ = __webpack_require__(86);
 /* unused harmony reexport HashRouter */
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Link__ = __webpack_require__(38);
-/* unused harmony reexport Link */
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return __WEBPACK_IMPORTED_MODULE_2__Link__["a"]; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__MemoryRouter__ = __webpack_require__(88);
 /* unused harmony reexport MemoryRouter */
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__NavLink__ = __webpack_require__(91);
@@ -2576,13 +2581,13 @@ module.exports = warning;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__Redirect__ = __webpack_require__(96);
 /* unused harmony reexport Redirect */
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__Route__ = __webpack_require__(39);
-/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return __WEBPACK_IMPORTED_MODULE_7__Route__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return __WEBPACK_IMPORTED_MODULE_7__Route__["a"]; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__Router__ = __webpack_require__(20);
 /* unused harmony reexport Router */
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__StaticRouter__ = __webpack_require__(102);
 /* unused harmony reexport StaticRouter */
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__Switch__ = __webpack_require__(104);
-/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return __WEBPACK_IMPORTED_MODULE_10__Switch__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "d", function() { return __WEBPACK_IMPORTED_MODULE_10__Switch__["a"]; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__matchPath__ = __webpack_require__(106);
 /* unused harmony reexport matchPath */
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__withRouter__ = __webpack_require__(107);
@@ -60175,13 +60180,13 @@ var Main = function Main() {
         'main',
         null,
         __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-            __WEBPACK_IMPORTED_MODULE_1_react_router_dom__["c" /* Switch */],
+            __WEBPACK_IMPORTED_MODULE_1_react_router_dom__["d" /* Switch */],
             null,
-            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1_react_router_dom__["b" /* Route */], { exact: true, path: '/', component: __WEBPACK_IMPORTED_MODULE_8__Home__["a" /* default */] }),
-            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1_react_router_dom__["b" /* Route */], { path: '/user_test', component: UserTest }),
-            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1_react_router_dom__["b" /* Route */], { path: '/lab_test', component: LabTest }),
-            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1_react_router_dom__["b" /* Route */], { path: '/position_test', component: __WEBPACK_IMPORTED_MODULE_10__PositionTest__["a" /* default */] }),
-            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1_react_router_dom__["b" /* Route */], { path: '/application_test', component: ApplicationTest })
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1_react_router_dom__["c" /* Route */], { exact: true, path: '/', component: __WEBPACK_IMPORTED_MODULE_8__Home__["a" /* default */] }),
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1_react_router_dom__["c" /* Route */], { path: '/user_test', component: UserTest }),
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1_react_router_dom__["c" /* Route */], { path: '/lab_test', component: LabTest }),
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1_react_router_dom__["c" /* Route */], { path: '/position_test', component: __WEBPACK_IMPORTED_MODULE_10__PositionTest__["a" /* default */] }),
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1_react_router_dom__["c" /* Route */], { path: '/application_test', component: ApplicationTest })
         )
     );
 };
@@ -60240,19 +60245,19 @@ var Labs = function (_React$Component) {
                 comp.setState({ labs: JSON.stringify(resp) });
             });
 
-            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["j" /* getLab */])(2).then(function (resp) {
+            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["h" /* getLab */])(2).then(function (resp) {
                 comp.setState({ lab: JSON.stringify(resp) });
             });
 
-            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["n" /* getLabSkills */])(1).then(function (resp) {
+            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["k" /* getLabSkills */])(1).then(function (resp) {
                 comp.setState({ skills: JSON.stringify(resp) });
             });
 
-            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["o" /* getLabTags */])(2).then(function (resp) {
+            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["l" /* getLabTags */])(2).then(function (resp) {
                 comp.setState({ tags: JSON.stringify(resp) });
             });
 
-            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["getLabPreferences"])(1).then(function (resp) {
+            getLabPreferences(1).then(function (resp) {
                 comp.setState({ prefs: JSON.stringify(resp) });
             });
         }
@@ -60374,11 +60379,11 @@ var Faculties = function (_React$Component) {
                 comp.setState({ faculties: JSON.stringify(resp) });
             });
 
-            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["h" /* getFaculty */])(2).then(function (resp) {
+            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["g" /* getFaculty */])(2).then(function (resp) {
                 comp.setState({ faculty: JSON.stringify(resp) });
             });
 
-            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["getFacultyLabs"])(1).then(function (resp) {
+            getFacultyLabs(1).then(function (resp) {
                 comp.setState({ labs: JSON.stringify(resp) });
             });
         }
@@ -60556,7 +60561,7 @@ var Students = function (_React$Component) {
     }, {
         key: 'update',
         value: function update() {
-            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["w" /* updateStudent */])(1, 'test', 'test', null, null, null, null, null, null, null).then(function (resp) {
+            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["s" /* updateStudent */])(1, 'test', 'test', null, null, null, null, null, null, null).then(function (resp) {
                 console.log(resp);
             });
         }
@@ -60570,7 +60575,7 @@ var Students = function (_React$Component) {
     }, {
         key: 'remove_tags',
         value: function remove_tags() {
-            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["v" /* removeTagsFromStudent */])(1, [5, 6]).then(function (resp) {
+            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["r" /* removeTagsFromStudent */])(1, [5, 6]).then(function (resp) {
                 console.log(resp);
             });
         }
@@ -60651,7 +60656,7 @@ var Register = function (_React$Component) {
     _createClass(Register, [{
         key: 'componentDidMount',
         value: function componentDidMount() {
-            var name = Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["getCurrentUsername"])();
+            var name = getCurrentUsername();
             this.setState({ username: name });
         }
     }, {
@@ -60665,7 +60670,7 @@ var Register = function (_React$Component) {
                 password_confirmation = _state.password_confirmation;
 
 
-            var no_err = Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["u" /* registerUser */])(name, email, password, password_confirmation);
+            var no_err = Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["q" /* registerUser */])(name, email, password, password_confirmation);
             if (no_err) {
                 this.refs.name.value = "";
                 this.refs.password.value = "";
@@ -60704,7 +60709,7 @@ var Register = function (_React$Component) {
                     ),
                     __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                         'button',
-                        { onClick: __WEBPACK_IMPORTED_MODULE_3__helpers__["s" /* logoutCurrentUser */].bind(this) },
+                        { onClick: __WEBPACK_IMPORTED_MODULE_3__helpers__["p" /* logoutCurrentUser */].bind(this) },
                         'Logout'
                     )
                 );
@@ -60867,7 +60872,7 @@ var Users = function (_React$Component) {
     }, {
         key: 'resetPass',
         value: function resetPass() {
-            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["passwordResetEmail"])('akshayro@umich.edu');
+            passwordResetEmail('akshayro@umich.edu');
         }
     }, {
         key: 'render',
@@ -60945,12 +60950,12 @@ var Home = function (_React$Component) {
     }, {
         key: 'sendImage',
         value: function sendImage() {
-            Object(__WEBPACK_IMPORTED_MODULE_3__helpers_js__["x" /* uploadPic */])('student', 1, 'fileToUpload');
+            Object(__WEBPACK_IMPORTED_MODULE_3__helpers_js__["t" /* uploadPic */])('student', 1, 'fileToUpload');
         }
     }, {
         key: 'sendResume',
         value: function sendResume() {
-            Object(__WEBPACK_IMPORTED_MODULE_3__helpers_js__["y" /* uploadResume */])(1, 'fileToUpload');
+            Object(__WEBPACK_IMPORTED_MODULE_3__helpers_js__["u" /* uploadResume */])(1, 'fileToUpload');
         }
     }, {
         key: 'render',
@@ -61038,8 +61043,8 @@ var Login = function (_React$Component) {
     _createClass(Login, [{
         key: 'componentDidMount',
         value: function componentDidMount() {
-            this.setState({ logged_in: Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["q" /* isLoggedIn */])() });
-            this.setState({ username: Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["getCurrentUsername"])() });
+            this.setState({ logged_in: Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["n" /* isLoggedIn */])() });
+            this.setState({ username: getCurrentUsername() });
         }
     }, {
         key: 'onSubmit',
@@ -61050,7 +61055,7 @@ var Login = function (_React$Component) {
                 password = _state.password;
 
 
-            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["r" /* loginUser */])(email, password);
+            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["o" /* loginUser */])(email, password);
             this.forceUpdate();
         }
     }, {
@@ -61080,7 +61085,7 @@ var Login = function (_React$Component) {
                     ),
                     __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                         'button',
-                        { onClick: __WEBPACK_IMPORTED_MODULE_3__helpers__["s" /* logoutCurrentUser */].bind(this) },
+                        { onClick: __WEBPACK_IMPORTED_MODULE_3__helpers__["p" /* logoutCurrentUser */].bind(this) },
                         'Logout'
                     )
                 );
@@ -61187,15 +61192,15 @@ var PositionTest = function (_React$Component) {
                 comp.setState({ positions: JSON.stringify(resp) });
             });
 
-            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["k" /* getLabPosition */])(1).then(function (resp) {
+            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["i" /* getLabPosition */])(1).then(function (resp) {
                 comp.setState({ position: JSON.stringify(resp) });
             });
 
-            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["p" /* getPositionApplication */])(1).then(function (resp) {
+            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["m" /* getPositionApplication */])(1).then(function (resp) {
                 comp.setState({ application: JSON.stringify(resp) });
             });
 
-            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["l" /* getLabPositionApplicants */])(1).then(function (resp) {
+            Object(__WEBPACK_IMPORTED_MODULE_3__helpers__["j" /* getLabPositionApplicants */])(1).then(function (resp) {
                 comp.setState({ responses: JSON.stringify(resp) });
             });
         }
@@ -61312,6 +61317,32 @@ var Header = function (_React$Component) {
                     'h1',
                     null,
                     'Perch API test suite'
+                ),
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'nav',
+                    null,
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'ul',
+                        null,
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                            'li',
+                            null,
+                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                __WEBPACK_IMPORTED_MODULE_1_react_router_dom__["b" /* Link */],
+                                { to: '/' },
+                                'Home'
+                            )
+                        ),
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                            'li',
+                            null,
+                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                __WEBPACK_IMPORTED_MODULE_1_react_router_dom__["b" /* Link */],
+                                { to: '/users' },
+                                'Users'
+                            )
+                        )
+                    )
                 )
             );
         }
@@ -61903,7 +61934,7 @@ module.exports = exports['default'];
 /* 129 */
 /***/ (function(module, exports) {
 
-throw new Error("Module build failed: ModuleBuildError: Module build failed: Error: ENOENT: no such file or directory, scandir 'C:\\Users\\aksha\\Desktop\\perch\\backend\\perch_api\\node_modules\\node-sass\\vendor'\n    at Error (native)\n    at Object.fs.readdirSync (fs.js:952:18)\n    at Object.getInstalledBinaries (C:\\Users\\aksha\\Desktop\\perch\\backend\\perch_api\\node_modules\\node-sass\\lib\\extensions.js:128:13)\n    at foundBinariesList (C:\\Users\\aksha\\Desktop\\perch\\backend\\perch_api\\node_modules\\node-sass\\lib\\errors.js:20:15)\n    at foundBinaries (C:\\Users\\aksha\\Desktop\\perch\\backend\\perch_api\\node_modules\\node-sass\\lib\\errors.js:15:5)\n    at Object.module.exports.missingBinary (C:\\Users\\aksha\\Desktop\\perch\\backend\\perch_api\\node_modules\\node-sass\\lib\\errors.js:45:5)\n    at module.exports (C:\\Users\\aksha\\Desktop\\perch\\backend\\perch_api\\node_modules\\node-sass\\lib\\binding.js:15:30)\n    at Object.<anonymous> (C:\\Users\\aksha\\Desktop\\perch\\backend\\perch_api\\node_modules\\node-sass\\lib\\index.js:14:35)\n    at Module._compile (module.js:570:32)\n    at Object.Module._extensions..js (module.js:579:10)\n    at Module.load (module.js:487:32)\n    at tryModuleLoad (module.js:446:12)\n    at Function.Module._load (module.js:438:3)\n    at Module.require (module.js:497:17)\n    at require (internal/module.js:20:19)\n    at Object.<anonymous> (C:\\Users\\aksha\\Desktop\\perch\\backend\\perch_api\\node_modules\\sass-loader\\lib\\loader.js:3:14)\n    at Module._compile (module.js:570:32)\n    at Object.Module._extensions..js (module.js:579:10)\n    at Module.load (module.js:487:32)\n    at tryModuleLoad (module.js:446:12)\n    at Function.Module._load (module.js:438:3)\n    at Module.require (module.js:497:17)\n    at require (internal/module.js:20:19)\n    at loadLoader (C:\\Users\\aksha\\Desktop\\perch\\backend\\perch_api\\node_modules\\loader-runner\\lib\\loadLoader.js:13:17)\n    at iteratePitchingLoaders (C:\\Users\\aksha\\Desktop\\perch\\backend\\perch_api\\node_modules\\loader-runner\\lib\\LoaderRunner.js:169:2)\n    at iteratePitchingLoaders (C:\\Users\\aksha\\Desktop\\perch\\backend\\perch_api\\node_modules\\loader-runner\\lib\\LoaderRunner.js:165:10)\n    at C:\\Users\\aksha\\Desktop\\perch\\backend\\perch_api\\node_modules\\loader-runner\\lib\\LoaderRunner.js:173:18\n    at loadLoader (C:\\Users\\aksha\\Desktop\\perch\\backend\\perch_api\\node_modules\\loader-runner\\lib\\loadLoader.js:36:3)\n    at iteratePitchingLoaders (C:\\Users\\aksha\\Desktop\\perch\\backend\\perch_api\\node_modules\\loader-runner\\lib\\LoaderRunner.js:169:2)\n    at iteratePitchingLoaders (C:\\Users\\aksha\\Desktop\\perch\\backend\\perch_api\\node_modules\\loader-runner\\lib\\LoaderRunner.js:165:10)\n    at runLoaders (C:\\Users\\aksha\\Desktop\\perch\\backend\\perch_api\\node_modules\\webpack\\lib\\NormalModule.js:195:19)\n    at C:\\Users\\aksha\\Desktop\\perch\\backend\\perch_api\\node_modules\\loader-runner\\lib\\LoaderRunner.js:364:11\n    at C:\\Users\\aksha\\Desktop\\perch\\backend\\perch_api\\node_modules\\loader-runner\\lib\\LoaderRunner.js:170:18\n    at loadLoader (C:\\Users\\aksha\\Desktop\\perch\\backend\\perch_api\\node_modules\\loader-runner\\lib\\loadLoader.js:27:11)\n    at iteratePitchingLoaders (C:\\Users\\aksha\\Desktop\\perch\\backend\\perch_api\\node_modules\\loader-runner\\lib\\LoaderRunner.js:169:2)\n    at iteratePitchingLoaders (C:\\Users\\aksha\\Desktop\\perch\\backend\\perch_api\\node_modules\\loader-runner\\lib\\LoaderRunner.js:165:10)\n    at C:\\Users\\aksha\\Desktop\\perch\\backend\\perch_api\\node_modules\\loader-runner\\lib\\LoaderRunner.js:173:18\n    at loadLoader (C:\\Users\\aksha\\Desktop\\perch\\backend\\perch_api\\node_modules\\loader-runner\\lib\\loadLoader.js:36:3)\n    at iteratePitchingLoaders (C:\\Users\\aksha\\Desktop\\perch\\backend\\perch_api\\node_modules\\loader-runner\\lib\\LoaderRunner.js:169:2)\n    at iteratePitchingLoaders (C:\\Users\\aksha\\Desktop\\perch\\backend\\perch_api\\node_modules\\loader-runner\\lib\\LoaderRunner.js:165:10)\n    at C:\\Users\\aksha\\Desktop\\perch\\backend\\perch_api\\node_modules\\loader-runner\\lib\\LoaderRunner.js:173:18\n    at loadLoader (C:\\Users\\aksha\\Desktop\\perch\\backend\\perch_api\\node_modules\\loader-runner\\lib\\loadLoader.js:36:3)\n    at iteratePitchingLoaders (C:\\Users\\aksha\\Desktop\\perch\\backend\\perch_api\\node_modules\\loader-runner\\lib\\LoaderRunner.js:169:2)\n    at iteratePitchingLoaders (C:\\Users\\aksha\\Desktop\\perch\\backend\\perch_api\\node_modules\\loader-runner\\lib\\LoaderRunner.js:165:10)\n    at C:\\Users\\aksha\\Desktop\\perch\\backend\\perch_api\\node_modules\\loader-runner\\lib\\LoaderRunner.js:173:18\n    at loadLoader (C:\\Users\\aksha\\Desktop\\perch\\backend\\perch_api\\node_modules\\loader-runner\\lib\\loadLoader.js:36:3)\n    at iteratePitchingLoaders (C:\\Users\\aksha\\Desktop\\perch\\backend\\perch_api\\node_modules\\loader-runner\\lib\\LoaderRunner.js:169:2)\n    at runLoaders (C:\\Users\\aksha\\Desktop\\perch\\backend\\perch_api\\node_modules\\loader-runner\\lib\\LoaderRunner.js:362:2)\n    at NormalModule.doBuild (C:\\Users\\aksha\\Desktop\\perch\\backend\\perch_api\\node_modules\\webpack\\lib\\NormalModule.js:182:3)\n    at NormalModule.build (C:\\Users\\aksha\\Desktop\\perch\\backend\\perch_api\\node_modules\\webpack\\lib\\NormalModule.js:275:15)\n    at Compilation.buildModule (C:\\Users\\aksha\\Desktop\\perch\\backend\\perch_api\\node_modules\\webpack\\lib\\Compilation.js:151:10)\n    at moduleFactory.create (C:\\Users\\aksha\\Desktop\\perch\\backend\\perch_api\\node_modules\\webpack\\lib\\Compilation.js:454:10)\n    at factory (C:\\Users\\aksha\\Desktop\\perch\\backend\\perch_api\\node_modules\\webpack\\lib\\NormalModuleFactory.js:243:5)\n    at applyPluginsAsyncWaterfall (C:\\Users\\aksha\\Desktop\\perch\\backend\\perch_api\\node_modules\\webpack\\lib\\NormalModuleFactory.js:94:13)\n    at C:\\Users\\aksha\\Desktop\\perch\\backend\\perch_api\\node_modules\\tapable\\lib\\Tapable.js:268:11\n    at NormalModuleFactory.params.normalModuleFactory.plugin (C:\\Users\\aksha\\Desktop\\perch\\backend\\perch_api\\node_modules\\webpack\\lib\\CompatibilityPlugin.js:52:5)\n    at NormalModuleFactory.applyPluginsAsyncWaterfall (C:\\Users\\aksha\\Desktop\\perch\\backend\\perch_api\\node_modules\\tapable\\lib\\Tapable.js:272:13)\n    at resolver (C:\\Users\\aksha\\Desktop\\perch\\backend\\perch_api\\node_modules\\webpack\\lib\\NormalModuleFactory.js:69:10)\n    at process.nextTick (C:\\Users\\aksha\\Desktop\\perch\\backend\\perch_api\\node_modules\\webpack\\lib\\NormalModuleFactory.js:196:7)\n    at _combinedTickCallback (internal/process/next_tick.js:73:7)\n    at process._tickCallback (internal/process/next_tick.js:104:9)");
+// removed by extract-text-webpack-plugin
 
 /***/ })
 /******/ ]);

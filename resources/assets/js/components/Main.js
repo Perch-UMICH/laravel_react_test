@@ -12,6 +12,7 @@ import Users from './Users'
 import Home from './Home'
 import Login from './Login'
 import PositionTest from './PositionTest'
+import FileUploadTest from './FileUploadTest'
 
 const Main = () => (
     <main>
@@ -21,6 +22,7 @@ const Main = () => (
             <Route path='/lab_test' component={LabTest}/>
             <Route path='/position_test' component={PositionTest}/>
             <Route path='/application_test' component={ApplicationTest}/>
+            <Route path='/file_upload_test' component={FileUploadTest}/>
         </Switch>
     </main>
 );

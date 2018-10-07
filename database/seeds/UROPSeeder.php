@@ -5,6 +5,8 @@ use App\Position;
 use App\UropPosition;
 use App\Department;
 use App\UropTag;
+use App\Application;
+use App\User;
 
 use Illuminate\Database\Seeder;
 
@@ -154,6 +156,7 @@ Specific tasks and responsibilities include:
         $lab = Lab::find(2);
         $lab->members()->sync([4 => ['role' => 1], 1 => ['role' => 3]]);
     }
+
     // Seeds db with excel file containing projects
     public function pb_db_seeder()
     {
@@ -161,17 +164,14 @@ Specific tasks and responsibilities include:
         $reader = Excel::load($file);
         $data = $reader->get();
 
+        $titles = [];
         foreach ($data as $d) {
-            // Check for project duplicate
-            $projs = Position::all();
-            $titles = [];
-            foreach ($projs as $p) {
-                $titles[] = $p->title;
-            }
-            if (!in_array($d['projtitle'], $titles)) {
+            if (!in_array(trim($d['projtitle']), $titles)) {
                 $pos = new Position();
                 $pos->title = trim($d['projtitle']);
+                $titles[] = $pos->title;
                 $pos->description = $d['projdescr'];
+                if ($pos->description == null) $pos->description = "No description";
 
                 $hrs = $d['hrsperweek'];
                 if ($hrs == 0) {
@@ -218,6 +218,24 @@ Specific tasks and responsibilities include:
                     $lab->save();
                 }
                 $lab->positions()->save($pos);
+
+                // Create faculty user based on sponsor
+
+                $username = snake_case($d['name'], ' ');
+                $user = User::where('name',$username)->first();
+                if ($user == null) {
+                    $user = new User();
+                    $user->name = $username;
+                    $user->email = $username . '@email.com';
+                    $user->password = 'testpass';
+                    $user->save();
+                }
+
+                $lab->members()->sync([$user->id => ['role' => 1]]);
+
+                // Create empty application
+                $app = new Application();
+                $pos->application()->save($app);
 
                 // Normalize departments
                 $depts_in = explode(', ', $urop->dept);
