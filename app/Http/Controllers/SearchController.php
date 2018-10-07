@@ -86,13 +86,17 @@ class SearchController extends Controller
         $selected = [];
         $selected_keywords = [];
         $results = [];
+        $num_results = 0;
 
         if (empty($commitments) && empty($skills) && empty($areas) && empty($departments) && empty($keyword)) {
             $labs = Lab::all();
             foreach ($labs as $l) {
                 $projs = $l->positions->pluck('id')->toArray();
-                if (!empty($projs))
-                    $results[$l->id] = $projs;
+                if (!empty($projs)) {
+                    $results[$num_results] = ['lab_id' => $l->id, 'projects' => $projs];
+                    ++$num_results;
+                }
+
             }
             return $this->outputJSON(['results' => $results, 'keyword_location' => $selected_keywords], "Search performed");
         }
@@ -142,7 +146,17 @@ class SearchController extends Controller
 
             if (($has_area && $has_department) && ($has_commitment && $has_skill && $has_keyword)) {
                 $l_id = $p->lab->id;
-                $results[$l_id][] = $p;
+                $found = false;
+                foreach ($results as $r) {
+                    if ($r['lab_id'] == $l_id) {
+                        $r['projects'][] = $p->id;
+                        $found = true;
+                        break;
+                    }
+                }
+                if (!$found) {
+                    $results[] = ['lab_id' => $l_id, 'projects' => [$p->id]];
+                }
                 //$selected[] = $p->id;
                 //$selected_keywords[] = $loc;
             }
