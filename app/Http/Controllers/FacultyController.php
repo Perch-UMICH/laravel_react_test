@@ -89,11 +89,11 @@ class FacultyController extends Controller
     public function update(Request $request, Faculty $faculty)
     {
         $input = $request->all();
-        $input = array_filter($input);
+        //$input = array_filter($input);
         $faculty->update($input);
         $faculty->save();
 
-        return $this->outputJSON($faculty, 'Faculty profile updates');
+        return $this->outputJSON($faculty, 'Faculty profile updated');
     }
 
     /**
