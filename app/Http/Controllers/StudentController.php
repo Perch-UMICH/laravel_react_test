@@ -116,9 +116,8 @@ class StudentController extends Controller
      */
     public function update(Request $request, Student $student)
     {
-        // TODO check for issues with empty arrays
         $input = $request->all();
-        $input = array_filter($input);
+        //$input = array_filter($input);
         $student->update($input);
         $student->save();
 

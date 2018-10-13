@@ -196,7 +196,7 @@ class LabController extends Controller
     public function update(Request $request, Lab $lab)
     {
         $input = $request->all();
-        $input = array_filter($input);
+        //$input = array_filter($input);
         $lab->update($input);
         $lab->save();
 
@@ -422,7 +422,7 @@ class LabController extends Controller
 
     public function update_position(Request $request, Lab $lab) {
         $input = $request->all();
-        $input = array_filter($input);
+        //$input = array_filter($input);
 
         $position = Position::find($input['position_id']);
         $position->update($input);
