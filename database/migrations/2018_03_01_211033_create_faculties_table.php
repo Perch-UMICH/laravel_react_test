@@ -31,7 +31,6 @@ class CreateFacultiesTable extends Migration
             // Education
 
             $table->string('title')->nullable();
-            $table->string('profilepic_path')->nullable();
 
             $table->timestamps();
         });
