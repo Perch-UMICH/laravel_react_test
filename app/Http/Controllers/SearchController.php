@@ -105,19 +105,27 @@ class SearchController extends Controller
         // CURRENTLY DOESN'T ACCOUNT FOR PROJS WITH MULTIPLE CLASSES AND SUBCATS
         $projects = Position::with(['urop_position','departments'])->get();
         foreach ($projects as $p) {
-            $urop = $p->urop_position;
+
             $commitment = $p->min_time_commitment;
             $desc = $p->description;
             $p_title = $p->title;
             $l_title = $p->lab->name;
 
-            $classes = $urop->urop_tags->where('type', 'Classification')->pluck('name')->all();
-            $cats = $urop->urop_tags->where('type', 'SubCategory')->pluck('name')->all();
-
             $dept = $p->departments;
             if ($dept != null) $dept = $dept->pluck('name')->toArray();
             if (!empty($dept)) $dept = $dept[0];
             else $dept = null;
+
+            // These only apply to urop positions
+            if ($p->urop_position()->exists()) {
+                $urop = $p->urop_position;
+                $classes = $urop->urop_tags->where('type', 'Classification')->pluck('name')->all();
+                $cats = $urop->urop_tags->where('type', 'SubCategory')->pluck('name')->all();
+            }
+            else {
+                $classes = [];
+                $cats = [];
+            }
 
             $has_commitment = (empty($commitments)
                 || in_array(strtolower($commitment), array_map('strtolower', $commitments)));
