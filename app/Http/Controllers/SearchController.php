@@ -83,29 +83,26 @@ class SearchController extends Controller
         $departments = $input['departments']; // depts
         $keyword = $input['keyword'];
 
-        $selected = [];
-        $selected_keywords = [];
         $results = [];
-        $num_results = 0;
+        $num_labs = 0;
+        $num_projects = 0;
 
+        // Check if all parameters are empty
         if (empty($commitments) && empty($skills) && empty($areas) && empty($departments) && empty($keyword)) {
             $labs = Lab::all();
             foreach ($labs as $l) {
                 $projs = $l->positions->pluck('id')->toArray();
                 if (!empty($projs)) {
-                    $results[$num_results] = ['lab_id' => $l->id, 'projects' => $projs];
-                    ++$num_results;
+                    $results[$num_labs] = ['lab_id' => $l->id, 'projects' => $projs];
+                    ++$num_labs;
+                    $num_projects += count($projs);
                 }
-
             }
-            return $this->outputJSON(['results' => $results, 'keyword_location' => $selected_keywords], "Search performed");
+            return $this->outputJSON(['results' => $results, 'num_results' => $num_projects], "Search performed");
         }
-
-        // $l->positions()->whereHas('departments', function($query) {$query->where('name','Chemistry');})->get()
 
 
         // CURRENTLY DOESN'T ACCOUNT FOR PROJS WITH MULTIPLE CLASSES AND SUBCATS
-        // $projects = Position::with(['urop_position','departments'])->orderBy('lab_id')->get();
         $projects = Position::with(['urop_position','departments'])->get();
         foreach ($projects as $p) {
             $urop = $p->urop_position;
@@ -157,13 +154,10 @@ class SearchController extends Controller
                 if (!$found) {
                     $results[] = ['lab_id' => $l_id, 'projects' => [$p->id]];
                 }
-                //$selected[] = $p->id;
-                //$selected_keywords[] = $loc;
+                ++$num_projects;
             }
         }
-
-
-        return $this->outputJSON($results,"Search performed");
+        return $this->outputJSON(['results' => $results, 'num_results' => $num_projects], "Search performed");
     }
 
     public function retrieve_search_data(Request $request)
