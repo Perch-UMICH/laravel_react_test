@@ -526,11 +526,10 @@ class LabController extends Controller
     // getPositionApplication
     public function position_application(Request $request, Lab $lab) {
         $position_id = $request->route()->parameters['position'];
-        $position = $lab->positions()->where('id', $position_id)->with('application.questions')->get();
+        $position = $lab->positions()->where('id', $position_id)->first();
         if (!$position) return $this->outputJSON(null, 'Error: invalid position id', 400);
-
         $app = $position->application;
-        $app->questions;
+
         return $this->outputJSON($app, 'Application retrieved');
     }
 
