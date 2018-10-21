@@ -7,6 +7,7 @@ use App\Lab;
 use App\Position;
 use App\Application;
 use App\Skill;
+use Doctrine\DBAL\Tools\Console\Command\ReservedWordsCommand;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
@@ -196,7 +197,7 @@ class LabController extends Controller
     public function update(Request $request, Lab $lab)
     {
         $input = $request->all();
-        $input = array_filter($input);
+        //$input = array_filter($input);
         $lab->update($input);
         $lab->save();
 
@@ -407,6 +408,7 @@ class LabController extends Controller
     }
 
     public function positions(Lab $lab) {
+        //$positions = $lab->positions()->with('application.questions')->get();
         $positions = $lab->positions()->get();
         return $this->outputJSON($positions,"Positions from lab retrieved");
     }
@@ -422,7 +424,7 @@ class LabController extends Controller
 
     public function update_position(Request $request, Lab $lab) {
         $input = $request->all();
-        $input = array_filter($input);
+        //$input = array_filter($input);
 
         $position = Position::find($input['position_id']);
         $position->update($input);
@@ -520,6 +522,30 @@ class LabController extends Controller
 
         return $this->outputJSON($application,"Updated application");
     }
+
+    // getPositionApplication
+    public function position_application(Request $request, Lab $lab) {
+        $position_id = $request->route()->parameters['position'];
+        $position = $lab->positions()->where('id', $position_id)->first();
+        if (!$position) return $this->outputJSON(null, 'Error: invalid position id', 400);
+        $app = $position->application;
+        $app->questions;
+
+        return $this->outputJSON($app, 'Application retrieved');
+    }
+
+    // getLabPositionApplicationResponses
+    public function position_application_responses(Request $request, Lab $lab) {
+        $position_id = $request->route()->parameters['position'];
+        $position = $lab->positions()->where('id', $position_id)->first();
+        if (!$position) return $this->outputJSON(null, 'Error: invalid position id', 400);
+        $app = $position->application;
+        $resp = $app->responses()->with('answers')->get();
+
+
+        return $this->outputJSON($resp, 'Responses retrieved');
+    }
+
 
     // App Responses:
 
