@@ -118,7 +118,7 @@ class IdpGrant extends AbstractGrant
 
             // Google verifies 'iss' (google's source signature) and 'exp' (the token expiration)
             // try{
-                $url = urlencode('https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=' . $token);
+                $url = 'https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=' . urlencode($token);
                 $options = array(
                     'http' => array(
                         'header' => "Content-type: application/x-www-form-urlencoded\r\n",
