@@ -534,6 +534,17 @@ class LabController extends Controller
         return $this->outputJSON($app, 'Application retrieved');
     }
 
+    // getLabPositionApplicationResponses
+    public function position_application_responses(Request $request, Lab $lab) {
+        $position_id = $request->route()->parameters['position'];
+        $position = $lab->positions()->where('id', $position_id)->first();
+        if (!$position) return $this->outputJSON(null, 'Error: invalid position id', 400);
+        $app = $position->application;
+        $resp = $app->responses;
+
+        return $this->outputJSON($resp, 'Responses retrieved');
+    }
+
 
     // App Responses:
 
