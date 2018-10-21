@@ -117,22 +117,23 @@ class IdpGrant extends AbstractGrant
             $client = new \Google_Client(['client_id' => env('GOOGLE_CLIENT_ID')]);
 
             // Google verifies 'iss' (google's source signature) and 'exp' (the token expiration)
-            try{
+            // try{
                 $url = 'https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=' . $token;
                 $options = array(
-                    'http' = array(
+                    'http' => array(
                         'header' => "Content-type: application/x-www-form-urlencoded\r\n",
                         'method' => 'GET'
                     )
                 );
                 $context = stream_context_create($options);
                 $result = file_get_contents($url, false, $context);
+                throw OAuthServerException::invalidRequest('response: ' . $result);
 
                 // $payload = $client->verifyIdToken($token);
-            } catch(Exception $e) {
-                throw OAuthServerException::invalidRequest('response: ' . $result);
-                //throw OAuthServerException::invalidRequest('token: ' . $token);
-            }
+//            } catch(Exception $e) {
+//                throw OAuthServerException::invalidRequest('response: ' . $result);
+//                //throw OAuthServerException::invalidRequest('token: ' . $token);
+//            }
 
             if($payload) {
                 $username = $payload('sub');
