@@ -116,9 +116,8 @@ class StudentController extends Controller
      */
     public function update(Request $request, Student $student)
     {
-        // TODO check for issues with empty arrays
         $input = $request->all();
-        $input = array_filter($input);
+        //$input = array_filter($input);
         $student->update($input);
         $student->save();
 
@@ -306,8 +305,8 @@ class StudentController extends Controller
 
         // Get application questions
         $questions = $application->questions;
-        if (count($questions) !== count($response_strings))
-            return $this->outputJSON(null, 'Error: number of answers does not match number of questions', 400);
+//        if (count($questions) !== count($response_strings))
+//            return $this->outputJSON(null, 'Error: number of answers does not match number of questions', 400);
 
         $count = 0;
         foreach ($response_strings as $resp) {
