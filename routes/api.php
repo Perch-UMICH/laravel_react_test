@@ -97,6 +97,9 @@ Route::group(['middleware' => 'auth:api'], function(){
         Route::post('labs/{lab}/positions/delete', 'LabController@delete_positions'); // delete (also deletes application)
         Route::post('labs/{lab}/positions/responses', 'LabController@app_responses'); // Get all responses to an application
 
+        Route::post('labs/{lab}/positions/{position}/application', 'LabController@position_application'); // Get application from position
+        Route::post('labs/{lab}/positions/{position}/application/responses', 'LabController@position_application_responses'); // Get application from position
+
         Route::post('labs/{lab}/applications', 'LabController@create_application');
         Route::post('labs/{lab}/applications/update', 'LabController@update_application');
     });

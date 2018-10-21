@@ -7,6 +7,7 @@ use App\Lab;
 use App\Position;
 use App\Application;
 use App\Skill;
+use Doctrine\DBAL\Tools\Console\Command\ReservedWordsCommand;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
@@ -407,7 +408,8 @@ class LabController extends Controller
     }
 
     public function positions(Lab $lab) {
-        $positions = $lab->positions()->with('application.questions')->get();
+        //$positions = $lab->positions()->with('application.questions')->get();
+        $positions = $lab->positions()->get();
         return $this->outputJSON($positions,"Positions from lab retrieved");
     }
 
@@ -520,6 +522,18 @@ class LabController extends Controller
 
         return $this->outputJSON($application,"Updated application");
     }
+
+    // getPositionApplication
+    public function position_application(Request $request, Lab $lab) {
+        $position_id = $request->route()->parameters['position'];
+        $position = $lab->positions()->where('id', $position_id)->get();
+        if (!$position) return $this->outputJSON(null, 'Error: invalid position id', 400);
+
+        $app = $position->application;
+        $app->questions;
+        return $this->outputJSON($app, 'Application retrieved');
+    }
+
 
     // App Responses:
 
