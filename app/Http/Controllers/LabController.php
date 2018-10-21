@@ -529,6 +529,7 @@ class LabController extends Controller
         $position = $lab->positions()->where('id', $position_id)->first();
         if (!$position) return $this->outputJSON(null, 'Error: invalid position id', 400);
         $app = $position->application;
+        $app->questions;
 
         return $this->outputJSON($app, 'Application retrieved');
     }
