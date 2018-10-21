@@ -407,7 +407,7 @@ class LabController extends Controller
     }
 
     public function positions(Lab $lab) {
-        $positions = $lab->positions()->with('application')->get();
+        $positions = $lab->positions()->with('application.questions')->get();
         return $this->outputJSON($positions,"Positions from lab retrieved");
     }
 
