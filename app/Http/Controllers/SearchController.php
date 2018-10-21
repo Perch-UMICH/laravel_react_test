@@ -171,26 +171,18 @@ class SearchController extends Controller
     public function retrieve_search_data(Request $request)
     {
         $input = $request->all();
-        $ids = $input['position_ids'];
+        $lab_objs = $input['search_results'];
 
-        $selected = Position::whereIn('id', $ids)->with(['urop_position','departments'])->get();
-
-        // Pull labs
         $labs = [];
-        $i = 0;
-        foreach ($selected as $s) {
-            if (empty($labs)) {
-                $labs[] = $s->lab->toArray();
-                $labs[$i]['positions'][] = $s->toArray();
+        foreach ($lab_objs as $l) {
+            $l_id = $l['lab_id'];
+            $lab = Lab::find($l_id)->toArray();
+            $proj_ids = $l['projects'];
+            foreach ($proj_ids as $p_id) {
+                $p = Position::where('id', $p_id)->with(['urop_position','departments'])->first();
+                $lab['projects'][] = $p;
             }
-            else if ($labs[$i]['id'] == $s->lab->id) {
-                $labs[$i]['positions'][] = $s->toArray();
-            }
-            else {
-                $labs[] = $s->lab->toArray();
-                $i++;
-                $labs[$i]['positions'][] = $s->toArray();
-            }
+            $labs[] = $lab;
         }
 
         return $this->outputJSON(['results' => $labs],"Search results retrieved");
