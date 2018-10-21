@@ -16,7 +16,6 @@ class LabsTableSeeder extends Seeder
 
         $lab = new Lab();
         $lab->name = "Nishii Lab";
-        $lab->department = "Chemistry";
         $lab->description = <<<DESC
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse ut ipsum condimentum, eleifend ante a, semper neque. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Cras gravida, magna sed finibus ornare, dolor massa sagittis enim, tincidunt luctus risus leo eu ipsum. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla enim nibh, mollis sed erat at, euismod sagittis massa. Donec dapibus iaculis lectus, sed lobortis nisl. Integer est ipsum, sodales eu risus ut, condimentum posuere nunc. Nunc et ante magna. Maecenas faucibus finibus massa, ut imperdiet nunc fringilla id.
 
@@ -26,8 +25,6 @@ DESC;
 Nishii, A. “Title”. Journal, <b>2016</b>, Volume (issue), Pages.
 Nishii, A. “Title”. Journal, <b>2015</b>, Volume (issue), Pages.";
         $lab->location = "1 Chemistry";
-        $lab->gpa = 3.5;
-        $lab->weeklyCommitment = 15;
         $lab->save();
 
         $lab = new Lab();
@@ -42,7 +39,7 @@ DESC;
 Perch, F. “Title”. Journal, <b>2016</b>, Volume (issue), Pages.
 Perch, F. “Title”. Journal, <b>2015</b>, Volume (issue), Pages.";
         $lab->location = "1 Biology";
-        $lab->weeklyCommitment = 10;
         $lab->save();
+
     }
 }

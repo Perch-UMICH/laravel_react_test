@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateLabStudentPivotTable extends Migration
+class CreatePositionStudentPivotTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,13 +12,13 @@ class CreateLabStudentPivotTable extends Migration
      */
     public function up()
     {
-        Schema::create('lab_student', function (Blueprint $table) {
-            $table->integer('lab_id')->unsigned()->index();
+        Schema::create('position_student', function (Blueprint $table) {
+            $table->integer('position_id')->unsigned()->index();
             $table->integer('student_id')->unsigned()->index();
-            $table->primary(['lab_id', 'student_id']);
+            $table->primary(['position_id', 'student_id']);
         });
-        Schema::table('lab_student', function (Blueprint $table) {
-            $table->foreign('lab_id')->references('id')->on('labs')->onDelete('cascade');
+        Schema::table('position_student', function (Blueprint $table) {
+            $table->foreign('position_id')->references('id')->on('positions')->onDelete('cascade');
             $table->foreign('student_id')->references('id')->on('students')->onDelete('cascade');
         });
     }
@@ -30,6 +30,6 @@ class CreateLabStudentPivotTable extends Migration
      */
     public function down()
     {
-        Schema::drop('lab_student');
+        Schema::drop('position_student');
     }
 }

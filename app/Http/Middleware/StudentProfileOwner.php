@@ -17,6 +17,7 @@ class StudentProfileOwner
     {
         // Grab user from token
         $user = $request->user();
+        if ($user->is_admin) return $next($request);
         // Grab student id
         $student_id = $request->route()->parameter('student')->id;
 

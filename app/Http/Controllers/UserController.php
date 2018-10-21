@@ -7,15 +7,14 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\User;
+use App\LoginMethod;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Validator;
 use Lcobucci\JWT\Parser;
+use App\Controllers\Auth\IdpGrant;
 
 class UserController extends Controller
 {
-
-
-    public $successStatus = 200;
 
     public function index()
     {
@@ -30,13 +29,13 @@ class UserController extends Controller
 
 
     /**
-     * login api
-     *
-     * @return \Illuminate\Http\Response
+     * Login api
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
      */
     public function login(Request $request)
     {
-//        $validator = $request->validate([
+//        $validator = Validator::make($request->all(), [
 //            'email' => 'required|email',
 //            'password' => 'required',
 //        ]);
@@ -92,30 +91,47 @@ class UserController extends Controller
      */
     public function register(Request $request)
     {
-//        $validator = $request->validate([
-//            'name' => 'required',
-//            'email' => 'required|email',
-//            'password' => 'required',
-//            'password_confirmation' => 'required|same:password',
-//        ]);
+        $validator = $request->validate([
+            'name' => 'required',
+            'email' => 'required|email',
+            'password' => 'required',
+            'password_confirmation' => 'required|same:password',
+        ]);
 
         $input = $request->all();
         if ($input['password'] != $input['password_confirmation']) {
             return $this->outputJSON(null,"Passwords do not match", 404);
         }
-        if (User::where('name', $input['name'])->first() != null) {
-            return $this->outputJSON(null,"Name already taken", 404);
-        }
         if (User::where('email', $input['email'])->first() != null) {
             return $this->outputJSON(null,"Email already taken", 404);
         }
         $input['password'] = bcrypt($input['password']);
+//        $input['login_method_id'] = LoginMethod::getId('password');
         $user = User::create($input);
-        $token['token'] = $user->createToken('token')->accessToken;
+        $token = $user->createToken('token')->accessToken;
 
         Auth::attempt(['email' => request('email'), 'password' => request('password')]);
 
         return $this->outputJSON($token,"Successfully Registered");
+    }
+
+    public function registerIdp(string $idp, string $username, string $email = null) {
+        $methodId = LoginMethod::getId($idp);
+        $user = User::where(['username' => $username, 'login_method_id' => $methodId]);
+        if(!is_null($user)) {
+            // User already exists
+            return $user;
+        }
+
+        // Register a new user
+        $input['username'] = $username;
+        if(!is_null($email)) {
+            $input['email'] = $email;
+        }
+        $input['login_method_id'] = LoginMethod::getId($idp);
+
+        $user = User::create($input);
+        return $user;
     }
 
     public function update(Request $request, User $user) {
@@ -158,12 +174,18 @@ class UserController extends Controller
             return $this->outputJSON(null,"Error: invalid user_id");
         }
         $student = $user->student;
-        if ($student != null) {
-            return $this->outputJSON($student,"Retrieved student profile of user " . $user->email);
-        }
-        else {
+
+        if (!$student) {
             return $this->outputJSON(null,"Error: " . $user->email . " does not have a student profile");
         }
+
+        $s = $student->toArray();
+        $s['skills'] = $student->skills;
+        $s['tags'] = $student->tags;
+        $s['work_experiences'] = $student->work_experiences;
+        $s['edu_experiences'] = $student->edu_experiences()->with('classes','majors','university')->get();
+        $s['position_list'] = $student->position_list()->with('departments','skills','tags','lab')->get();
+        return $this->outputJSON($s,"Retrieved student profile of user " . $user->email);
     }
 
     public function get_faculty_profile(User $user) {
@@ -192,5 +214,32 @@ class UserController extends Controller
         }
         return $this->outputJSON($labs,"User's labs retrieved");
 
+    }
+
+    public function get_user_from_credentials(string $provider, string $username, string $password = null) {
+        if($provider = 'password') {
+            if(is_null($password)) {
+                return null;
+            }
+            // Search for username and verify password
+            $user = User::where(['provider' => 1, 'username' => username, 'password' => bcrypt(password)])::first();
+            if(is_null($user)) {
+                return null;
+            }
+            if($user->password === bcrypt($password)) {
+                // Authenticated!
+                return $user;
+            }
+        } else {
+            // Authenticated through 3rd party idp
+            $providerId = LoginMethod::getId($provider);
+            if(!is_null($providerId)) {
+                $user = User::where(['provider_id' => $providerId, 'username' => $username])::first();
+                if(!is_null($user)) {
+                    return $user;
+                }
+            }
+        }
+        return null;
     }
 }

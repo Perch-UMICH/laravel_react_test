@@ -16,14 +16,21 @@ class CreatePositionsTable extends Migration
         Schema::create('positions', function (Blueprint $table) {
             $table->increments('id');
 
-            $table->integer('lab_id')->unsigned()->index();
+            $table->integer('lab_id')->unsigned()->index()->nullable();
             $table->foreign('lab_id')->references('id')->on('labs')->onDelete('cascade');
 
             $table->string('title')->nullable();
             $table->text('description')->nullable();
-            $table->string('time_commitment')->nullable();
+            $table->text('duties')->nullable();
+            $table->text('min_qual')->nullable();
+            $table->integer('min_time_commitment')->nullable();
+            $table->boolean('filled')->nullable();
 
-            $table->integer('open_slots')->nullable();
+            $table->string('contact_email')->nullable();
+            $table->string('contact_phone')->nullable();
+            $table->string('location')->nullable();
+
+            $table->boolean('is_urop_project')->nullable();
 
             $table->timestamps();
         });
@@ -36,6 +43,7 @@ class CreatePositionsTable extends Migration
      */
     public function down()
     {
+        Schema::dropIfExists('applications');
         Schema::dropIfExists('positions');
     }
 }

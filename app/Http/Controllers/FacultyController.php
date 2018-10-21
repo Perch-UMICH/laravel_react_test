@@ -40,13 +40,12 @@ class FacultyController extends Controller
         $input = $request->all();
         $input = array_filter($input);
 
-        $faculty = Faculty::where('user_id', $request['user_id'])->count();
-        if ($faculty > 0) {
-            $faculty = Faculty::where('user_id', $request['user_id'])->get();
+        $faculty = Faculty::where('user_id', $request['user_id'])->get();
+        if (count($faculty) > 0) {
             return $this->outputJSON($faculty, 'Error: this user already has a faculty profile');
         }
         $user = User::find($input['user_id']);
-        if ($user == null) {
+        if ($user === null) {
             return $this->outputJSON(null, 'Error: user_id is invalid');
         }
 
@@ -90,11 +89,11 @@ class FacultyController extends Controller
     public function update(Request $request, Faculty $faculty)
     {
         $input = $request->all();
-        $input = array_filter($input);
+        //$input = array_filter($input);
         $faculty->update($input);
         $faculty->save();
 
-        return $this->outputJSON($faculty, 'Faculty profile updates');
+        return $this->outputJSON($faculty, 'Faculty profile updated');
     }
 
     /**
@@ -110,18 +109,4 @@ class FacultyController extends Controller
         return $this->outputJSON(null, 'Faculty profile deleted');
     }
 
-//    public function labs(Faculty $faculty) {
-//        $labs = $faculty->labs()->wherePivot('faculty_id', $faculty->id)->get();
-//        return $this->outputJSON($labs,"Labs retrieved");
-//    }
-//
-//    public function add_lab(Request $request, Faculty $faculty) {
-//        $input = $request->all();
-//        $faculty->labs()->syncWithoutDetaching([$input['lab_id']]);
-//    }
-//
-//    public function remove_lab(Request $request, Faculty $faculty) {
-//        $input = $request->all();
-//        $faculty->labs()->detach([$input['lab_id']]);
-//    }
 }

@@ -22,10 +22,10 @@ class LabConnectionsSeeder extends Seeder
         //$this->labFacultiesSeeder();
         $this->labRolesSeeder();
         $this->labMembersSeeder();
-        $this->labStudentSeeder();
+        //$this->labStudentSeeder();
         $this->labTagsTableSeeder();
         $this->labSkillsTableSeeder();
-        $this->labPreferencesTableSeeder();
+        //$this->labPreferencesTableSeeder();
         $this->labPositionsTableSeeder();
     }
 
@@ -52,19 +52,6 @@ class LabConnectionsSeeder extends Seeder
         $lab = Lab::find(2);
         $lab->members()->sync([4 => ['role' => 1], 2 => ['role' => 3]]);
 
-    }
-
-    /**
-     * Seeds lab_students table
-     */
-    public function labStudentSeeder() {
-        //DB::table('lab_students')->delete();
-
-//        $lab = Lab::find(1);
-//        $lab->students()->sync([1]);
-//
-//        $lab = Lab::find(2);
-//        $lab->students()->sync([2]);
     }
 
     /**
@@ -123,10 +110,14 @@ class LabConnectionsSeeder extends Seeder
         // Lab 1
 
         $pos = new Position();
-        $pos->title = 'Computational drug discovery';
-        $pos->description = 'Design novel drug combination therapies using computational approaches.';
-        $pos->time_commitment = '10-12 hours/week';
-        $pos->open_slots = 2;
+        $pos->title = 'Wireless Snow Sensor';
+        $pos->proj_id = 10010;
+        $pos->description = 'Snowpack properties such as density and content of liquid water are very difficult quantities to measure.  Microwave resonant cavities can be used to measure these properties, but so far they have all been bulky and expensive.  Being wired devices, they cannot be installed in the snow for long periods, as heat moves thru the wires and partly melts the snow near the sensor, ruining the measurement.  I would like to develop a wireless sensor to measure these snow properties.  One application could be an avalanche warning system, as snowpack with liquid water at its base is more likely to avalanche than snowpack that is dry and frozen.';
+        $pos->min_time_commitment = 10;
+        $pos->duties = 'The path to a completed system will likely take several years, but each year (06-07 being the first) affords some UROP opportunities.  Microcontroller programming, verification of vendor specifications, circuit board design and fabrication, laboratory and field testing are some activities that will involve students.';
+        $pos->min_qual = 'Sophomore standing preferred; completion of Engr 100 preferred.
+Students:  when applying, send me by email 1. your resume, so I understand your interests, 2. an unofficial transcript, so I can understand your educational background, and 3. your schedule, to help me schedule an appointment';
+        $pos->filled = false;
 
         $lab = Lab::find(2);
         $lab->positions()->save($pos);

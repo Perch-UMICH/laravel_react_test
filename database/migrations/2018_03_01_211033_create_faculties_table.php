@@ -21,11 +21,16 @@ class CreateFacultiesTable extends Migration
 
             $table->string('first_name')->nullable();
             $table->string('last_name')->nullable();
-            $table->string('email')->nullable();
+
+            $table->string('contact_email')->nullable();
+            $table->string('contact_phone')->nullable();
+
+            // Add department association
+            // University positions
+            // Honors, awards
+            // Education
 
             $table->string('title')->nullable();
-            $table->integer('pi_of_lab_id')->nullable();
-            $table->string('profilepic_path')->nullable();
 
             $table->timestamps();
         });

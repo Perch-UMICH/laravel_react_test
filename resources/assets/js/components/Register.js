@@ -4,7 +4,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom';
 import axios from 'axios'
- import {logoutCurrentUser, registerUser, getCurrentUsername} from './helpers';
+ import {logoutCurrentUser, registerUser} from './helpers';
 
 
 class Register extends React.Component {

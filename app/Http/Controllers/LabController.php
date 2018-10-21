@@ -3,12 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\AppQuestion;
-use App\Faculty;
 use App\Lab;
 use App\Position;
 use App\Application;
-use App\Student;
-use App\User;
+use App\Skill;
+use Doctrine\DBAL\Tools\Console\Command\ReservedWordsCommand;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
@@ -24,10 +23,15 @@ class LabController extends Controller
         $labs = Lab::all();
         $lab_data = [];
         foreach( $labs as $lab ) {
-            $skills = $lab->skills()->wherePivot('lab_id', $lab->id)->get();
-            $tags = $lab->tags()->wherePivot('lab_id', $lab->id)->get();
+            $skills = $this->skills($lab)->original;
+            $tags = $this->tags($lab)->original;
+            if (array_key_exists('result',$skills)) $skills = $skills['result'];
+            else $skills = null;
+            if (array_key_exists('result',$tags)) $tags = $tags['result'];
+            else $tags = null;
+
             $positions = $lab->positions()->get();
-            $lab_data[$lab->id] = ['data' => $lab, 'skills' => $skills, 'tags' => $tags, 'positions' => $positions];
+            $lab_data[$lab->id] = ['data' => $lab, 'skills' => $skills, 'tags' => $tags];
         }
         return $this->outputJSON($lab_data,"Labs retrieved");
     }
@@ -45,13 +49,13 @@ class LabController extends Controller
             $lab_data[$lab->id] = Collection::make();
             $lab_data[$lab->id]->put('data', $lab);
 
-            if ($input['skilltag_data']) {
-                $skills = $lab->skills()->wherePivot('lab_id', $lab->id)->get();
-                $tags = $lab->tags()->wherePivot('lab_id', $lab->id)->get();
-                $lab_data[$lab->id]->put('skills', $skills);
-                $lab_data[$lab->id]->put('tags', $tags);
-
-            }
+//            if ($input['skilltag_data']) {
+//                $skills = $lab->skills()->wherePivot('lab_id', $lab->id)->get();
+//                $tags = $lab->tags()->wherePivot('lab_id', $lab->id)->get();
+//                $lab_data[$lab->id]->put('skills', $skills);
+//                $lab_data[$lab->id]->put('tags', $tags);
+//
+//            }
             if ($input['position_data']) {
                 $positions = $lab->positions()->get();
                 $lab_data[$lab->id]->put('positions', $positions);
@@ -103,13 +107,14 @@ class LabController extends Controller
         $input = $request->all();
         $input = array_filter($input);
 
-        $lab = Lab::where('name', $request['name']);
-        if ($lab == null) {
-            return $this->outputJSON($lab, 'Error: lab with this name already exists');
-        }
-
         $lab = new Lab($input);
         $lab->save();
+
+        // Make user owner of this group
+        $user = $request->user();
+        $lab->members()->syncWithoutDetaching([$user->id => ['role' => 1]]);
+
+        $lab->members;
 
         return $this->outputJSON($lab, 'Lab page created');
     }
@@ -122,8 +127,14 @@ class LabController extends Controller
      */
     public function show(Lab $lab)
     {
-        $skills = $lab->skills()->wherePivot('lab_id', $lab->id)->get();
-        $tags = $lab->tags()->wherePivot('lab_id', $lab->id)->get();
+        $skills = $this->skills($lab)->original;
+        $tags = $this->tags($lab)->original;
+
+        if (array_key_exists('result',$skills)) $skills = $skills['result'];
+        else $skills = null;
+        if (array_key_exists('result',$tags)) $tags = $tags['result'];
+        else $tags = null;
+
         $lab_data = ['data' => $lab, 'skills' => $skills, 'tags' => $tags];
         return $this->outputJSON($lab_data,"Lab retrieved");
     }
@@ -136,13 +147,6 @@ class LabController extends Controller
         $lab_data = Collection::make();
         $lab_data->put('data', $lab);
 
-        if ($input['skilltag_data']) {
-            $skills = $lab->skills()->wherePivot('lab_id', $lab->id)->get();
-            $tags = $lab->tags()->wherePivot('lab_id', $lab->id)->get();
-            $lab_data->put('skills', $skills);
-            $lab_data->put('tags', $tags);
-
-        }
         if ($input['position_data']) {
             $positions = $lab->positions()->get();
             $lab_data->put('positions', $positions);
@@ -193,7 +197,7 @@ class LabController extends Controller
     public function update(Request $request, Lab $lab)
     {
         $input = $request->all();
-        $input = array_filter($input);
+        //$input = array_filter($input);
         $lab->update($input);
         $lab->save();
 
@@ -212,27 +216,120 @@ class LabController extends Controller
         return $this->outputJSON(null, 'Lab page deleted');
     }
 
-    // Lab associations
+    // LAB ASSOCIATIONS
+    // NOTE: skill/tag additions are made to positions, not labs directly
 
-    // Retrieve
+    // Skills (derived from positions):
 
-//    public function students(Lab $lab) {
-//        $members = $lab->members()->wherePivot('lab_id', $lab->id)->get();
-//        $students = [];
-//        foreach ($members as $member) {
-//            if ($member->is_student) $students[] = $member->student;
-//        }
-//        return $this->outputJSON($students,"Students from lab retrieved");
-//    }
-//
-//    public function faculties(Lab $lab) {
-//        $members = $lab->members()->wherePivot('lab_id', $lab->id)->get();
-//        $faculties = [];
-//        foreach ($members as $member) {
-//            if ($member->is_faculty) $faculties[] = $member->faculty;
-//        }
-//        return $this->outputJSON($faculties,"Faculties from lab retrieved");
-//    }
+    public function skills(Lab $lab) {
+        $skills = [];
+        $skill_ids = [];
+        $positions = $lab->positions;
+        foreach ($positions as $p) {
+            $p_skills = $p->skills;
+            foreach ($p_skills as $s) {
+                $skill_ids[] = $s->id;
+            }
+        }
+        array_unique($skill_ids);
+        foreach ($skill_ids as $id) {
+            $skills[] = Skill::find($id);
+        }
+        return $this->outputJSON($skills,"Skills from lab retrieved");
+    }
+
+    public function add_skill(Request $request) {
+        $input = $request->all();
+        $ids = $input['skill_ids'];
+        $position_id = $input['position_id'];
+        $position = Position::find($position_id);
+
+        if ($position === null) return $this->outputJSON(null,"Error: invalid position_id",404);
+
+        $position->skills()->syncWithoutDetaching($ids);
+        return $this->outputJSON(null,"Added skills");
+    }
+
+    public function sync_skills(Request $request) {
+        $input = $request->all();
+        $ids = $input['skill_ids'];
+        $position_id = $input['position_id'];
+        $position = Position::find($position_id);
+
+        if ($position === null) return $this->outputJSON(null,"Error: invalid position_id",404);
+
+        $position->skills()->sync($ids);
+        return $this->outputJSON(null,"Synced skills");
+    }
+
+    public function remove_skill(Request $request) {
+        $input = $request->all();
+        $ids = $input['skill_ids'];
+        $position_id = $input['position_id'];
+        $position = Position::find($position_id);
+
+        if ($position === null) return $this->outputJSON(null,"Error: invalid position_id",404);
+
+        $position->skills()->detach($ids);
+        return $this->outputJSON(null,"Removed skills");
+    }
+
+    // Tags (derived from positions):
+
+    public function tags(Lab $lab) {
+        $tags = [];
+        $tag_ids = [];
+        $positions = $lab->positions;
+        foreach ($positions as $p) {
+            $p_tags = $p->tags;
+            foreach ($p_tags as $t) {
+                $tag_ids[] = $t->id;
+            }
+        }
+        array_unique($tag_ids);
+        foreach ($tag_ids as $id) {
+            $tags[] = Tag::find($id);
+        }
+        return $this->outputJSON($tags,"Tags from lab retrieved");
+    }
+
+    public function add_tag(Request $request, Lab $lab) {
+        $input = $request->all();
+        $ids = $input['tag_ids'];
+        $position_id = $input['position_id'];
+        $position = Position::find($position_id);
+
+        if ($position === null) return $this->outputJSON(null,"Error: invalid position_id",404);
+
+        $position->tags()->syncWithoutDetaching($ids);
+        return $this->outputJSON(null,"Added tags");
+    }
+
+    public function sync_tags(Request $request, Lab $lab) {
+        $input = $request->all();
+        $ids = $input['tag_ids'];
+        $position_id = $input['position_id'];
+        $position = Position::find($position_id);
+
+        if ($position === null) return $this->outputJSON(null,"Error: invalid position_id",404);
+
+        $position->tags()->sync($ids);
+        return $this->outputJSON(null,"Synced tags");
+    }
+
+    public function remove_tag(Request $request, Lab $lab) {
+        $input = $request->all();
+        $ids = $input['tag_ids'];
+        $position_id = $input['position_id'];
+        $position = Position::find($position_id);
+
+        if ($position ===null) return $this->outputJSON(null,"Error: invalid position_id",404);
+
+        $position->tags()->detach($ids);
+        return $this->outputJSON(null,"Removed tags");
+    }
+
+    // Members:
 
     public function members(Lab $lab) {
         $members = $lab->members;
@@ -245,82 +342,6 @@ class LabController extends Controller
         }
 
         return $this->outputJSON(['students' => $students, 'faculty' => $faculties],"Members from lab retrieved");
-    }
-
-    public function skills(Lab $lab) {
-        $skills = $lab->skills()->wherePivot('lab_id', $lab->id)->get();
-        return $this->outputJSON($skills,"Skills from lab retrieved");
-    }
-
-    public function tags(Lab $lab) {
-        $tags = $lab->tags()->wherePivot('lab_id', $lab->id)->get();
-        return $this->outputJSON($tags,"Tags from lab retrieved");
-    }
-
-    public function preferences(Lab $lab) {
-        $preferences = $lab->preferences()->wherePivot('lab_id', $lab->id)->get();
-        return $this->outputJSON($preferences,"Preferences from lab retrieved");
-    }
-
-    public function positions(Lab $lab) {
-        $positions = $lab->positions()->get();
-        foreach ($positions as $p) {
-            $p->application;
-        }
-        return $this->outputJSON($positions,"Positions from lab retrieved");
-    }
-
-    public function application(Request $request) {
-        $input = $request->all();
-        $pos = Position::find($input['position_id']);
-        $application = $pos->application;
-        if (!$application) return $this->outputJSON(null, 'Error: position has no application associated with it');
-        $questions = $application->questions;
-
-        $app = ['base' => $application, 'questions' => $questions];
-        return $this->outputJSON($app, 'Application retrieved');
-    }
-
-
-
-//    public function applications(Lab $lab) {
-//        $applications = $lab->applications()->get();
-//        $application_data = [];
-//        foreach($applications as $app) {
-//            $qs = $app->questions()->get();
-//            $application_data[$app->id] = ['data' => $app, 'questions' => $qs];
-//        }
-//        return $this->outputJSON($application_data,"Applications from lab retrieved");
-//    }
-
-    // Add
-
-    public function add_skill(Request $request, Lab $lab) {
-        $input = $request->all();
-        $ids = $input['skill_ids'];
-        $lab->skills()->syncWithoutDetaching($ids);
-        return $this->outputJSON(null,"Added skills");
-    }
-
-    public function sync_skills(Request $request, Lab $lab) {
-        $input = $request->all();
-        $ids = $input['skill_ids'];
-        $lab->skills()->sync($ids);
-        return $this->outputJSON(null,"Synced skills");
-    }
-
-    public function add_tag(Request $request, Lab $lab) {
-        $input = $request->all();
-        $ids = $input['tag_ids'];
-        $lab->tags()->syncWithoutDetaching($ids);
-        return $this->outputJSON(null,"Added tags");
-    }
-
-    public function sync_tags(Request $request, Lab $lab) {
-        $input = $request->all();
-        $ids = $input['tag_ids'];
-        $lab->tags()->sync($ids);
-        return $this->outputJSON(null,"Synced tags");
     }
 
     public function add_members(Request $request, Lab $lab) {
@@ -341,11 +362,55 @@ class LabController extends Controller
         return $this->outputJSON(null,"Added " . count($ids) . " members to lab");
     }
 
-    public function add_preference(Request $request, Lab $lab) {
+    public function update_member(Request $request, Lab $lab) {
         $input = $request->all();
-        $ids = $input['preference_ids'];
-        $lab->preferences()->syncWithoutDetaching($ids);
-        return $this->outputJSON(null,"Added preferences");
+        $id = $input['user_id'];
+        $role = $input['role_id'];
+
+//        // Check for user removing themselves
+//        $user = $request->user();
+//        $user_mem = $lab->members()->where('id', $user->id)->get();
+
+        $mem = $lab->members()->where('id', $id)->get();
+
+        if ($mem->pivot->role == 1)
+        {
+            return $this->outputJSON($mem,"Error: you can't remove the owner from the lab", 500);
+        }
+
+        $lab->members()->updateExistingPivot($id, ['role' => $role]);
+        $member = $lab->members()->where('id', $id)->get();
+
+        return $this->outputJSON($member,"Updated membership");
+    }
+
+    public function remove_members(Request $request, Lab $lab) {
+        $input = $request->all();
+        $ids = $input['user_ids'];
+
+        $lab->members()->detach($ids);
+        return $this->outputJSON(null,"Removed " . count($ids) . " members from lab");
+    }
+
+    // Positions:
+
+    public function position(Request $request, Lab $lab) {
+        $position = Position::find($request->route()->parameter('position'))->with('application.questions')->first();
+        if (!$position)
+            return $this->outputJSON(null,"Error: invalid position_id");
+
+        $intended_lab = $position->lab;
+
+        if ($lab->id != $intended_lab->id)
+            return $this->outputJSON(null,"Error: position of id " . $position->id . " does not belong to a lab this user is admin of");
+
+        return $this->outputJSON($position,"Position from lab retrieved");
+    }
+
+    public function positions(Lab $lab) {
+        //$positions = $lab->positions()->with('application.questions')->get();
+        $positions = $lab->positions()->get();
+        return $this->outputJSON($positions,"Positions from lab retrieved");
     }
 
     public function create_position(Request $request, Lab $lab) {
@@ -357,9 +422,9 @@ class LabController extends Controller
         return $this->outputJSON($position,"Created position " . $position->title . " and added to lab " . $lab->name);
     }
 
-    public function update_position(Request $request) {
+    public function update_position(Request $request, Lab $lab) {
         $input = $request->all();
-        $input = array_filter($input);
+        //$input = array_filter($input);
 
         $position = Position::find($input['position_id']);
         $position->update($input);
@@ -367,13 +432,40 @@ class LabController extends Controller
         return $this->outputJSON($position, 'Lab Position updated');
     }
 
-    public function create_application(Request $request)
+    public function delete_positions(Request $request, Lab $lab) {
+        $input = $request->all();
+        $ids = $input['position_ids'];
+        Position::destroy($ids);
+
+        return $this->outputJSON(null,"Deleted positions from lab " . $lab->name);
+    }
+
+    // Applications:
+    // Takes position_id as input
+
+    public function application(Request $request, Lab $lab) {
+        $input = $request->all();
+        $pos = Position::find($input['position_id']);
+        $application = $pos->application;
+        if (!$application) return $this->outputJSON(null, 'Error: position has no application associated with it');
+        $questions = $application->questions;
+
+        $app = ['base' => $application, 'questions' => $questions];
+        return $this->outputJSON($app, 'Application retrieved');
+    }
+
+    public function create_application(Request $request, Lab $lab)
     {
         $input = $request->all();
 
         $position = Position::find($input['position_id']);
-        if ($position == null)
+        if (!$position)
             return $this->outputJSON(null,"Error: invalid position_id");
+
+        $intended_lab = $position->lab;
+
+        if ($lab->id != $intended_lab->id)
+            return $this->outputJSON(null,"Error: position of id " . $position->id . " does not belong to a lab this user is admin of");
 
         $application = new Application();
         $application->save();
@@ -396,12 +488,17 @@ class LabController extends Controller
         return $this->outputJSON($application,"Created application and added to position " . $position->title);
     }
 
-    public function update_application(Request $request) {
+    public function update_application(Request $request, Lab $lab) {
         $input = $request->all();
 
         $position = Position::find($input['position_id']);
-        if ($position == null)
+        if ($position === null)
             return $this->outputJSON(null,"Error: invalid position_id");
+
+        $intended_lab = $position->lab;
+
+        if ($lab->id != $intended_lab->id)
+            return $this->outputJSON(null,"Error: position of id " . $position->id . " does not belong to a lab this user is admin of");
 
         $application = $position->application;
         // Remove old questions
@@ -426,94 +523,71 @@ class LabController extends Controller
         return $this->outputJSON($application,"Updated application");
     }
 
-    public function app_responses(Request $request) {
+    // getPositionApplication
+    public function position_application(Request $request, Lab $lab) {
+        $position_id = $request->route()->parameters['position'];
+        $position = $lab->positions()->where('id', $position_id)->first();
+        if (!$position) return $this->outputJSON(null, 'Error: invalid position id', 400);
+        $app = $position->application;
+        $app->questions;
+
+        return $this->outputJSON($app, 'Application retrieved');
+    }
+
+    // getLabPositionApplicationResponses
+    public function position_application_responses(Request $request, Lab $lab) {
+        $position_id = $request->route()->parameters['position'];
+        $position = $lab->positions()->where('id', $position_id)->first();
+        if (!$position) return $this->outputJSON(null, 'Error: invalid position id', 400);
+        $app = $position->application;
+        $resp = $app->responses()->with('answers')->get();
+
+
+        return $this->outputJSON($resp, 'Responses retrieved');
+    }
+
+
+    // App Responses:
+
+    public function app_responses(Request $request, Lab $lab) {
         $input = $request->all();
         $position = Position::find($input['position_id']);
-        if ($position == null)
+        if ($position ===null)
             return $this->outputJSON(null,"Error: invalid position_id");
+
+        $intended_lab = $position->lab;
+
+        if ($lab->id != $intended_lab->id)
+            return $this->outputJSON(null,"Error: position of id " . $position->id . " does not belong to a lab this user is admin of");
 
         $application = $position->application;
         if (!$application) return $this->outputJSON(null, 'Error: position has no application associated with it');
-        $responses = $application->responses;
+        $responses = $application->responses()->with('answers')->get();
 
-        $response_data = [];
-        $count = 0;
-        foreach ($responses as $response) {
-            if ($response->sent) {
-                $response_data[$count] = Collection::make();
-                $response_data[$count]->put('base', $response);
-                $response_data[$count]->put('answers', $response->answers);
-                $count++;
-            }
+        return $this->outputJSON($responses, 'Retrieved responses to this application');
+    }
+
+
+    // Challenge:
+
+    public function challenge_project_data() {
+
+        $positions = Position::all()->random(10);
+
+        $poses = [];
+
+        foreach ($positions as $p)
+        {
+            $pos = (object)array();
+            $pos->id = $p->id;
+            $pos->title = $p->title;
+            $pos->description = str_replace("_x000D_","",$p->description);
+            $pos->duties = str_replace("_x000D_","",$p->duties);
+            $pos->time_commitment = $p->min_time_commitment;
+            $pos->classification = $p->urop_position->classification;
+            $poses[] = $pos;
         }
-        return $this->outputJSON($response_data, 'Retrieved responses to this application');
+
+        return $this->outputJSON($poses, 'Retrieved positions');
     }
-
-//    public function create_application(Request $request, Lab $lab) {
-//        $input = $request->all();
-//        $application = new Application($input);
-//        $application->save();
-//
-//        $questions = $input['questions'];
-//        foreach ($questions as $q) {
-//            $question = new AppQuestion();
-//            $question->question = $q;
-//            $application->questions()->save($question);
-//        }
-//
-//        $pos = $application->position;
-//        $pos->applications()->save($application);
-//        $pos->save();
-//
-//        return $this->outputJSON($application,"Created application and added to position " . $pos->title);
-//    }
-
-
-    // Remove
-
-    public function remove_skill(Request $request, Lab $lab) {
-        $input = $request->all();
-        $ids = $input['skill_ids'];
-        $lab->skills()->detach($ids);
-        return $this->outputJSON(null,"Removed skills from lab " . $lab->name);
-    }
-
-    public function remove_tag(Request $request, Lab $lab) {
-        $input = $request->all();
-        $ids = $input['tag_ids'];
-        $lab->tags()->detach($ids);
-        return $this->outputJSON(null,"Removed tags from lab " . $lab->name);
-    }
-
-    public function remove_members(Request $request, Lab $lab) {
-        $input = $request->all();
-        $ids = $input['user_ids'];
-
-        $lab->members()->detach($ids);
-        return $this->outputJSON(null,"Removed " . count($ids) . " members from lab");
-    }
-
-
-    public function remove_preference(Request $request, Lab $lab) {
-        $input = $request->all();
-        $ids = $input['preference_ids'];
-        $lab->preferences()->detach($ids);
-        return $this->outputJSON(null,"Removed preferences from lab " . $lab->name);
-    }
-
-    public function delete_positions(Request $request, Lab $lab) {
-        $input = $request->all();
-        $ids = $input['position_ids'];
-        Position::destroy($ids);
-
-        return $this->outputJSON(null,"Deleted positions from lab " . $lab->name);
-    }
-
-//    public function delete_applications(Request $request, Lab $lab) {
-//        $input = $request->all();
-//        $ids = $input['application_ids'];
-//        Application::destroy($ids);
-//
-//        return $this->outputJSON(null,"Deleted applications from lab " . $lab->name);
-//    }
 }

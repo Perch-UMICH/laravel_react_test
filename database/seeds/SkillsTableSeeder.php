@@ -1,5 +1,6 @@
 <?php
 use Illuminate\Database\Seeder;
+use App\Skill;
 
 /**
  * Created by PhpStorm.
@@ -10,6 +11,7 @@ use Illuminate\Database\Seeder;
 class SkillsTableSeeder extends Seeder{
     public function run() {
         DB::table('skills')->delete();
+
 
         DB::table('skills')->insert([
             'name' => 'Reading comprehension',

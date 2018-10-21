@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateLabTagPivotTable extends Migration
+class CreatePositionTagPivotTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,14 +12,14 @@ class CreateLabTagPivotTable extends Migration
      */
     public function up()
     {
-        Schema::create('lab_tag', function (Blueprint $table) {
-            $table->integer('lab_id')->unsigned()->index();
+        Schema::create('position_tag', function (Blueprint $table) {
+            $table->integer('position_id')->unsigned()->index();
             $table->integer('tag_id')->unsigned()->index();
-            $table->primary(['lab_id', 'tag_id']);
+            $table->primary(['position_id', 'tag_id']);
         });
-
-        Schema::table('lab_tag', function (Blueprint $table) {
-            $table->foreign('lab_id')->references('id')->on('labs')->onDelete('cascade');
+        Schema::table('position_tag', function(Blueprint $table)
+        {
+            $table->foreign('position_id')->references('id')->on('positions')->onDelete('cascade');
             $table->foreign('tag_id')->references('id')->on('tags')->onDelete('cascade');
         });
     }
@@ -31,6 +31,6 @@ class CreateLabTagPivotTable extends Migration
      */
     public function down()
     {
-        Schema::drop('lab_tag');
+        Schema::drop('position_tag');
     }
 }

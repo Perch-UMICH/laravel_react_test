@@ -8,7 +8,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom';
 import axios from 'axios'
-import {loginUser, logoutCurrentUser, getCurrentUsername, isLoggedIn} from './helpers';
+import {loginUser, logoutCurrentUser, isLoggedIn} from './helpers';
 
 
 class Login extends React.Component {
