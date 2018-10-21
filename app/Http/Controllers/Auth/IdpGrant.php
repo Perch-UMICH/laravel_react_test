@@ -120,7 +120,7 @@ class IdpGrant extends AbstractGrant
             try{
                 $url = 'https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=' . $token;
                 $options = array(
-                    'http' = array(
+                    'http' => array(
                         'header' => "Content-type: application/x-www-form-urlencoded\r\n",
                         'method' => 'GET'
                     )
