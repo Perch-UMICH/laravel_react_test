@@ -305,8 +305,8 @@ class StudentController extends Controller
 
         // Get application questions
         $questions = $application->questions;
-        if (count($questions) !== count($response_strings))
-            return $this->outputJSON(null, 'Error: number of answers does not match number of questions', 400);
+//        if (count($questions) !== count($response_strings))
+//            return $this->outputJSON(null, 'Error: number of answers does not match number of questions', 400);
 
         $count = 0;
         foreach ($response_strings as $resp) {
