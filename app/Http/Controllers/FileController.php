@@ -102,7 +102,11 @@ class FileController extends Controller
         if ($file->isValid()) {
             // Crop
             $img = Image::make($file->getRealPath());
-            $img->crop($input['width'], $input['height'], $input['x'], $input['y']);
+            $w = $input['width'] * $img->width();
+            $h = $input['height'] * $img->height();
+            $x = $input['x'] * $img->width();
+            $y = $input['y'] * $img->height();
+            $img->crop($w, $h, $x, $y);
             $img->save();
 
             // Save
