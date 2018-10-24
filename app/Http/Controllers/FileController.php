@@ -10,6 +10,7 @@ use App\File;
 use App\ResumeFileType;
 use App\ProfilePicFileType;
 use App\LabPicFileType;
+use Intervention\Image\Facades\Image;
 
 use Illuminate\Support\Facades\Validator;
 
@@ -85,6 +86,7 @@ class FileController extends Controller
 
     public function add_profile_pic_to_user(Request $request) {
         $user = $request->user();
+        $input = $request->all();
 
         $request->validate([
             'file' => 'image',
@@ -96,9 +98,17 @@ class FileController extends Controller
 
         $file = $request->file('file');
 
+
         if ($file->isValid()) {
+            // Crop
+            $img = Image::make($file->getRealPath());
+            $img->crop($input['width'], $input['height'], $input['x'], $input['y']);
+            $img->save();
+
+            // Save
             $path = Storage::disk('s3')->put('users/' . $user->id . '/img', $file, 'public');
             $url = Storage::disk('s3')->url($path);
+
             $file = new File(['path' => $path, 'url' => $url, 'user_id' => $user->id]);
             $user->files()->save($file);
             $type = new ProfilePicFileType(['current' => true, 'file_id' => $file->id]);
