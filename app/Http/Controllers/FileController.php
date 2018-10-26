@@ -107,7 +107,7 @@ class FileController extends Controller
             $h = $input['scale'] * $size;
             $x = $input['x'] * $img->width();
             $y = $input['y'] * $img->height();
-            $img->crop($w, $h, $x, $y);
+            $img->crop(intval($w), intval($h), intval($x), intval($y));
             $img->save();
 
             // Save
