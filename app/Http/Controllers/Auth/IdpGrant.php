@@ -118,16 +118,33 @@ class IdpGrant extends AbstractGrant
 
             // Google verifies 'iss' (google's source signature) and 'exp' (the token expiration)
             // try{
-                $url = 'https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=' . urlencode($token);
-                $options = array(
-                    'http' => array(
-                        'header' => "Content-type: application/x-www-form-urlencoded\r\n",
-                        'method' => 'GET'
-                    )
-                );
-                $context = stream_context_create($options);
-                $result = file_get_contents($url, false, $context);
-                throw OAuthServerException::invalidRequest('response: ' . $result);
+            $curl = curl_init();
+
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => 'https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=' . urlencode($token),
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => "",
+                CURLOPT_TIMEOUT => 30000,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => "GET",
+                CURLOPT_HTTPHEADER => array(
+                    // Set Here Your Requesred Headers
+                    'Content-Type: application/json',
+                ),
+            ));
+            $response = curl_exec($curl);
+            $err = curl_error($curl);
+            curl_close($curl);
+//                $url = 'https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=' . urlencode($token);
+//                $options = array(
+//                    'http' => array(
+//                        'header' => "Content-type: application/x-www-form-urlencoded\r\n",
+//                        'method' => 'GET'
+//                    )
+//                );
+//                $context = stream_context_create($options);
+//                $result = file_get_contents($url, false, $context);
+                throw OAuthServerException::invalidRequest('response: ' . json_decode($response));
 
                 // $payload = $client->verifyIdToken($token);
 //            } catch(Exception $e) {
