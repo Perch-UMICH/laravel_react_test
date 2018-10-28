@@ -128,7 +128,7 @@ class IdpGrant extends AbstractGrant
                 CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                 CURLOPT_CUSTOMREQUEST => "GET",
                 CURLOPT_HTTPHEADER => array(
-                    // Set Here Your Requesred Headers
+                    // Set Here Your Requested Headers
                     'Content-Type: application/json',
                 ),
             ));
@@ -144,7 +144,7 @@ class IdpGrant extends AbstractGrant
 //                );
 //                $context = stream_context_create($options);
 //                $result = file_get_contents($url, false, $context);
-                throw OAuthServerException::invalidRequest('response: ' . $response);
+            throw OAuthServerException::serverError('response: ' . $response);
 
                 // $payload = $client->verifyIdToken($token);
 //            } catch(Exception $e) {
