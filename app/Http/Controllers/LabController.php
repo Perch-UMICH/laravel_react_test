@@ -332,13 +332,13 @@ class LabController extends Controller
     // Members:
 
     public function members(Lab $lab) {
-        $members = $lab->members;
+        $members = $lab->members()->with('student', 'faculty', 'files');
 
         $students = [];
         $faculties = [];
         foreach ($members as $member) {
-            if ($member->is_faculty) $faculties[] = ['data' => $member->faculty, 'role' => $member->pivot->role];
-            if ($member->is_student) $students[] = ['data' => $member->student, 'role' => $member->pivot->role];
+            if ($member->is_faculty) $faculties[] = ['data' => $member, 'role' => $member->pivot->role];
+            if ($member->is_student) $students[] = ['data' => $member, 'role' => $member->pivot->role];
         }
 
         return $this->outputJSON(['students' => $students, 'faculty' => $faculties],"Members from lab retrieved");
@@ -540,6 +540,7 @@ class LabController extends Controller
         $position = $lab->positions()->where('id', $position_id)->first();
         if (!$position) return $this->outputJSON(null, 'Error: invalid position id', 400);
         $app = $position->application;
+        if (!$app) return $this->outputJSON(null, 'Error: ');
         $resp = $app->responses()->with('answers')->get(); //TODO add where('sent','true')
 
 
