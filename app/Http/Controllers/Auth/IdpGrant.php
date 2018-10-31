@@ -81,7 +81,6 @@ class IdpGrant extends AbstractGrant
             $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
             throw OAuthServerException::invalidClient();
         }
-
 //        // If a redirect URI is provided ensure it matches what is pre-registered
 //        $redirectUri = $this->getRequestParameter('redirect_uri', $request, null);
 //        if ($redirectUri !== null) {
