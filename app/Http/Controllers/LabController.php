@@ -395,9 +395,6 @@ class LabController extends Controller
     // Positions:
 
     public function position(Request $request, Lab $lab, Position $position) {
-        if (!$position)
-            return $this->outputJSON(null,"Error: invalid position_id " . $request->route()->parameter('position'));
-
         $position->application->questions;
 
         if (!$this->check_lab_position_association($lab, $position))
@@ -449,10 +446,8 @@ class LabController extends Controller
 
         // Update Application
         $app = $position->application;
-        $app->update($input['application']);
-
         // Delete old questions and add updated ones (if applicable)
-        if (property_exists($input['application'], 'questions')) {
+        if (array_key_exists ('questions', $input['application'])) {
             // Remove old questions
             foreach($app->questions as $q) {
                 $q->delete();
@@ -463,12 +458,14 @@ class LabController extends Controller
             foreach ($questions as $q) {
                 $question = new AppQuestion();
                 $question->question = $q;
-                $question->save();
                 $app->questions()->save($question);
             }
         }
 
-        return $this->outputJSON($position, 'Lab Position updated');
+        $p = Position::find($position->id);
+        $p->application->questions;
+
+        return $this->outputJSON($p, 'Lab Position updated');
     }
 
     public function delete_position(Request $request, Lab $lab, Position $position) {
