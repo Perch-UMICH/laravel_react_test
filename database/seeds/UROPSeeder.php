@@ -7,6 +7,7 @@ use App\Department;
 use App\UropTag;
 use App\Application;
 use App\User;
+use App\Faculty;
 
 use Illuminate\Database\Seeder;
 
@@ -228,7 +229,13 @@ Specific tasks and responsibilities include:
                     $user->name = $username;
                     $user->email = $username . '@email.com';
                     $user->password = 'testpass';
+                    $user->is_faculty = true;
                     $user->save();
+
+                    $faculty = new Faculty();
+                    $faculty->first_name = explode(' ', $d['name'])[0];
+                    $faculty->contact_email = $username . '@email.com';
+                    $user->faculty()->save($faculty);
                 }
 
                 $lab->members()->sync([$user->id => ['role' => 1]]);

@@ -21,8 +21,8 @@ class CreateApplicationResponsesTable extends Migration
             $table->foreign('student_id')->references('id')->on('students')->onDelete('cascade');
 
             // For an application
-            $table->integer('application_id')->unsigned()->index()->nullable();
-            $table->foreign('application_id')->references('id')->on('applications')->onDelete('cascade');
+            $table->integer('position_id')->unsigned()->index()->nullable();
+            $table->foreign('position_id')->references('id')->on('positions')->onDelete('cascade');
 
             $table->boolean('sent');
 
@@ -37,6 +37,7 @@ class CreateApplicationResponsesTable extends Migration
      */
     public function down()
     {
+        Schema::dropIfExists('app_question_responses');
         Schema::dropIfExists('application_responses');
     }
 }

@@ -56,6 +56,10 @@ Route::group(['middleware' => 'auth:api'], function(){
     // Lab creation
     Route::post('labs', 'LabController@store');
 
+    // Viewable Lab data
+    Route::get('labs/{lab}/positions', 'LabController@positions'); // get all from lab
+    Route::get('labs/{lab}/positions/{position}', 'LabController@position'); // get single from lab
+
     // Search
     Route::get('search_data', 'SearchController@get_search_data_urop');
     Route::post('search', 'SearchController@search_urop');
@@ -93,15 +97,12 @@ Route::group(['middleware' => 'auth:api'], function(){
         Route::put('labs/{lab}/preferences', 'LabController@remove_preference');
 
         Route::post('labs/{lab}/positions', 'LabController@create_position'); // create for lab
-        Route::post('labs/{lab}/positions/update', 'LabController@update_position'); // create for lab
-        Route::post('labs/{lab}/positions/delete', 'LabController@delete_positions'); // delete (also deletes application)
-        Route::post('labs/{lab}/positions/responses', 'LabController@app_responses'); // Get all responses to an application
+        Route::post('labs/{lab}/positions/{position}/update', 'LabController@update_position'); // create for lab
+        Route::post('labs/{lab}/positions/{position}/delete', 'LabController@delete_position'); // delete (also deletes application)
+        Route::get('labs/{lab}/positions/{position}/responses', 'LabController@position_application_responses'); // Get all responses to an application
 
-        Route::get('labs/{lab}/positions/{position}/application', 'LabController@position_application'); // Get application from position
-        Route::get('labs/{lab}/positions/{position}/application/responses', 'LabController@position_application_responses'); // Get application from position
-
-        Route::post('labs/{lab}/applications', 'LabController@create_application');
-        Route::post('labs/{lab}/applications/update', 'LabController@update_application');
+        //Route::post('labs/{lab}/applications', 'LabController@create_application');
+        //Route::post('labs/{lab}/applications/update', 'LabController@update_application');
     });
 
     // Student creation
@@ -270,8 +271,6 @@ Route::get('preferences', 'LabPreferenceController@index');
 //Route::put('labs/{lab}/preferences', 'LabController@remove_preference');
 
 // POSITIONS //
-Route::get('labs/{lab}/positions', 'LabController@positions'); // get all from lab
-Route::get('labs/{lab}/position/{position}', 'LabController@position'); // get single from lab
 //Route::post('labs/{lab}/positions', 'LabController@create_position'); // create for lab
 //Route::post('labs/{lab}/positions/update', 'LabController@update_position'); // create for lab
 //Route::post('labs/{lab}/positions/delete', 'LabController@delete_positions'); // delete (also deletes application)

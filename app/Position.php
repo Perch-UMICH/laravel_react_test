@@ -29,9 +29,16 @@ class Position extends Model
 
     }
 
+    // Application to join lab
     public function application()
     {
         return $this->hasOne('App\Application');
+    }
+
+    // Student response to application
+    public function responses()
+    {
+        return $this->hasMany('App\ApplicationResponse');
     }
 
     public function skills() {
@@ -45,4 +52,5 @@ class Position extends Model
     public function departments() {
         return $this->belongsToMany('App\Department', 'department_position');
     }
+
 }

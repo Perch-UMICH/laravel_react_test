@@ -94,10 +94,12 @@ class FileController extends Controller
 
         // Delete old propic
         $pic = $user->profile_pic()->first();
-        if ($pic) $pic->delete();
+        if ($pic) {
+            Storage::disk('s3')->delete($pic->file->url);
+            $pic->delete();
+        }
 
         $file = $request->file('file');
-
 
         if ($file->isValid()) {
             // Crop

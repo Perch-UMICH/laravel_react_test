@@ -21,7 +21,6 @@ class CreateAppQuestionsTable extends Migration
 
             // Question
             $table->string('question');
-            $table->integer('number')->nullable();
 
             $table->timestamps();
         });

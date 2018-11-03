@@ -6,9 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class AppQuestionResponse extends Model
 {
-    protected $fillable = ['number', 'response', 'application_response_id'];
+    protected $fillable = ['question', 'answer', 'application_response_id'];
 
-    public function response() {
+    // Overall response
+    public function response()
+    {
         return $this->belongsTo('App\ApplicationResponse');
     }
 }

@@ -394,14 +394,13 @@ class LabController extends Controller
 
     // Positions:
 
-    public function position(Request $request, Lab $lab) {
-        $position = Position::find($request->route()->parameter('position'))->with('application.questions')->first();
+    public function position(Request $request, Lab $lab, Position $position) {
         if (!$position)
-            return $this->outputJSON(null,"Error: invalid position_id");
+            return $this->outputJSON(null,"Error: invalid position_id " . $request->route()->parameter('position'));
 
-        $intended_lab = $position->lab;
+        $position->application->questions;
 
-        if ($lab->id != $intended_lab->id)
+        if (!$this->check_lab_position_association($lab, $position))
             return $this->outputJSON(null,"Error: position of id " . $position->id . " does not belong to a lab this user is admin of");
 
         return $this->outputJSON($position,"Position from lab retrieved");
@@ -415,158 +414,192 @@ class LabController extends Controller
 
     public function create_position(Request $request, Lab $lab) {
         $input = $request->all();
+
+        // Create Position
         $position = new Position($input);
         $lab->positions()->save($position);
         $position->save();
 
+        // Create Application
+        $app = new Application();
+        $position->application()->save($app);
+
+        // Attach questions to Application
+        $questions = $input['application']['questions'];
+        foreach ($questions as $q) {
+            $question = new AppQuestion();
+            $question->question = $q;
+            $app->questions()->save($question);
+        }
+
+
         return $this->outputJSON($position,"Created position " . $position->title . " and added to lab " . $lab->name);
     }
 
-    public function update_position(Request $request, Lab $lab) {
+    public function update_position(Request $request, Lab $lab, Position $position) {
+        if (!$this->check_lab_position_association($lab, $position))
+            return $this->outputJSON(null,"Error: position of id " . $position->id . " does not belong to a lab this user is admin of");
+
         $input = $request->all();
         //$input = array_filter($input);
 
-        $position = Position::find($input['position_id']);
+        // Update Position
         $position->update($input);
         $position->save();
+
+        // Update Application
+        $app = $position->application;
+        $app->update($input['application']);
+
+        // Delete old questions and add updated ones (if applicable)
+        if (property_exists($input['application'], 'questions')) {
+            // Remove old questions
+            foreach($app->questions as $q) {
+                $q->delete();
+            }
+
+            // Add new
+            $questions = $input['application']['questions'];
+            foreach ($questions as $q) {
+                $question = new AppQuestion();
+                $question->question = $q;
+                $question->save();
+                $app->questions()->save($question);
+            }
+        }
+
         return $this->outputJSON($position, 'Lab Position updated');
     }
 
-    public function delete_positions(Request $request, Lab $lab) {
-        $input = $request->all();
-        $ids = $input['position_ids'];
-        Position::destroy($ids);
+    public function delete_position(Request $request, Lab $lab, Position $position) {
+        if (!$this->check_lab_position_association($lab, $position))
+            return $this->outputJSON(null,"Error: position of id " . $position->id . " does not belong to a lab this user is admin of");
 
-        return $this->outputJSON(null,"Deleted positions from lab " . $lab->name);
+        $id = $position->id;
+        $app = $position->application;
+        foreach($app->questions as $q) {
+            $q->delete();
+        }
+        $app->delete();
+
+        return $this->outputJSON(null,"Deleted position of id " . $id);
+    }
+
+    public function check_lab_position_association(Lab $lab, Position $position) {
+        $intended_lab = $position->lab;
+        return ($lab->id == $intended_lab->id);
     }
 
     // Applications:
     // Takes position_id as input
 
-    public function application(Request $request, Lab $lab) {
-        $input = $request->all();
-        $pos = Position::find($input['position_id']);
-        $application = $pos->application;
-        if (!$application) return $this->outputJSON(null, 'Error: position has no application associated with it');
-        $questions = $application->questions;
+//    public function application(Request $request, Lab $lab) {
+//        $input = $request->all();
+//        $pos = Position::find($input['position_id']);
+//        $application = $pos->application;
+//        if (!$application) return $this->outputJSON(null, 'Error: position has no application associated with it');
+//        $application->questions;
+//
+//        return $this->outputJSON($application, 'Application retrieved');
+//    }
 
-        $app = ['base' => $application, 'questions' => $questions];
-        return $this->outputJSON($app, 'Application retrieved');
-    }
+//    public function create_application(Request $request, Lab $lab)
+//    {
+//        $input = $request->all();
+//
+//        $position = Position::find($input['position_id']);
+//        if (!$position)
+//            return $this->outputJSON(null,"Error: invalid position_id");
+//
+//        $intended_lab = $position->lab;
+//
+//        if ($lab->id != $intended_lab->id)
+//            return $this->outputJSON(null,"Error: position of id " . $position->id . " does not belong to a lab this user is admin of");
+//
+//        $application = new Application();
+//        $application->save();
+//
+//        $position->application()->delete();
+//        $position->application()->save($application);
+//
+//        $questions = $input['questions'];
+//        foreach ($questions as $q) {
+//            $question = new AppQuestion();
+//            $question->question = $q;
+//            $application->questions()->save($question);
+//        }
+//
+//        $application->questions;
+//
+//        return $this->outputJSON($application,"Created application and added to position " . $position->title);
+//    }
 
-    public function create_application(Request $request, Lab $lab)
-    {
-        $input = $request->all();
+//    public function update_application(Request $request, Lab $lab) {
+//        $input = $request->all();
+//
+//        $position = Position::find($input['position_id']);
+//        if ($position === null)
+//            return $this->outputJSON(null,"Error: invalid position_id");
+//
+//        $intended_lab = $position->lab;
+//
+//        if ($lab->id != $intended_lab->id)
+//            return $this->outputJSON(null,"Error: position of id " . $position->id . " does not belong to a lab this user is admin of");
+//
+//        $application = $position->application;
+//        // Remove old questions
+//        foreach($application->questions as $q) {
+//            $q->delete();
+//        }
+//
+//        // Add new
+//        $questions = $input['questions'];
+//        foreach ($questions as $q) {
+//            $question = new AppQuestion();
+//            $question->question = $q;
+//            $question->save();
+//            $application->questions()->save($question);
+//        }
+//
+//        $application->questions;
+//
+//        return $this->outputJSON($application,"Updated application");
+//    }
 
-        $position = Position::find($input['position_id']);
-        if (!$position)
-            return $this->outputJSON(null,"Error: invalid position_id");
-
-        $intended_lab = $position->lab;
-
-        if ($lab->id != $intended_lab->id)
-            return $this->outputJSON(null,"Error: position of id " . $position->id . " does not belong to a lab this user is admin of");
-
-        $application = new Application();
-        $application->save();
-
-        $position->application()->delete();
-        $position->application()->save($application);
-
-        $questions = $input['questions'];
-        $count = 0;
-        foreach ($questions as $q) {
-            $question = new AppQuestion();
-            $question->question = $q;
-            $question->number = $count;
-            $application->questions()->save($question);
-            $count++;
-        }
-
-        $application->questions;
-
-        return $this->outputJSON($application,"Created application and added to position " . $position->title);
-    }
-
-    public function update_application(Request $request, Lab $lab) {
-        $input = $request->all();
-
-        $position = Position::find($input['position_id']);
-        if ($position === null)
-            return $this->outputJSON(null,"Error: invalid position_id");
-
-        $intended_lab = $position->lab;
-
-        if ($lab->id != $intended_lab->id)
-            return $this->outputJSON(null,"Error: position of id " . $position->id . " does not belong to a lab this user is admin of");
-
-        $application = $position->application;
-        // Remove old questions
-        foreach($application->questions as $q) {
-            $q->delete();
-        }
-
-        // Add new
-        $questions = $input['questions'];
-        $count = 0;
-        foreach ($questions as $q) {
-            $question = new AppQuestion();
-            $question->question = $q;
-            $question->number = $count;
-            $count++;
-            $question->save();
-            $application->questions()->save($question);
-        }
-
-        $application->questions;
-
-        return $this->outputJSON($application,"Updated application");
-    }
-
-    // getPositionApplication
-    public function position_application(Request $request, Lab $lab) {
-        $position_id = $request->route()->parameters['position'];
-        $position = $lab->positions()->where('id', $position_id)->first();
-        if (!$position) return $this->outputJSON(null, 'Error: invalid position id', 400);
-        $app = $position->application;
-        $app->questions;
-
-        return $this->outputJSON($app, 'Application retrieved');
-    }
+//    // getPositionApplication
+//    public function position_application(Request $request, Lab $lab) {
+//        $position_id = $request->route()->parameters['position'];
+//        $position = $lab->positions()->where('id', $position_id)->first();
+//        if (!$position) return $this->outputJSON(null, 'Error: invalid position id', 400);
+//        $app = $position->application;
+//        $app->questions;
+//
+//        return $this->outputJSON($app, 'Application retrieved');
+//    }
 
     // getLabPositionApplicationResponses
-    public function position_application_responses(Request $request, Lab $lab) {
-        $position_id = $request->route()->parameters['position'];
-        $position = $lab->positions()->where('id', $position_id)->first();
-        if (!$position) return $this->outputJSON(null, 'Error: invalid position id', 400);
-        $app = $position->application;
-        if (!$app) return $this->outputJSON(null, 'Error: ');
-        $resp = $app->responses()->with('answers')->get(); //TODO add where('sent','true')
+    public function position_application_responses(Request $request, Lab $lab, Position $position) {
+        if (!$this->check_lab_position_association($lab, $position))
+            return $this->outputJSON(null,"Error: position of id " . $position->id . " does not belong to a lab this user is admin of");
 
+        $resp = $position->responses()->with('answers')->get(); //TODO add where('sent','true')
 
         return $this->outputJSON($resp, 'Responses retrieved');
     }
 
 
-    // App Responses:
-
-    public function app_responses(Request $request, Lab $lab) {
-        $input = $request->all();
-        $position = Position::find($input['position_id']);
-        if ($position ===null)
-            return $this->outputJSON(null,"Error: invalid position_id");
-
-        $intended_lab = $position->lab;
-
-        if ($lab->id != $intended_lab->id)
-            return $this->outputJSON(null,"Error: position of id " . $position->id . " does not belong to a lab this user is admin of");
-
-        $application = $position->application;
-        if (!$application) return $this->outputJSON(null, 'Error: position has no application associated with it');
-        $responses = $application->responses()->with('answers')->get();
-
-        return $this->outputJSON($responses, 'Retrieved responses to this application');
-    }
+//    // App Responses:
+//
+//    public function app_responses(Request $request, Lab $lab, Position $position) {
+//        if (!$this->check_lab_position_association($lab, $position))
+//            return $this->outputJSON(null,"Error: position of id " . $position->id . " does not belong to a lab this user is admin of");
+//
+//        $application = $position->application;
+//        if (!$application) return $this->outputJSON(null, 'Error: position has no application associated with it');
+//        $responses = $application->responses()->with('answers')->get();
+//
+//        return $this->outputJSON($responses, 'Retrieved responses to this application');
+//    }
 
 
     // Challenge:

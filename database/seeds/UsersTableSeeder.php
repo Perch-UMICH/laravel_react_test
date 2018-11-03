@@ -22,8 +22,8 @@ class UsersTableSeeder extends Seeder
         $admin->name = 'rodriguez';
         $admin->email = 'info@perchresearch.com';
         $admin->password = bcrypt('perchperchperch');
-        $admin->is_student = true;
-        $admin->is_faculty = true;
+        $admin->is_student = false;
+        $admin->is_faculty = false;
         $admin->is_admin = true;
         $admin->save();
 

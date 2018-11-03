@@ -16,12 +16,7 @@ class Application extends Model
     // May have many questions
     public function questions()
     {
-        return $this->hasMany('App\AppQuestion')->orderBy('number', 'asc');
-    }
-
-    public function responses()
-    {
-        return $this->hasMany('App\ApplicationResponse');
+        return $this->hasMany('App\AppQuestion');
     }
 
 }
