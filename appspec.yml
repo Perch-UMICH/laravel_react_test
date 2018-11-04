@@ -29,8 +29,6 @@ files:
   destination: /var/www/perchlaravel/
 - source: /composer.json
   destination: /var/www/perchlaravel/
-- source: /composer.lock
-  destination: /var/www/perchlaravel/
 - source: /phpunit.xml
   destination: /var/www/perchlaravel/
 - source: /server.php
