@@ -1,5 +1,5 @@
 #!/bin/bash
-cd /var/www/phplaravel
+cd /var/www/perchlaravel
 cp .env.example .env
 
 # Set environment as production and set App URL
