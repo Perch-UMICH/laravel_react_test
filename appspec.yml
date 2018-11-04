@@ -1,0 +1,52 @@
+version: 0.0
+os: linux
+files:
+- source: /app
+  destination: /var/www/perchlaravel/app/
+- source: /bootstrap
+  destination: /var/www/perchlaravel/bootstrap/
+- source: /config
+  destination: /var/www/perchlaravel/config/
+- source: /database
+  destination: /var/www/perchlaravel/database/
+- source: /public
+  destination: /var/www/perchlaravel/public/
+- source: /resources
+  destination: /var/www/perchlaravel/resources/
+- source: /routes
+  destination: /var/www/perchlaravel/routes/
+- source: /storage
+  destination: /var/www/perchlaravel/storage/
+- source: /tests
+  destination: /var/www/perchlaravel/tests/
+- source: /.env.example
+  destination: /var/www/perchlaravel/
+- source: /.gitattributes
+  destination: /var/www/perchlaravel/
+- source: /.gitignore
+  destination: /var/www/perchlaravel/
+- source: /artisan
+  destination: /var/www/perchlaravel/
+- source: /composer.json
+  destination: /var/www/perchlaravel/
+- source: /composer.lock
+  destination: /var/www/perchlaravel/
+- source: /phpunit.xml
+  destination: /var/www/perchlaravel/
+- source: /server.php
+  destination: /var/www/perchlaravel/
+hooks:
+  AfterInstall:
+  - location: scripts/config_env_variables
+    timeout: 900
+    runas: root
+  - location: scripts/install_dependencies
+    timeout: 900
+    runas: root
+  - location: scripts/start_server
+    timeout: 300
+    runas: root
+  ApplicationStop:
+  - location: scripts/stop_server
+    timeout: 300
+    runas: root

@@ -1,0 +1,34 @@
+#!/bin/bash
+cd /var/www/phplaravel
+cp .env.example .env
+
+# Set environment as production and set App URL
+sed -i -e 's/^APP_ENV=.*/APP_ENV=production/' .env
+sed -i -e 's/^APP_URL=.*/APP_URL=https:\/\/perchresearch.com/' .env
+
+# Config Database
+host=$(aws ssm get-parameters --region us-east-1 --names DBHost --with-decryption --query Parameters[0].Value)
+host=`echo $host | sed -e 's/^"//' -e 's/"$//'`
+name=$(aws ssm get-parameters --region us-east-1 --names DBName --with-decryption --query Parameters[0].Value)
+name=`echo $name | sed -e 's/^"//' -e 's/"$//'`
+user=$(aws ssm get-parameters --region us-east-1 --names DBUser --with-decryption --query Parameters[0].Value)
+user=`echo $user | sed -e 's/^"//' -e 's/"$//'`
+password=$(aws ssm get-parameters --region us-east-1 --names DBPass --with-decryption --query Parameters[0].Value)
+password=`echo $password | sed -e 's/^"//' -e 's/"$//'`
+sed -i -e 's/^DB_HOST=.*/DB_HOST='$host'/' .env
+sed -i -e 's/^DB_DATABASE=.*/DB_DATABASE='$name'/' .env
+sed -i -e 's/^DB_USERNAME=.*/DB_USERNAME='$user'/' .env
+sed -i -e 's/^DB_PASSWORD=.*/DB_PASSWORD='$password'/' .env
+
+# AWS access
+aws_key=$(aws ssm get-parameters --region us-east-1 --names AmazonKey --with-decryption --query Parameters[0].Value)
+aws_key=`echo $aws_key | sed -e 's/^"//' -e 's/"$//'`
+aws_secret=$(aws ssm get-parameters --region us-east-1 --names AmazonSecret --with-decryption --query Parameters[0].Value)
+aws_secret=`echo $aws_secret | sed -e 's/^"//' -e 's/"$//'`
+s3_bucket=$(aws ssm get-parameters --region us-east-1 --names S3BucketName --with-decryption --query Parameters[0].Value)
+s3_bucket=`echo $s3_bucket | sed -e 's/^"//' -e 's/"$//'`
+
+sed -i -e 's/^AWS_ACCESS_KEY_ID=.*/AWS_ACCESS_KEY_ID='$aws_key'/' .env
+sed -i -e 's/^AWS_SECRET_ACCESS_KEY=.*/AWS_SECRET_ACCESS_KEY='$aws_secret'/' .env
+sed -i -e 's/^AWS_DEFAULT_REGION=.*/AWS_DEFAULT_REGION=us-east-1/' .env
+sed -i -e 's/^AWS_BUCKET=.*/AWS_BUCKET='$s3_bucket'/' .env
