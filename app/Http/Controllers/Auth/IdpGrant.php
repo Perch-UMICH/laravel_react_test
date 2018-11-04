@@ -145,7 +145,9 @@ class IdpGrant extends AbstractGrant
                 throw OAuthServerException::serverError('exception response: ' . implode(" | ", $payload));
                 //throw OAuthServerException::invalidRequest('token: ' . $token);
             }
-            throw OAuthServerException::serverError('response: ' . implode(" | ", $payload));
+
+            // Debugging exception
+            // throw OAuthServerException::serverError('response: ' . implode(" | ", $payload));
 
             if($payload) {
                 $username = $payload('sub');
