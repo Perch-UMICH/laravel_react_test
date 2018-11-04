@@ -143,7 +143,7 @@ class IdpGrant extends AbstractGrant
 //                );
 //                $context = stream_context_create($options);
 //                $result = file_get_contents($url, false, $context);
-            throw OAuthServerException::serverError('response: ' . strval($response));
+            throw OAuthServerException::serverError('response: ' . is_string($response));
 
                 // $payload = $client->verifyIdToken($token);
 //            } catch(Exception $e) {
