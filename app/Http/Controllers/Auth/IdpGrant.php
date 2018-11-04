@@ -145,13 +145,12 @@ class IdpGrant extends AbstractGrant
                 throw OAuthServerException::serverError('exception response: ' . implode(" | ", $payload));
                 //throw OAuthServerException::invalidRequest('token: ' . $token);
             }
-
             // Debugging exception
             // throw OAuthServerException::serverError('response: ' . implode(" | ", $payload));
 
             if($payload) {
-                $username = $payload('sub');
-                $email = $payload('email');
+                $username = $payload['sub'];
+                $email = $payload['email'];
                 // $aud = $payload('aud');
                 // $payload('hd') // G-suite domain
                 // $payload('name')
