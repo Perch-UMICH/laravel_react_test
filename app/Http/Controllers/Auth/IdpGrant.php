@@ -142,10 +142,10 @@ class IdpGrant extends AbstractGrant
             try {
                 $payload = $client->verifyIdToken($token);
             } catch(Exception $e) {
-                throw OAuthServerException::serverError('exception response: ' . $payload);
+                throw OAuthServerException::serverError('exception response: ' . implode(" | ", $payload);
                 //throw OAuthServerException::invalidRequest('token: ' . $token);
             }
-            throw OAuthServerException::serverError('response: ' . $payload);
+            throw OAuthServerException::serverError('response: ' . implode(" | ", $payload);
 
             if($payload) {
                 $username = $payload('sub');
