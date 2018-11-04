@@ -134,22 +134,16 @@ class IdpGrant extends AbstractGrant
             $response = curl_exec($curl);
             $err = curl_error($curl);
             curl_close($curl);
-//                $url = 'https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=' . urlencode($token);
-//                $options = array(
-//                    'http' => array(
-//                        'header' => "Content-type: application/x-www-form-urlencoded\r\n",
-//                        'method' => 'GET'
-//                    )
-//                );
-//                $context = stream_context_create($options);
-//                $result = file_get_contents($url, false, $context);
-            throw OAuthServerException::serverError('response: ' . $response);
 
-                // $payload = $client->verifyIdToken($token);
-//            } catch(Exception $e) {
-//                throw OAuthServerException::invalidRequest('response: ' . $result);
-//                //throw OAuthServerException::invalidRequest('token: ' . $token);
-//            }
+            // Debugging: Force an exception and return the response
+            // throw OAuthServerException::serverError('response: ' . $response);
+
+            $payload = $client->verifyIdToken($token);
+            } catch(Exception $e) {
+                throw OAuthServerException::serverError('exception response: ' . $result);
+                //throw OAuthServerException::invalidRequest('token: ' . $token);
+            }
+            throw OAuthServerException::serverError('response: ' . $result);
 
             if($payload) {
                 $username = $payload('sub');
