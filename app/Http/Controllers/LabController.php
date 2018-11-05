@@ -332,7 +332,7 @@ class LabController extends Controller
     // Members:
 
     public function members(Lab $lab) {
-        $members = $lab->members()->with('student', 'faculty', 'files');
+        $members = $lab->members()->with('student', 'faculty', 'files')->get();
 
         $students = [];
         $faculties = [];
