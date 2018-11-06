@@ -425,12 +425,10 @@ class LabController extends Controller
         // Attach questions to Application
         $questions = $input['application']['questions'];
 
-        $count = 0;
         foreach ($questions as $q) {
             $question = new AppQuestion();
-            $question->question = $q;
-            $question->number = $count;
-            $count++;
+            $question->question = $q['question'];
+            $question->number = $q['number'];
             $app->questions()->save($question);
         }
 
@@ -451,21 +449,17 @@ class LabController extends Controller
 
         // Update Application
         $app = $position->application;
-        // Delete old questions and add updated ones (if applicable)
+        // Add updated questions (if applicable)
         if (array_key_exists ('questions', $input['application'])) {
-            // Remove old questions
-            foreach($app->questions as $q) {
-                $q->delete();
-            }
+//            // Remove old questions
+//            foreach($app->questions as $q) {
+//                $q->delete();
+//            }
 
-            // Add new
             $questions = $input['application']['questions'];
-            $count = 0;
             foreach ($questions as $q) {
-                $question = new AppQuestion();
-                $question->question = $q;
-                $question->number = $count;
-                $count++;
+                $question = $app->question()->where('number','=',$q['number'])->first();
+                $question->question = $q['question'];
                 $app->questions()->save($question);
             }
         }
