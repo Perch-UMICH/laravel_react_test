@@ -20,6 +20,7 @@ class CreateAppQuestionsTable extends Migration
             $table->foreign('application_id')->references('id')->on('applications');
 
             // Question
+            $table->unsignedTinyInteger('number');
             $table->string('question');
 
             $table->timestamps();

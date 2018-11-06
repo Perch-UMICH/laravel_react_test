@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class AppQuestion extends Model
 {
-    protected $fillable = ['question', 'lab_id'];
+    protected $fillable = ['question', 'number', 'lab_id'];
 
     public function application() {
         return $this->belongsTo('App\Application');

@@ -11,9 +11,10 @@ class ApplicationResponse extends Model
         return $this->belongsTo('App\Student');
     }
 
-    public function application()
+    // Response is responding to a Position's Application
+    public function position()
     {
-        return $this->belongsTo('App\Application');
+        return $this->belongsTo('App\Position');
     }
 
     public function answers()

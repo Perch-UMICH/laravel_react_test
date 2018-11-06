@@ -20,6 +20,7 @@ class CreateAppQuestionResponsesTable extends Migration
             $table->integer('application_response_id')->unsigned()->index()->nullable();
             $table->foreign('application_response_id')->references('id')->on('application_responses')->onDelete('cascade');
 
+            $table->tinyInteger('number')->nullable();
             $table->string('question')->nullable();
             $table->text('answer')->nullable();
 

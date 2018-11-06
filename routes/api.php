@@ -141,11 +141,14 @@ Route::group(['middleware' => 'auth:api'], function(){
 
         Route::post('students/{student}/resume', 'StudentController@add_resume');
 
-        Route::get('students/{student}/responses', 'StudentController@app_responses'); // Get student responses
-        Route::post('students/{student}/responses', 'StudentController@create_app_response'); // Create a response
-        Route::post('students/{student}/responses/update', 'StudentController@update_app_response'); // Update a response
-        Route::post('students/{student}/responses/submit', 'StudentController@submit_app_response'); // Submit a response
-        Route::post('students/{student}/responses/delete', 'StudentController@delete_app_response'); // Delete a response
+        // Application Responses
+        Route::get('students/{student}/applications/{position}', 'StudentController@app_response'); // Get specific student response
+        Route::get('students/{student}/applications', 'StudentController@app_responses'); // Get all student responses
+        Route::post('students/{student}/applications/{position}', 'StudentController@create_app_response'); // Create a response
+        Route::post('students/{student}/applications/{position}/update', 'StudentController@update_app_response'); // Update a response
+        Route::post('students/{student}/applications/{position}/submit', 'StudentController@submit_app_response'); // Submit a response
+        Route::post('students/{student}/applications/{position}/delete', 'StudentController@delete_app_response'); // Delete a response
+        //
     });
 
     // METADATA //

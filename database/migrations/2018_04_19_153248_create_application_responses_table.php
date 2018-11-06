@@ -16,11 +16,11 @@ class CreateApplicationResponsesTable extends Migration
         Schema::create('application_responses', function (Blueprint $table) {
             $table->increments('id');
 
-            // Belongs to a student
+            // Belongs to a Student
             $table->integer('student_id')->unsigned()->index()->nullable();
             $table->foreign('student_id')->references('id')->on('students')->onDelete('cascade');
 
-            // For an application
+            // For an Position's Application
             $table->integer('position_id')->unsigned()->index()->nullable();
             $table->foreign('position_id')->references('id')->on('positions')->onDelete('cascade');
 

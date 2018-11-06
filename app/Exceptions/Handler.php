@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\JsonResponse;
@@ -69,7 +70,10 @@ class Handler extends ExceptionHandler
             }
 
             // Default response of 400
-            $status = 400;
+            if ($e instanceof ModelNotFoundException)
+                $status = 404;
+            else
+                $status = 400;
 
             // If this exception is an instance of HttpException
             if ($this->isHttpException($e)) {

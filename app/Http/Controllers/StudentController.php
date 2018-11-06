@@ -283,63 +283,71 @@ class StudentController extends Controller
 
     // App Responses:
 
-    public function app_responses(Student $student) {
+    // getStudentApplicationResponse
+    public function app_response(Student $student, Position $position)
+    {
+        $response = $student->responses()->where('position_id', '=', $position->id)->first();
+        if ($response) {
+            $response->answers;
+            return $this->outputJSON($response,"App response retrieved", 200);
+        }
+        else
+            return $this->outputJSON(null,"Error: this student has not applied to position of id " . $position->id, 404);
+    }
+
+    // getAllStudentApplicationResponses
+    public function app_responses(Student $student)
+    {
         $responses = $student->app_responses;
         return $this->outputJSON($responses,"App responses retrieved");
     }
 
-    public function create_app_response(Request $request, Student $student) {
+    public function create_app_response(Request $request, Student $student, Position $position) {
         $input = $request->all();
-        $position = Position::where('id', $input['position_id'])->first();    // Position this is responding to
-        $response_strings = $input['responses'];                                // Response strings
-
-        if (!$position) return $this->outputJSON(null, 'Error: Invalid position_id', 400);
-        $application = $position->application;
+        $responses = $input['responses']; // Response strings
 
         // Create new response, and associate with application and student
         $response = new ApplicationResponse();
         $response->sent = false;
         $response->save();
-        $application->responses()->save($response);
+        $position->responses()->save($response);
         $student->responses()->save($response);
 
         // Get application questions
+        $application = $position->application;
         $questions = $application->questions;
-//        if (count($questions) !== count($response_strings))
-//            return $this->outputJSON(null, 'Error: number of answers does not match number of questions', 400);
+        if (count($questions) !== count($responses))
+            return $this->outputJSON(null, 'Error: number of answers does not match number of questions', 400);
 
-        $count = 0;
-        foreach ($response_strings as $resp) {
+        foreach ($responses as $resp) {
             $question_response = new AppQuestionResponse();
-            $question_response->response = $resp;
-            $question_response->number = $count;
+            $question_response->question = $application->questions()->where('number','=', $resp['number'])->first()->question;
+            $question_response->answer = $resp['answer'];
+            $question_response->number = $resp['number'];
             $question_response->save();
 
-            // Associate with corresponding AppQuestion and AppResponse
             $response->answers()->save($question_response);
-            $count++;
         }
 
         $response->answers;
-        return $this->outputJSON($response, 'Response created for position ' . $position->name);
+        return $this->outputJSON($response, 'Response created for position ' . $position->title);
     }
 
-    public function update_app_response(Request $request, Student $student) {
+    public function update_app_response(Request $request, Student $student, Position $position) {
         $input = $request->all();
-        $applicationResponse = ApplicationResponse::find($input['application_response_id']);
-        $resp = $input['application_response'];
-        $response_strings = $resp['responses'];   // Updated response strings
 
-        if (!$applicationResponse) return $this->outputJSON(null, 'Error: application_response_id is invalid');
-        if ($applicationResponse->student->id != $student->id)  return $this->outputJSON(null, 'Error: student of id ' . $student->id . ' does not own this application response');
+        $applicationResponse = $student->responses()->where('position_id', '=', $position->id)->first();
+        if (!$applicationResponse) return $this->outputJSON(null,"Error: this student has not applied to position of id " . $position->id, 404);
 
-        $answers = $applicationResponse->answers;
+        $responses = $input['responses'];   // Updated responses
 
-        $count = 0;
-        foreach ($answers as $a) {
-            $a->response = $response_strings[$count];
-            $a->save();
-            $count++;
+        foreach ($responses as $r) {
+            // Find previous response
+            $resp = $applicationResponse->answers()->where('number','=',$r['number'])->first();
+
+            // Update
+            $resp->answer = $r['answer'];
+            $resp->save();
         }
 
         $applicationResponse->answers;
@@ -347,28 +355,22 @@ class StudentController extends Controller
         return $this->outputJSON($applicationResponse, 'Response updated');
     }
 
-    public function delete_app_response(Request $request, Student $student) {
-        $input = $request->all();
-        $applicationResponse = ApplicationResponse::find($input['application_response_id']);
-
-        if (!$applicationResponse) return $this->outputJSON(null, 'Error: application_response_id is invalid');
-        if ($applicationResponse->student->id != $student->id)  return $this->outputJSON(null, 'Error: student of id ' . $student->id . ' does not own this application response');
+    public function delete_app_response(Request $request, Student $student, Position $position) {
+        $applicationResponse = $student->responses()->where('position_id', '=', $position->id)->first();
+        if (!$applicationResponse) return $this->outputJSON(null,"Error: this student has not applied to position of id " . $position->id, 404);
 
         $applicationResponse->delete();
 
         return $this->outputJSON(null, 'Response deleted');
     }
 
-    public function submit_app_response(Request $request, Student $student) {
-        $input = $request->all();
-        $applicationResponse = ApplicationResponse::find($input['application_response_id']);
-
-        if (!$applicationResponse) return $this->outputJSON(null, 'Error: application_response_id is invalid');
-        if ($applicationResponse->student->id != $student->id) return $this->outputJSON(null, 'Error: student of id ' . $student->id . ' does not own this application response');
+    public function submit_app_response(Request $request, Student $student, Position $position) {
+        $applicationResponse = $student->responses()->where('position_id', '=', $position->id)->first();
+        if (!$applicationResponse) return $this->outputJSON(null,"Error: this student has not applied to position of id " . $position->id, 404);
 
         $applicationResponse->sent = true;
 
-        return $this->outputJSON($applicationResponse, 'Response submitted to position ' . $applicationResponse->application->position->name);
+        return $this->outputJSON($applicationResponse, 'Response submitted to position ' . $applicationResponse->position->name);
     }
 
     // Resume:

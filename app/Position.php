@@ -35,7 +35,7 @@ class Position extends Model
         return $this->hasOne('App\Application');
     }
 
-    // Student response to application
+    // Student response to position's application
     public function responses()
     {
         return $this->hasMany('App\ApplicationResponse');

@@ -331,6 +331,7 @@ class LabController extends Controller
 
     // Members:
 
+    // getLabMembers
     public function members(Lab $lab) {
         $members = $lab->members()->with('student', 'faculty', 'files')->get();
 
@@ -423,9 +424,13 @@ class LabController extends Controller
 
         // Attach questions to Application
         $questions = $input['application']['questions'];
+
+        $count = 0;
         foreach ($questions as $q) {
             $question = new AppQuestion();
             $question->question = $q;
+            $question->number = $count;
+            $count++;
             $app->questions()->save($question);
         }
 
@@ -455,9 +460,12 @@ class LabController extends Controller
 
             // Add new
             $questions = $input['application']['questions'];
+            $count = 0;
             foreach ($questions as $q) {
                 $question = new AppQuestion();
                 $question->question = $q;
+                $question->number = $count;
+                $count++;
                 $app->questions()->save($question);
             }
         }
