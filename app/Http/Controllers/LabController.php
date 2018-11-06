@@ -458,7 +458,7 @@ class LabController extends Controller
 
             $questions = $input['application']['questions'];
             foreach ($questions as $q) {
-                $question = $app->question()->where('number','=',$q['number'])->first();
+                $question = $app->questions()->where('number','=',$q['number'])->first();
                 $question->question = $q['question'];
                 $app->questions()->save($question);
             }
