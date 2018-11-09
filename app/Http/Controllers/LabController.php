@@ -425,10 +425,12 @@ class LabController extends Controller
         // Attach questions to Application
         $questions = $input['application']['questions'];
 
+        $count = 0;
         foreach ($questions as $q) {
             $question = new AppQuestion();
             $question->question = $q['question'];
-            $question->number = $q['number'];
+            $question->number = $count;
+            $count++;
             $app->questions()->save($question);
         }
 
@@ -459,6 +461,7 @@ class LabController extends Controller
             $questions = $input['application']['questions'];
             foreach ($questions as $q) {
                 $question = $app->questions()->where('number','=',$q['number'])->first();
+                if ($question == null) continue;
                 $question->question = $q['question'];
                 $app->questions()->save($question);
             }

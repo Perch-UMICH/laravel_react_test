@@ -69,10 +69,10 @@ Route::group(['middleware' => 'auth:api'], function(){
     Route::post('tags/match','TagController@search_matching_tags');
 
     // File upload
-    Route::post('users/{user}/profile_pic', 'FileController@add_profile_pic_to_user');
+    Route::post('users/{user}/profile_pic', 'FileController@add_pic_to_user');
     Route::post('users/{user}/resume', 'FileController@add_resume_to_user');
-    Route::put('users/{user}/profile_pic', 'FileController@get_user_profile_pic');
-    Route::put('users/{user}/resume', 'FileController@get_user_resume');
+    Route::put('users/{user}/profile_pic', 'FileController@get__pic');
+    Route::put('users/{user}/resume', 'FileController@get_resume');
 
     // Lab edits
     // MUST BE LOGGED IN + BE LAB OWNER

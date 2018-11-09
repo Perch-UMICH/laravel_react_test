@@ -57,7 +57,7 @@ class FileController extends Controller
         }
     }
 
-    public function get_user_resume(Request $request) {
+    public function get_resume(Request $request) {
         $input = $request->all();
         $u_id = $input['user_id'];
         $user = User::find($u_id);
@@ -84,7 +84,7 @@ class FileController extends Controller
 //        return $this->outputJSON($files, 'Set resume to current');
 //    }
 
-    public function add_profile_pic_to_user(Request $request) {
+    public function add_pic_to_user(Request $request) {
         $user = $request->user();
         $input = $request->all();
 
@@ -128,7 +128,7 @@ class FileController extends Controller
         }
     }
 
-    public function get_user_profile_pic(Request $request) {
+    public function get_pic(Request $request) {
         $input = $request->all();
         $u_id = $input['user_id'];
         $user = User::find($u_id);
@@ -136,6 +136,10 @@ class FileController extends Controller
         $pic->file;
 
         return $this->outputJSON($pic, 'Retrieved user profile pic');
+    }
+
+    public function edit_pic(Request $request) {
+
     }
 
 //    public function add_image_to_lab(Request $request, Lab $lab) {
