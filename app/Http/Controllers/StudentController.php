@@ -298,7 +298,7 @@ class StudentController extends Controller
     // getAllStudentApplicationResponses
     public function app_responses(Student $student)
     {
-        $responses = $student->app_responses;
+        $responses = $student->responses;
         return $this->outputJSON($responses,"App responses retrieved");
     }
 
@@ -369,6 +369,7 @@ class StudentController extends Controller
         if (!$applicationResponse) return $this->outputJSON(null,"Error: this student has not applied to position of id " . $position->id, 404);
 
         $applicationResponse->sent = true;
+        $applicationResponse->save();
 
         return $this->outputJSON($applicationResponse, 'Response submitted to position ' . $applicationResponse->position->name);
     }
