@@ -313,17 +313,10 @@ class StudentController extends Controller
         $position->responses()->save($response);
         $student->responses()->save($response);
 
-        // Get application questions
-        $application = $position->application;
-        $questions = $application->questions;
-        if (count($questions) !== count($responses))
-            return $this->outputJSON(null, 'Error: number of answers does not match number of questions', 400);
-
         foreach ($responses as $resp) {
             $question_response = new AppQuestionResponse();
-            $question_response->question = $application->questions()->where('number','=', $resp['number'])->first()->question;
+            $question_response->question = $resp['question'];
             $question_response->answer = $resp['answer'];
-            $question_response->number = $resp['number'];
             $question_response->save();
 
             $response->answers()->save($question_response);
@@ -336,23 +329,28 @@ class StudentController extends Controller
     public function update_app_response(Request $request, Student $student, Position $position) {
         $input = $request->all();
 
-        $applicationResponse = $student->responses()->where('position_id', '=', $position->id)->first();
-        if (!$applicationResponse) return $this->outputJSON(null,"Error: this student has not applied to position of id " . $position->id, 404);
+        $response = $student->responses()->where('position_id', '=', $position->id)->first();
+        if (!$response) return $this->outputJSON(null,"Error: this student has not applied to position of id " . $position->id, 404);
 
         $responses = $input['responses'];   // Updated responses
 
-        foreach ($responses as $r) {
-            // Find previous response
-            $resp = $applicationResponse->answers()->where('number','=',$r['number'])->first();
-
-            // Update
-            $resp->answer = $r['answer'];
-            $resp->save();
+        // Delete old responses
+        foreach ($response->answers as $a) {
+            $a->delete();
         }
 
-        $applicationResponse->answers;
+        foreach ($responses as $resp) {
+            $question_response = new AppQuestionResponse();
+            $question_response->question = $resp['question'];
+            $question_response->answer = $resp['answer'];
+            $question_response->save();
 
-        return $this->outputJSON($applicationResponse, 'Response updated');
+            $response->answers()->save($question_response);
+        }
+
+        $response = $student->responses()->where('position_id', '=', $position->id)->first();
+        $response->answers;
+        return $this->outputJSON($response, 'Response updated');
     }
 
     public function delete_app_response(Request $request, Student $student, Position $position) {
@@ -370,6 +368,7 @@ class StudentController extends Controller
 
         $applicationResponse->sent = true;
         $applicationResponse->save();
+        $applicationResponse->answers;
 
         return $this->outputJSON($applicationResponse, 'Response submitted to position ' . $applicationResponse->position->name);
     }
