@@ -115,29 +115,28 @@ class IdpGrant extends AbstractGrant
         if($idp === "google") {
             $client = new \Google_Client(['client_id' => env('GOOGLE_CLIENT_ID')]);
 
-            // Google verifies 'iss' (google's source signature) and 'exp' (the token expiration)
-            // try{
-            $curl = curl_init();
-
-            curl_setopt_array($curl, array(
-                CURLOPT_URL => 'https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=' . urlencode($token),
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_ENCODING => "",
-                CURLOPT_TIMEOUT => 30000,
-                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                CURLOPT_CUSTOMREQUEST => "GET",
-                CURLOPT_HTTPHEADER => array(
-                    // Set Here Your Requested Headers
-                    'Content-Type: application/json',
-                ),
-            ));
-            $response = curl_exec($curl);
-            $err = curl_error($curl);
-            curl_close($curl);
+//            $curl = curl_init();
+//
+//            curl_setopt_array($curl, array(
+//                CURLOPT_URL => 'https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=' . urlencode($token),
+//                CURLOPT_RETURNTRANSFER => true,
+//                CURLOPT_ENCODING => "",
+//                CURLOPT_TIMEOUT => 30000,
+//                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+//                CURLOPT_CUSTOMREQUEST => "GET",
+//                CURLOPT_HTTPHEADER => array(
+//                    // Set Here Your Requested Headers
+//                    'Content-Type: application/json',
+//                ),
+//            ));
+//            $response = curl_exec($curl);
+//            $err = curl_error($curl);
+//            curl_close($curl);
 
             // Debugging: Force an exception and return the response
             // throw OAuthServerException::serverError('response: ' . $response);
 
+            // Google verifies 'iss' (google's source signature) and 'exp' (the token expiration)
             $payload = "initial";
             try {
                 $payload = $client->verifyIdToken($token);
