@@ -124,10 +124,10 @@ class UserController extends Controller
         $name = $data['name'];
 
         if(User::where('email', $email)->first() != null) {
-            return "Email already taken";
+            return "Registration failed: Email already taken";
         }
         if(LoginType::where(['login_type' => $idp, 'login_id' => $idp_id])->first() != null) {
-            return "Idp ID already registered";
+            return "Registration failed: Idp ID already registered";
         }
 
         // Register new user
@@ -136,6 +136,7 @@ class UserController extends Controller
             'user_id' => $user->id,
             'login_type' => $idp,
             'login_id' => $idp_id,
+            'email' => $email,
             'name' => $name
         ];
         // Add the login info
