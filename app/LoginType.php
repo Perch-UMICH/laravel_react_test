@@ -11,7 +11,7 @@ class LoginType extends Model
      *
      * @var array
      */
-    protected $hidden = [
+    protected $fillable = [
         'user_id',
         'login_type',
         'login_id'
