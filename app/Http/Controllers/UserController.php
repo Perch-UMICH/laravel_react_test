@@ -120,7 +120,6 @@ class UserController extends Controller
         $idp = $data['idp'];
         $idp_id = $data['idp_id'];
         $email = $data['email'];
-        $name = $data['name'];
 
         if(User::where('email', $email)->first() != null) {
             return $this->outputJSON(null, "Email already taken", 404);
@@ -131,12 +130,7 @@ class UserController extends Controller
 
         // Register new user
         $user = User::create($data);
-        $login_type_data = [
-            'user_id' => $user->id,
-            'login_type' => $idp,
-            'login_id' => $idp_id,
-            'name' => $name
-        ];
+        $login_type_data = ['user_id' => $user->id, 'login_type' => $idp, 'login_id' => $idp_id];
         LoginType::create($login_type_data);
 
         return $user;
