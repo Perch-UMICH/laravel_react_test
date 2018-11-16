@@ -40,6 +40,11 @@ class IdpGrant extends AbstractGrant
         $scopes = $this->validateScopes($this->getRequestParameter('scope', $request, $this->defaultScope));
         $user = $this->validateUser($request);
 
+        if(is_string($user)) {
+            // User validation failed
+            throw OAuthServerException::invalidRequest("", $user);
+        }
+
         // Finalize the requested scopes
         $finalizedScopes = $this->scopeRepository->finalizeScopes($scopes, $this->getIdentifier(), $client, $user->getIdentifier());
 

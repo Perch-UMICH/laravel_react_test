@@ -116,6 +116,7 @@ class UserController extends Controller
     }
 
     // WARNING: This function assumes the idp id has already been verified!!!
+    // Returns string on error, User on success
     public function registerIdp(array $data) {
         $idp = $data['idp'];
         $idp_id = $data['idp_id'];
@@ -123,10 +124,10 @@ class UserController extends Controller
         $name = $data['name'];
 
         if(User::where('email', $email)->first() != null) {
-            return $this->outputJSON(null, "Email already taken", 404);
+            return "Email already taken";
         }
         if(LoginType::where(['login_type' => $idp, 'login_id' => $idp_id])->first() != null) {
-            return $this->outputJSON(null, "Idp ID already registered");
+            return "Idp ID already registered";
         }
 
         // Register new user
@@ -137,7 +138,11 @@ class UserController extends Controller
             'login_id' => $idp_id,
             'name' => $name
         ];
+        // Add the login info
         LoginType::create($login_type_data);
+
+        // If either the user creation or the login info fails,
+        // process should fail and both entries should be deleted (if they exist)
 
         return $user;
     }
