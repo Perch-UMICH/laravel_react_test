@@ -157,7 +157,7 @@ class IdpGrant extends AbstractGrant
                 // $payload('family_name')
             } else {
                 // Invalid google token
-                throw OAuthServerException::invalidRequest('idpToken', 'Google rejected the token');
+                throw OAuthServerException::invalidRequest('idpToken', 'token was rejected by Google verifier');
             }
         } else {
             throw OAuthServerException::invalidRequest('idp');
@@ -170,11 +170,12 @@ class IdpGrant extends AbstractGrant
         // Register a new google user
         if($register) {
             $uc = new UserController();
-            throw OAuthServerException::serverError('reached register function');
+            throw OAuthServerException::serverError('reached idp register function');
 
             // Will return error if user already exists
             $user = $uc->registerIdp(['idp' => $idp, 'idp_id' => $username, 'email' => $email]);
         } else {
+            throw OAuthServerException::serverError('reached idp login function');
             // Authenticate existing user
             $credentials = [
                 'username' => $username,
