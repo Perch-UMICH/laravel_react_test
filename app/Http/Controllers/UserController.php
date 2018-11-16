@@ -125,7 +125,7 @@ class UserController extends Controller
             return $this->outputJSON(null, "Email already taken", 404);
         }
         if(LoginType::where(['login_type' => $idp, 'login_id' => $idp_id])->first() != null) {
-            return $this->outputJSON(null, 'Idp ID already registered', responseCode 404);
+            return $this->outputJSON(null, "Idp ID already registered");
         }
 
         // Register new user
