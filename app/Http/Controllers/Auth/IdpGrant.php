@@ -153,7 +153,7 @@ class IdpGrant extends AbstractGrant
                 $email = $payload['email'];
                 // $aud = $payload('aud');
                 // $payload('hd') // G-suite domain
-                // $payload('name')
+                $name = $payload('name');
                 // $payload('given_name')
                 // $payload('family_name')
             } else {
@@ -173,7 +173,7 @@ class IdpGrant extends AbstractGrant
             $uc = new UserController();
 
             // Will return error if user already exists
-            $user = $uc->registerIdp(['idp' => $idp, 'idp_id' => $username, 'email' => $email]);
+            $user = $uc->registerIdp(['idp' => $idp, 'idp_id' => $username, 'email' => $email, 'name' => $name]);
         } else {
             // Authenticate existing user
             $credentials = [
