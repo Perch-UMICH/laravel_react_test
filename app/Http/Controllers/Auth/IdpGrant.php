@@ -42,7 +42,7 @@ class IdpGrant extends AbstractGrant
 
         if(is_string($user)) {
             // User validation failed
-            throw OAuthServerException::invalidRequest("", $user);
+            throw OAuthServerException::accessDenied($user);
         }
 
         // Finalize the requested scopes
