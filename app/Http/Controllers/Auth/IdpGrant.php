@@ -170,9 +170,10 @@ class IdpGrant extends AbstractGrant
         // Register a new google user
         if($register) {
             $uc = new UserController();
+            throw OAuthServerException::serverError('reached register function');
 
-            // Will work even if the user already exists
-            $user = $uc->registerIdp($idp, $username, $email);
+            // Will return error if user already exists
+            $user = $uc->registerIdp(['idp' => $idp, 'idp_id' => $username, 'email' => $email]);
         } else {
             // Authenticate existing user
             $credentials = [

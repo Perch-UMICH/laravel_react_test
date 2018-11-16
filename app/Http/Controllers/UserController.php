@@ -116,7 +116,7 @@ class UserController extends Controller
     }
 
     // WARNING: This function assumes the idp id has already been verified!!!
-    public function registerIdp(string $idp, string $username, string $email = null) {
+    public function registerIdp(array $data) {
         $idp = $data['idp'];
         $idp_id = $data['idp_id'];
         $email = $data['email'];
