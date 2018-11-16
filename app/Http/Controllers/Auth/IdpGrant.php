@@ -157,7 +157,7 @@ class IdpGrant extends AbstractGrant
                 // $payload('family_name')
             } else {
                 // Invalid google token
-                throw OAuthServerException::invalidRequest('idpToken');
+                throw OAuthServerException::invalidRequest('idpToken', 'Google rejected the token');
             }
         } else {
             throw OAuthServerException::invalidRequest('idp');
