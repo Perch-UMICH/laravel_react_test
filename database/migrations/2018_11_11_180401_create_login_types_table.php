@@ -20,7 +20,7 @@ class CreateLoginTypesTable extends Migration
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
 
             $table->string('login_type')->nullable();
-            $table->unsignedBigInteger('login_id')->nullable();
+            $table->string('login_id', 30)->nullable();
 
             $table->timestamps();
         });
