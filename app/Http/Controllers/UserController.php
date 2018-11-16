@@ -7,7 +7,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\User;
-use App\LoginMethod;
+use App\LoginType;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Validator;
 use Lcobucci\JWT\Parser;
@@ -106,7 +106,7 @@ class UserController extends Controller
             return $this->outputJSON(null,"Email already taken", 404);
         }
         $input['password'] = bcrypt($input['password']);
-//        $input['login_method_id'] = LoginMethod::getId('password');
+
         $user = User::create($input);
         $token = $user->createToken('token')->accessToken;
 
@@ -115,22 +115,24 @@ class UserController extends Controller
         return $this->outputJSON($token,"Successfully Registered");
     }
 
+    // WARNING: This function assumes the idp id has already been verified!!!
     public function registerIdp(string $idp, string $username, string $email = null) {
-        $methodId = LoginMethod::getId($idp);
-        $user = User::where(['username' => $username, 'login_method_id' => $methodId]);
-        if(!is_null($user)) {
-            // User already exists
-            return $user;
+        $idp = $data['idp'];
+        $idp_id = $data['idp_id'];
+        $email = $data['email'];
+
+        if(User::where('email', $email)->first() != null) {
+            return $this->outputJSON(null, "Email already taken", 404);
+        }
+        if(LoginType::where(['login_type' => $idp, 'login_id' => $idp_id])->first() != null) {
+            return $this->outputJSON(null, 'Idp ID already registered', responseCode 404);
         }
 
-        // Register a new user
-        $input['username'] = $username;
-        if(!is_null($email)) {
-            $input['email'] = $email;
-        }
-        $input['login_method_id'] = LoginMethod::getId($idp);
+        // Register new user
+        $user = User::create($data);
+        $login_type_data = ['user_id' => $user->id, 'login_type' => $idp, 'login_id' => $idp_id];
+        LoginType::create($login_type_data);
 
-        $user = User::create($input);
         return $user;
     }
 
@@ -232,7 +234,7 @@ class UserController extends Controller
             }
         } else {
             // Authenticated through 3rd party idp
-            $providerId = LoginMethod::getId($provider);
+            // $providerId = LoginMethod::getId($provider);
             if(!is_null($providerId)) {
                 $user = User::where(['provider_id' => $providerId, 'username' => $username])::first();
                 if(!is_null($user)) {
