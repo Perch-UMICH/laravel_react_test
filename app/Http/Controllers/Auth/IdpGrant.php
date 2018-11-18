@@ -121,6 +121,8 @@ class IdpGrant extends AbstractGrant
         if($idp === "google") {
             $client = new \Google_Client(['client_id' => env('GOOGLE_CLIENT_ID')]);
 
+            // If there's something wrong with the Google verification library
+            // you can also send an http request to verify tokens
 //            $curl = curl_init();
 //
 //            curl_setopt_array($curl, array(
@@ -187,12 +189,12 @@ class IdpGrant extends AbstractGrant
             }
         } else {
             // Authenticate existing user
-            $credentials = [
-                'username' => $username,
-                'email' => $email
-            ];
+            $user = LoginType::where(['login_type' => $idp, 'login_id' => $idp_id])->first()->user();
 
-            $user = User::where($credentials)->first();
+//            $credentials = [
+//                'username' => $username,
+//                'email' => $email
+//            ];
 
             if ($user instanceof User === false) {
                 $this->getEmitter()->emit(new RequestEvent(RequestEvent::USER_AUTHENTICATION_FAILED, $request));
