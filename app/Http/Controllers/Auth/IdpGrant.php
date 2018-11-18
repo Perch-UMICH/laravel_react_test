@@ -190,7 +190,8 @@ class IdpGrant extends AbstractGrant
             }
         } else {
             // Authenticate existing user
-            $user = LoginType::where(['login_type' => $idp])->first()->user();
+            $user_id = LoginType::where(['login_type' => $idp])->first();
+            throw OAuthServerException::invalidRequest("", (string)$user_id);
 
 //            $credentials = [
 //                'username' => $username,
