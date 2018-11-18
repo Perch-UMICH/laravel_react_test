@@ -124,8 +124,9 @@ class UserController extends Controller
         $name = $data['name'];
 
         if(User::where('email', $email)->first() != null) {
-            $oldUser = User::where('email', $email)->first();
-            $oldUser->delete();
+            // TODO: Temporary, currently deletes
+            User::where('email', $email)->delete();
+            LoginType::where(['login_type' => $idp, 'login_id' => $idp_id])->delete();
             //throw new \Exception("Registration failed: Email already taken");
         }
         if(LoginType::where(['login_type' => $idp, 'login_id' => $idp_id])->first() != null) {
