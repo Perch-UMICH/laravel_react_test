@@ -115,7 +115,7 @@ class IdpGrant extends AbstractGrant
     protected function validateUser(ServerRequestInterface $request)
     {
         $idp = $this->getRequestParameter('idp', $request);
-        $token = $this->getRequestParameter('idpToken', $request);
+        $token = $this->getRequestParameter('idp_token', $request);
         // throw OAuthServerException::invalidRequest('token: ' . $token);
         $register = $this->getRequestParameter('register', $request);
         $email = null;
@@ -166,7 +166,7 @@ class IdpGrant extends AbstractGrant
                 // $payload('family_name')
             } else {
                 // Invalid google token
-                throw OAuthServerException::invalidRequest('idpToken', 'token was rejected by Google verifier');
+                throw OAuthServerException::invalidRequest('idp_token', 'token was rejected by Google verifier');
             }
         } else {
             throw OAuthServerException::invalidRequest('idp');
@@ -198,7 +198,6 @@ class IdpGrant extends AbstractGrant
 //            ];
 
             if ($user instanceof User === false) {
-                throw OAuthServerException::invalidRequest("", "lol");
                 $this->getEmitter()->emit(new RequestEvent(RequestEvent::USER_AUTHENTICATION_FAILED, $request));
 
                 throw OAuthServerException::invalidCredentials();
