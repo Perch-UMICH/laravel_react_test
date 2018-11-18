@@ -177,8 +177,14 @@ class IdpGrant extends AbstractGrant
         if($register) {
             $uc = new UserController();
 
-            // Will return error if user already exists
-            $user = $uc->registerIdp(['idp' => $idp, 'idp_id' => $username, 'email' => $email, 'name' => $name]);
+            // Try registration
+            try {
+                $user = $uc->registerIdp(['idp' => $idp, 'idp_id' => $username, 'email' => $email, 'name' => $name]);
+            } catch (\Exception $e) {
+                // Registration failed
+                // Will fail if user already exists
+                throw OAuthServerException::invalidRequest("", $e->getMessage());
+            }
         } else {
             // Authenticate existing user
             $credentials = [
