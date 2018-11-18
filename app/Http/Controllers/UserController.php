@@ -124,14 +124,24 @@ class UserController extends Controller
         $name = $data['name'];
 
         if(User::where('email', $email)->first() != null) {
-            return "Registration failed: Email already taken";
+            throw new Exception("Registration failed: Email already taken");
         }
         if(LoginType::where(['login_type' => $idp, 'login_id' => $idp_id])->first() != null) {
-            return "Registration failed: Idp ID already registered";
+            throw new Exception("Registration failed: Idp ID already registered");
         }
 
+        // If either the user creation or the login info fails,
+        // process should fail and both entries should be deleted (if they exist)
         // Register new user
-        $user = User::create($data);
+        try {
+            $user = User::create($data);
+        } catch(Exception $e) {
+            throw new Exception("User creation failed.");
+        }
+        if(is_null($user)) {
+            throw new Exception("User creation failed.");
+        }
+
         $login_type_data = [
             'user_id' => $user->id,
             'login_type' => $idp,
@@ -140,10 +150,16 @@ class UserController extends Controller
             'name' => $name
         ];
         // Add the login info
-        LoginType::create($login_type_data);
-
-        // If either the user creation or the login info fails,
-        // process should fail and both entries should be deleted (if they exist)
+        try {
+            $loginType = LoginType::create($login_type_data);
+        } catch (Exception $e) {
+            $user->delete;
+            throw new Exception("LoginType creation failed.");
+        }
+        if(is_null($loginType)) {
+            $user->delete;
+            throw new Exception("LoginType creation failed.");
+        }
 
         return $user;
     }
