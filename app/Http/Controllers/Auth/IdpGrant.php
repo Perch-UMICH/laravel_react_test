@@ -197,6 +197,7 @@ class IdpGrant extends AbstractGrant
 //            ];
 
             if ($user instanceof User === false) {
+                throw OAuthServerException::internalServerError("test");
                 $this->getEmitter()->emit(new RequestEvent(RequestEvent::USER_AUTHENTICATION_FAILED, $request));
 
                 throw OAuthServerException::invalidCredentials();
