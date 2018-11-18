@@ -3,6 +3,7 @@
 namespace App\Controllers\Auth;
 
 use App\User;
+use App\LoginType;
 use App\Http\Controllers\UserController;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
