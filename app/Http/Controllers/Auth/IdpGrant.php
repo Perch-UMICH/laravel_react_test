@@ -40,12 +40,16 @@ class IdpGrant extends AbstractGrant
         $scopes = $this->validateScopes($this->getRequestParameter('scope', $request, $this->defaultScope));
         $user = $this->validateUser($request);
 
+        if(is_string($user)) {
+            // User validation failed
+            throw OAuthServerException::accessDenied("User could not be validated: " . $user);
+        }
+
         // Finalize the requested scopes
         $finalizedScopes = $this->scopeRepository->finalizeScopes($scopes, $this->getIdentifier(), $client, $user->getIdentifier());
 
         // Issue and persist new tokens
-        $accessToken = $user->createToken('token')->accessToken;
-        // $accessToken = $this->issueAccessToken($accessTokenTTL, $client, $user->getIdentifier(), $finalizedScopes);
+        $accessToken = $this->issueAccessToken($accessTokenTTL, $client, $user->getIdentifier(), $finalizedScopes);
 
         // Inject tokens into response
         $responseType->setAccessToken($accessToken);
