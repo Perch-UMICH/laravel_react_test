@@ -69,4 +69,9 @@ class User extends Authenticatable
         return $this->hasManyThrough('App\ProfilePicFileType', 'App\File');
     }
 
+    // Necessary for issuing tokens the Passport way
+    public function getIdentifier() {
+        return $this->id;
+    }
+
 }

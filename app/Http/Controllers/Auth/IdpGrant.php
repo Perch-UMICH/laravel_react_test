@@ -46,11 +46,10 @@ class IdpGrant extends AbstractGrant
         }
 
         // Finalize the requested scopes
-        //$finalizedScopes = $this->scopeRepository->finalizeScopes($scopes, $this->getIdentifier(), $client, $user->getIdentifier());
+        $finalizedScopes = $this->scopeRepository->finalizeScopes($scopes, $this->getIdentifier(), $client, $user->getIdentifier());
 
         // Issue and persist new tokens
-        $accessToken = $user->createToken('token')->accessToken;
-        //$accessToken = $this->issueAccessToken($accessTokenTTL, $client, $user->getIdentifier(), $finalizedScopes);
+        $accessToken = $this->issueAccessToken($accessTokenTTL, $client, $user->getIdentifier(), $finalizedScopes);
 
         // Inject tokens into response
         $responseType->setAccessToken($accessToken);
