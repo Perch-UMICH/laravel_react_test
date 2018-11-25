@@ -247,6 +247,8 @@ Specific tasks and responsibilities include:
                 // Normalize departments
                 $depts_in = explode(', ', $urop->dept);
                 foreach ($depts_in as $dept_in) {
+                    if ($dept_in == 'Inc.') continue;
+
                     $dept = Department::where('name',$dept_in)->first();
                     if ($dept == null && $dept_in != '') {
                         $dept = new Department();

@@ -25,8 +25,7 @@ class FileController extends Controller
 
     }
 
-    public function add_resume_to_user(Request $request) {
-        $user = $request->user();
+    public function add_resume_to_user(Request $request, User $user) {
 
         $request->validate([
             'file' => 'mimes:doc,pdf,docx,zip',
@@ -45,10 +44,12 @@ class FileController extends Controller
         if ($file->isValid()) {
             $path = Storage::disk('s3')->put('users/' . $user->id . '/doc', $file, 'public');
             $url = Storage::disk('s3')->url($path);
-            $file = new File(['path' => $path, 'url' => $url, 'user_id' => $user->id]);
-            $user->files()->save($file);
-            $type = new ResumeFileType(['current' => true, 'file_id' => $file->id]);
-            $file->resume_type()->save($type);
+
+            $file = new File(['path' => $path, 'url' => $url]);
+            $file->save();
+
+            $resume = new ResumeFileType(['current' => true, 'file_id' => $file->id, 'user_id' => $user->id]);
+            $resume->save();
 
             return $this->outputJSON($file, 'Resume added to user');
         }
@@ -57,35 +58,15 @@ class FileController extends Controller
         }
     }
 
-    public function get_resume(Request $request) {
-        $input = $request->all();
-        $u_id = $input['user_id'];
-        $user = User::find($u_id);
+    public function get_resume_from_user(Request $request, User $user) {
         $resume = $user->resume()->first();
-        $resume->file;
+        $file = $resume->file()->first();
 
-        return $this->outputJSON($resume, 'Retrieved user resume');
+        return $this->outputJSON($file, 'Retrieved user resume');
     }
 
-//    public function set_user_resume_to_current(Request $request) {
-//        $user = $request->user();
-//        $files = $user->files()->has('resume_type')->get();
-//
-//        $file_id = $request->get('file_id');
-//        foreach ($files as $f) {
-//            if ($f == $file_id) {
-//                $f->resume_type->current = true;
-//            }
-//            else {
-//                $f->resume_type->current = false;
-//            }
-//        }
-//
-//        return $this->outputJSON($files, 'Set resume to current');
-//    }
 
-    public function add_pic_to_user(Request $request) {
-        $user = $request->user();
+    public function add_pic_to_user(Request $request, User $user) {
         $input = $request->all();
 
         $request->validate([
@@ -95,8 +76,9 @@ class FileController extends Controller
         // Delete old propic
         $pic = $user->profile_pic()->first();
         if ($pic) {
-            Storage::disk('s3')->delete($pic->file->url);
-            $pic->delete();
+            $file = $pic->file;
+            Storage::disk('s3')->delete($file->path);
+            $file->delete();
         }
 
         $file = $request->file('file');
@@ -116,10 +98,11 @@ class FileController extends Controller
             $path = Storage::disk('s3')->put('users/' . $user->id . '/img', $file, 'public');
             $url = Storage::disk('s3')->url($path);
 
-            $file = new File(['path' => $path, 'url' => $url, 'user_id' => $user->id]);
-            $user->files()->save($file);
-            $type = new ProfilePicFileType(['current' => true, 'file_id' => $file->id]);
-            $file->resume_type()->save($type);
+            $file = new File(['path' => $path, 'url' => $url]);
+            $file->save();
+
+            $propic = new ProfilePicFileType(['current' => true, 'file_id' => $file->id, 'user_id' => $user->id]);
+            $propic->save();
 
             return $this->outputJSON($file, 'Profile pic added to user');
         }
@@ -128,28 +111,68 @@ class FileController extends Controller
         }
     }
 
-    public function get_pic(Request $request) {
-        $input = $request->all();
-        $u_id = $input['user_id'];
-        $user = User::find($u_id);
+    public function get_pic_from_user(Request $request, User $user) {
         $pic = $user->profile_pic()->first();
-        $pic->file;
+        $file = $pic->file()->first();
 
-        return $this->outputJSON($pic, 'Retrieved user profile pic');
+        return $this->outputJSON($file, 'Retrieved user profile pic');
     }
 
     public function edit_pic(Request $request) {
 
     }
 
-//    public function add_image_to_lab(Request $request, Lab $lab) {
-//        $user = $request->user();
-//        $path = Storage::disk('s3')->putFile('users/' . $lab->id . '/img', $request->file('file'));
-//
-//        $file = File::create(['path' => $path]);
-//
-//        $lab->files()->syncWithoutDetaching($file->id);
-//
-//        return $this->outputJSON($file, 'File added to user');
-//    }
+
+    public function add_pic_to_lab(Request $request, Lab $lab) {
+        $input = $request->all();
+
+        $request->validate([
+            'file' => 'image',
+        ]);
+
+        // Delete old lab pic
+        $pic = $lab->lab_pic()->first();
+        if ($pic) {
+            $file = $pic->file;
+            Storage::disk('s3')->delete($file->path);
+            $file->delete();
+        }
+
+        $file = $request->file('file');
+
+        if ($file->isValid()) {
+            // Crop
+            $img = Image::make($file->getRealPath());
+            $size = min($img->width(), $img->height());
+            $w = $size / $input['scale'];
+            $h = $size / $input['scale'];
+            $x = ($input['x'] * $img->width()) - (0.5)*($w);
+            $y = ($input['y'] * $img->height()) - (0.5)*($h);
+            $img->crop(intval($w), intval($h), intval($x), intval($y));
+            $img->save();
+
+            // Save
+            $path = Storage::disk('s3')->put('labs/' . $lab->id . '/img', $file, 'public');
+            $url = Storage::disk('s3')->url($path);
+
+
+            $file = new File(['path' => $path, 'url' => $url]);
+            $file->save();
+
+            $labpic = new LabPicFileType(['file_id' => $file->id, 'lab_id' => $lab->id]);
+            $labpic->save();
+            return $this->outputJSON($file, 'Lab pic added to lab');
+        }
+        else {
+            return $this->outputJSON(null, 'Error: invalid file', 401);
+        }
+    }
+
+    public function get_pic_from_lab(Request $request, Lab $lab) {
+        $pic = $lab->lab_pic()->first();
+        $file = $pic->file()->first();
+
+        return $this->outputJSON($file, 'Retrieved lab pic');
+    }
+
 }

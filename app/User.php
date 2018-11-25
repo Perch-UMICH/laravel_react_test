@@ -55,18 +55,14 @@ class User extends Authenticatable
         return $this->belongsTo('App\LoginMethod', 'login_method_id');
     }
 
-    public function files() {
-        return $this->hasMany('App\File');
-    }
-
     public function resume()
     {
-        return $this->hasManyThrough('App\ResumeFileType', 'App\File');
+        return $this->hasMany('App\ResumeFileType');
     }
 
     public function profile_pic()
     {
-        return $this->hasManyThrough('App\ProfilePicFileType', 'App\File');
+        return $this->hasMany('App\ProfilePicFileType');
     }
 
     // Necessary for issuing tokens the Passport way

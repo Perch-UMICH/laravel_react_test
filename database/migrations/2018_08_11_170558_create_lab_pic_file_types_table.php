@@ -17,12 +17,14 @@ class CreateLabPicFileTypesTable extends Migration
             $table->increments('id');
 
             $table->integer('file_id')->unsigned()->unique()->index();
-            $table->foreign('file_id')->references('id')->on('files')->onDelete('cascade');
-
             $table->integer('lab_id')->unsigned()->unique()->index();
-            $table->foreign('lab_id')->references('id')->on('labs')->onDelete('cascade');
 
             $table->timestamps();
+        });
+
+        Schema::table('lab_pic_file_types', function (Blueprint $table) {
+            $table->foreign('file_id')->references('id')->on('files')->onDelete('cascade');
+            $table->foreign('lab_id')->references('id')->on('labs')->onDelete('cascade');
         });
     }
 

@@ -71,8 +71,8 @@ Route::group(['middleware' => 'auth:api'], function(){
     // File upload
     Route::post('users/{user}/profile_pic', 'FileController@add_pic_to_user');
     Route::post('users/{user}/resume', 'FileController@add_resume_to_user');
-    Route::put('users/{user}/profile_pic', 'FileController@get_pic');
-    Route::put('users/{user}/resume', 'FileController@get_resume');
+    Route::get('users/{user}/profile_pic', 'FileController@get_pic_from_user');
+    Route::get('users/{user}/resume', 'FileController@get_resume_from_user');
 
     // Lab edits
     // MUST BE LOGGED IN + BE LAB OWNER
@@ -92,17 +92,14 @@ Route::group(['middleware' => 'auth:api'], function(){
         Route::post('labs/{lab}/tags/sync', 'LabController@sync_tags');
         Route::put('labs/{lab}/tags', 'LabController@remove_tag');
 
-        Route::get('labs/{lab}/preferences', 'LabController@preferences');
-        Route::post('labs/{lab}/preferences', 'LabController@add_preference');
-        Route::put('labs/{lab}/preferences', 'LabController@remove_preference');
-
         Route::post('labs/{lab}/positions', 'LabController@create_position'); // create for lab
         Route::post('labs/{lab}/positions/{position}/update', 'LabController@update_position'); // create for lab
         Route::post('labs/{lab}/positions/{position}/delete', 'LabController@delete_position'); // delete (also deletes application)
         Route::get('labs/{lab}/positions/{position}/responses', 'LabController@position_application_responses'); // Get all responses to an application
 
-        //Route::post('labs/{lab}/applications', 'LabController@create_application');
-        //Route::post('labs/{lab}/applications/update', 'LabController@update_application');
+        Route::get('labs/{lab}/files/lab_pic', 'FileController@get_pic_from_lab');
+        //Route::get('labs/{lab}/files/lab_pic', 'FileController@get_lab_docs');
+        Route::post('labs/{lab}/files/lab_pic', 'FileController@add_pic_to_lab');
     });
 
     // Student creation

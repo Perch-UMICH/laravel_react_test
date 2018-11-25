@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class ProfilePicFileType extends Model
 {
     protected $fillable = [
-        'current',
+        'current', 'user_id', 'file_id',
     ];
 
     public function user() {
