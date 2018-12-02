@@ -295,6 +295,7 @@ class UserController extends Controller
 
     public function create_event(Request $request) {
         $user = $request->user();
+        return $this->outputJSON($user, 'Event created');
         $datetime_start = new \DateTime($request->start());
         $datetime_end = new \DateTime($request->end());
         $event = Event::create([
