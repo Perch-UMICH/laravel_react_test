@@ -283,8 +283,8 @@ class UserController extends Controller
         $count = 0;
         $events = [];
         foreach ($user->events as $event) {
-            $invitees = $event->pivot->user;
-            $events[$count] = ['event' => $event, 'invitees' => $invitees];
+            //$invitees = $event->pivot->user;
+            $events[$count] = ['event' => $event/*, 'invitees' => $invitees*/];
             $count++;
         }
         if(empty($events)) {
