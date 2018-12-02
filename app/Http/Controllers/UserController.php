@@ -279,7 +279,6 @@ class UserController extends Controller
     // Events
     public function get_events(Request $request) {
         $user = $request->user();
-        return $this->outputJSON($user, "User's events retrieved.");
         $count = 0;
         $events = [];
         foreach ($user->events as $event) {
@@ -290,9 +289,10 @@ class UserController extends Controller
         return $this->outputJSON($events, "User's events retrieved.");
     }
 
-    public function create_event(User $user, string $start, string $end) {
-        $datetime_start = new \DateTime($start);
-        $datetime_end = new \DateTime($end);
+    public function create_event(Request $request) {
+        $user = $request->user();
+        $datetime_start = new \DateTime($request->start());
+        $datetime_end = new \DateTime($request->end());
         $event = Event::create([
             'owner_user_id' => $user->id,
             'start' => $datetime_start,
