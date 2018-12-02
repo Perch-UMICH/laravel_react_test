@@ -20,6 +20,11 @@ class CreateUniversitiesTable extends Migration
 
             $table->timestamps();
         });
+
+//        Schema::table('users', function (Blueprint $table) {
+//            $table->integer('university_id')->unsigned()->nullable();
+//            $table->foreign('university_id')->references('id')->on('universities')->onDelete('cascade');
+//        });
     }
 
     /**
