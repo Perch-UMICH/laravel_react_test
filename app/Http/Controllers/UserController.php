@@ -7,6 +7,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\User;
+use App\Event;
 use App\LoginType;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Validator;
@@ -254,7 +255,7 @@ class UserController extends Controller
             $labs[$count] = ['lab' => $lab, 'role' => $role];
             $count++;
         }
-        return $this->outputJSON($labs,"User's labs retrieved");
+        return $this->outputJSON($labs,"User's labs retrieved.");
 
     }
 
@@ -283,5 +284,35 @@ class UserController extends Controller
             }
         }
         return null;
+    }
+
+    // Events
+    public function get_events(Request $request) {
+        $user = $request->user();
+        $count = 0;
+        $events = [];
+        foreach ($user->events as $event) {
+            //$invitees = $event->pivot->user;
+            $events[$count] = ['event' => $event/*, 'invitees' => $invitees*/];
+            $count++;
+        }
+        if(empty($events)) {
+            return $this->outputJSON(null, "User has no events.");
+        } else {
+            return $this->outputJSON($events, "User's events retrieved.");
+        }
+    }
+
+    public function create_event(Request $request) {
+        $user = $request->user();
+        $datetime_start = \DateTime::createFromFormat("Y-m-d H:i:s", $request->get('start'));
+        $datetime_end = \DateTime::createFromFormat("Y-m-d H:i:s", $request->get('end'));
+        $event = Event::create([
+            'owner_user_id' => $user->id,
+            'name' => $request->get('name'),
+            'start' => $datetime_start,
+            'end' => $datetime_end,
+        ]);
+        return $this->outputJSON($user, 'Event created');
     }
 }
