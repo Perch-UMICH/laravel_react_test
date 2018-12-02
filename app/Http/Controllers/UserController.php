@@ -300,6 +300,7 @@ class UserController extends Controller
         $datetime_end = \DateTime::createFromFormat("Y-m-d H:i:s", $request->get('end'));
         $event = Event::create([
             'owner_user_id' => $user->id,
+            'name' => $request->get('name'),
             'start' => $datetime_start,
             'end' => $datetime_end,
         ]);
