@@ -69,10 +69,13 @@ Route::group(['middleware' => 'auth:api'], function(){
     Route::post('tags/match','TagController@search_matching_tags');
 
     // File upload
-    Route::post('users/{user}/profile_pic', 'FileController@add_pic_to_user');
-    Route::post('users/{user}/resume', 'FileController@add_resume_to_user');
-    Route::get('users/{user}/profile_pic', 'FileController@get_pic_from_user');
-    Route::get('users/{user}/resume', 'FileController@get_resume_from_user');
+    Route::post('users/{user}/files/profile_pic', 'FileController@add_pic_to_user');
+    Route::get('users/{user}/files/profile_pic', 'FileController@get_pic_from_user');
+    Route::delete('users/{user}/files/profile_pic', 'FileController@delete_user_pic');
+
+    Route::post('users/{user}/files/resume', 'FileController@add_resume_to_user');
+    Route::get('users/{user}/files/resume', 'FileController@get_resume_from_user');
+    Route::delete('users/{user}/files/resume', 'FileController@delete_user_resume');
 
     // Event system
     Route::get('users/{user}/events', 'UserController@get_events');
@@ -108,8 +111,8 @@ Route::group(['middleware' => 'auth:api'], function(){
         Route::get('labs/{lab}/positions/{position}/responses', 'LabController@position_application_responses'); // Get all responses to an application
 
         Route::get('labs/{lab}/files/lab_pic', 'FileController@get_pic_from_lab');
-        //Route::get('labs/{lab}/files/lab_pic', 'FileController@get_lab_docs');
         Route::post('labs/{lab}/files/lab_pic', 'FileController@add_pic_to_lab');
+        Route::delete('labs/{lab}/files/lab_pic', 'FileController@delete_lab_pic');
     });
 
     // Student creation

@@ -21,10 +21,6 @@ class FileController extends Controller
     // resume
     // labpic
 
-    public function create_filename() {
-
-    }
-
     public function add_resume_to_user(Request $request, User $user) {
 
         $request->validate([
@@ -63,6 +59,17 @@ class FileController extends Controller
         $file = $resume->file()->first();
 
         return $this->outputJSON($file, 'Retrieved user resume');
+    }
+
+    public function delete_user_resume(Request $request, User $user) {
+        $pic = $user->resume()->first();
+        $file = $pic->file()->first();
+
+        Storage::disk('s3')->delete($file->path);
+        $file->delete();
+        // Should cascade to delete the resume object
+
+        return $this->outputJSON(null, 'Deleted user resume');
     }
 
 
@@ -122,6 +129,17 @@ class FileController extends Controller
 
     }
 
+    public function delete_user_pic(Request $request, User $user) {
+        $pic = $user->profile_pic()->first();
+        $file = $pic->file()->first();
+
+        Storage::disk('s3')->delete($file->path);
+        $file->delete();
+        // Should cascade to delete the profile_pic object
+
+        return $this->outputJSON(null, 'Deleted user profile pic');
+    }
+
 
     public function add_pic_to_lab(Request $request, Lab $lab) {
         $input = $request->all();
@@ -173,6 +191,17 @@ class FileController extends Controller
         $file = $pic->file()->first();
 
         return $this->outputJSON($file, 'Retrieved lab pic');
+    }
+
+    public function delete_lab_pic(Request $request, Lab $lab) {
+        $pic = $lab->lab_pic()->first();
+        $file = $pic->file()->first();
+
+        Storage::disk('s3')->delete($file->path);
+        $file->delete();
+        // Should cascade to delete the lab_pic object
+
+        return $this->outputJSON(null, 'Deleted lab pic');
     }
 
 }
