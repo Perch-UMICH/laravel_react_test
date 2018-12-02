@@ -286,10 +286,10 @@ class UserController extends Controller
             $events[$count] = ['event' => $event, 'invitees' => $invitees];
             $count++;
         }
-        if(count($events) > 0) {
-            return $this->outputJSON($events, "User's events retrieved.");
-        } else {
+        if(empty($events)) {
             return $this->outputJSON(, "User has no events.");
+        } else {
+            return $this->outputJSON($events, "User's events retrieved.");
         }
     }
 
