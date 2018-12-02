@@ -74,6 +74,16 @@ Route::group(['middleware' => 'auth:api'], function(){
     Route::get('users/{user}/profile_pic', 'FileController@get_pic_from_user');
     Route::get('users/{user}/resume', 'FileController@get_resume_from_user');
 
+    // Event system
+    Route::get('users/{user}/events', 'UserController@get_events');
+    Route::post('users/{user}/events', 'UserController@create_event');
+
+    Route::group(['middleware' => 'event_owner'], function() {
+        Route::delete('events/{event}', 'EventController@delete');
+        Route::post('events/{event}/invitees', 'EventController@add_invitees');
+        Route::delete('events/{event}/invitees', 'EventController@delete_invitees');
+    });
+
     // Lab edits
     // MUST BE LOGGED IN + BE LAB OWNER
     Route::group(['middleware' => 'lab_owner'], function() {

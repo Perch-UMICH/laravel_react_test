@@ -46,6 +46,10 @@ class User extends Authenticatable
     public function labs() {
         return $this->belongsToMany('App\Lab', 'lab_user','user_id', 'lab_id')->withPivot('role');
     }
+
+    public function events() {
+        return $this->hasMany('App\Event');
+    }
   
     public function university() {
         return $this->belongsToMany('App\University','university_user');
@@ -53,6 +57,10 @@ class User extends Authenticatable
 
     public function loginMethod() {
         return $this->belongsTo('App\LoginMethod', 'login_method_id');
+    }
+
+    public function eventsInvitedTo() {
+        return $this->belongsToMany('App\Event');
     }
 
     public function resume()
@@ -69,5 +77,4 @@ class User extends Authenticatable
     public function getIdentifier() {
         return $this->id;
     }
-
 }

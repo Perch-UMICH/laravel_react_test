@@ -245,7 +245,7 @@ class UserController extends Controller
             $labs[$count] = ['lab' => $lab, 'role' => $role];
             $count++;
         }
-        return $this->outputJSON($labs,"User's labs retrieved");
+        return $this->outputJSON($labs,"User's labs retrieved.");
 
     }
 
@@ -274,5 +274,17 @@ class UserController extends Controller
             }
         }
         return null;
+    }
+
+    // Events
+    public function get_events(User $user) {
+        $count = 0;
+        $events = [];
+        foreach ($user->events as $event) {
+            $invitees = $event->pivot->user;
+            $events[$count] = ['event' => $event, 'invitees' => $invitees];
+            $count++;
+        }
+        return $this->outputJSON($events, "User's events retrieved.");
     }
 }
