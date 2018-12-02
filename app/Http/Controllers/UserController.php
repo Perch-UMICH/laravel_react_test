@@ -278,6 +278,7 @@ class UserController extends Controller
 
     // Events
     public function get_events(User $user) {
+        return $this->outputJSON($events, "User's events retrieved.");
         $count = 0;
         $events = [];
         foreach ($user->events as $event) {
