@@ -19,10 +19,10 @@ class EventOwner
         $user = $request->user();
         if ($user->is_admin) return $next($request);
 
-        // Grab lab id
+        // Grab event id
         $event_id = $request->route()->parameter('event')->id;
 
-        // Check if user is an admin member of this lab
+        // Check if user owns lab
         $event = $user->events()->where('id', $event_id)->first();
         if ($event == null) {
             return response()->json(['message' => 'Access denied: user does not own event.'], 401);
