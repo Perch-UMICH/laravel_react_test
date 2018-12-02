@@ -54,16 +54,22 @@ class FileController extends Controller
         }
     }
 
+    public function edit_user_resume(Request $request, User $user) {
+        //
+    }
+
     public function get_resume_from_user(Request $request, User $user) {
         $resume = $user->resume()->first();
-        $file = $resume->file()->first();
+        if ($pic) $file = $resume->file()->first();
+        else $file = null;
 
         return $this->outputJSON($file, 'Retrieved user resume');
     }
 
     public function delete_user_resume(Request $request, User $user) {
-        $pic = $user->resume()->first();
-        $file = $pic->file()->first();
+        $res = $user->resume()->first();
+        if (!$res) return $this->outputJSON(null, 'Error: user does not have a profile pic');
+        $file = $res->file()->first();
 
         Storage::disk('s3')->delete($file->path);
         $file->delete();
@@ -118,19 +124,39 @@ class FileController extends Controller
         }
     }
 
+    // TODO Note working (can't edit while in s3 storage)
+    public function edit_user_pic(Request $request, User $user) {
+        $input = $request->all();
+
+        $pic = $user->profile_pic()->first();
+        if (!$pic) return $this->outputJSON(null, 'Error: user does not have a profile pic');
+        $file = $pic->file()->first();
+        $f_string = Storage::disk('s3')->get($file->path);
+
+        // Crop
+        $img = Image::make($f_string);
+        $size = min($img->width(), $img->height());
+        $w = $size / $input['scale'];
+        $h = $size / $input['scale'];
+        $x = ($input['x'] * $img->width()) - (0.5)*($w);
+        $y = ($input['y'] * $img->height()) - (0.5)*($h);
+        $img->crop(intval($w), intval($h), intval($x), intval($y));
+        $img->save();
+
+        return $this->outputJSON($file, 'Updated user profile pic');
+    }
+
     public function get_pic_from_user(Request $request, User $user) {
         $pic = $user->profile_pic()->first();
-        $file = $pic->file()->first();
+        if ($pic) $file = $pic->file()->first();
+        else $file = null;
 
         return $this->outputJSON($file, 'Retrieved user profile pic');
     }
 
-    public function edit_pic(Request $request) {
-
-    }
-
     public function delete_user_pic(Request $request, User $user) {
         $pic = $user->profile_pic()->first();
+        if (!$pic) return $this->outputJSON(null, 'Error: user does not have a profile pic');
         $file = $pic->file()->first();
 
         Storage::disk('s3')->delete($file->path);
@@ -186,9 +212,14 @@ class FileController extends Controller
         }
     }
 
+    public function edit_lab_pic(Request $request, User $user) {
+        //
+    }
+
     public function get_pic_from_lab(Request $request, Lab $lab) {
         $pic = $lab->lab_pic()->first();
-        $file = $pic->file()->first();
+        if ($pic) $file = $pic->file()->first();
+        else $file = null;
 
         return $this->outputJSON($file, 'Retrieved lab pic');
     }

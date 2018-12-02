@@ -70,10 +70,12 @@ Route::group(['middleware' => 'auth:api'], function(){
 
     // File upload
     Route::post('users/{user}/files/profile_pic', 'FileController@add_pic_to_user');
+    Route::post('users/{user}/files/profile_pic/edit', 'FileController@edit_user_pic');
     Route::get('users/{user}/files/profile_pic', 'FileController@get_pic_from_user');
     Route::delete('users/{user}/files/profile_pic', 'FileController@delete_user_pic');
 
     Route::post('users/{user}/files/resume', 'FileController@add_resume_to_user');
+    Route::post('users/{user}/files/resume/edit', 'FileController@edit_user_resume');
     Route::get('users/{user}/files/resume', 'FileController@get_resume_from_user');
     Route::delete('users/{user}/files/resume', 'FileController@delete_user_resume');
 
@@ -102,6 +104,7 @@ Route::group(['middleware' => 'auth:api'], function(){
 
         Route::get('labs/{lab}/files/lab_pic', 'FileController@get_pic_from_lab');
         Route::post('labs/{lab}/files/lab_pic', 'FileController@add_pic_to_lab');
+        Route::post('labs/{lab}/files/lab_pic/edit', 'FileController@edit_lab_pic');
         Route::delete('labs/{lab}/files/lab_pic', 'FileController@delete_lab_pic');
     });
 

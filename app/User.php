@@ -48,7 +48,7 @@ class User extends Authenticatable
     }
   
     public function university() {
-        return $this->belongsToMany('App\University','university_user');
+        return $this->belongsTo('App\University');
     }
 
     public function loginMethod() {

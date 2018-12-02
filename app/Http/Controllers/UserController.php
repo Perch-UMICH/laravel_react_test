@@ -112,6 +112,15 @@ class UserController extends Controller
 
         Auth::attempt(['email' => request('email'), 'password' => request('password')]);
 
+        // Other info
+        $input = $request->all();
+        if ($request->has('student')) {
+            // student
+        }
+        else if ($request->has('faculty')) {
+            // faculty
+        }
+
         return $this->outputJSON($token,"Successfully Registered");
     }
 

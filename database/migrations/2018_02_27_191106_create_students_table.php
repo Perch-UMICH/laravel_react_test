@@ -24,6 +24,10 @@ class CreateStudentsTable extends Migration
             $table->string('contact_email')->nullable();
             $table->string('contact_phone')->nullable();
 
+            // TEMP
+            $table->string('year')->nullable();
+            $table->string('major')->nullable();
+
             $table->text('bio')->nullable();
 //            $table->string('major')->nullable(); // normalize
 //            $table->double('gpa')->nullable();

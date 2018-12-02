@@ -22,15 +22,17 @@ class CreateFacultiesTable extends Migration
             $table->string('first_name')->nullable();
             $table->string('last_name')->nullable();
 
+            // TEMP
             $table->string('contact_email')->nullable();
             $table->string('contact_phone')->nullable();
+
+            $table->string('title')->nullable();
+            $table->string('department')->nullable();
 
             // Add department association
             // University positions
             // Honors, awards
             // Education
-
-            $table->string('title')->nullable();
 
             $table->timestamps();
         });

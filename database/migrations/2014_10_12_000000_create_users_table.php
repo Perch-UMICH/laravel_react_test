@@ -22,6 +22,9 @@ class CreateUsersTable extends Migration
             $table->boolean('is_student')->nullable();
             $table->boolean('is_faculty')->nullable();
 
+            $table->integer('university_id')->unsigned()->nullable();
+            $table->foreign('university_id')->references('id')->on('universities')->onDelete('cascade');
+
             $table->boolean('is_admin')->nullable();
             $table->rememberToken();
             $table->timestamps();
