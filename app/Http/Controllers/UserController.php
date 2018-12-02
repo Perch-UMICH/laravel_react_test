@@ -287,4 +287,15 @@ class UserController extends Controller
         }
         return $this->outputJSON($events, "User's events retrieved.");
     }
+
+    public function create_event(User $user, string $start, string $end) {
+        $datetime_start = new \DateTime($start);
+        $datetime_end = new \DateTime($end);
+        $event = Event::create([
+            'owner_user_id' => $user->id,
+            'start' => $datetime_start,
+            'end' => $datetime_end,
+        ]);
+        return $this->outputJSON($user, 'Event created');
+    }
 }
