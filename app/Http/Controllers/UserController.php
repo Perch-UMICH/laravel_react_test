@@ -3,7 +3,6 @@
 
 namespace App\Http\Controllers;
 
-
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\User;
@@ -13,6 +12,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Validator;
 use Lcobucci\JWT\Parser;
 use App\Controllers\Auth\IdpGrant;
+
+use App\Student;
+use App\Faculty;
 
 class UserController extends Controller
 {
@@ -114,12 +116,25 @@ class UserController extends Controller
         Auth::attempt(['email' => request('email'), 'password' => request('password')]);
 
         // Other info
-        $input = $request->all();
+
         if ($request->has('student')) {
             // student
+            $student = new Student();
+            $student->first_name = $input['student']['first_name'];
+            $student->last_name = $input['student']['last_name'];
+            $student->year = $input['student']['year'];
+            $student->major = $input['student']['major'];
+            $user->student()->save($student);
+
         }
         else if ($request->has('faculty')) {
             // faculty
+            $faculty = new Faculty();
+            $faculty->first_name = $input['faculty']['first_name'];
+            $faculty->last_name = $input['faculty']['last_name'];
+            $faculty->title = $input['faculty']['title'];
+            $faculty->department = $input['faculty']['department'];
+            $user->faculty()->save($faculty);
         }
 
         return $this->outputJSON($token,"Successfully Registered");
