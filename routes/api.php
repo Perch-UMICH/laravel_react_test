@@ -45,6 +45,7 @@ Route::group(['middleware' => 'auth:api'], function(){
     Route::post('logout', 'UserController@logout');
 
     // User edits
+    Route::get('user', 'UserController@getSelf');
     Route::put('users/{user}', 'UserController@update');
     Route::delete('users/{user}', 'UserController@delete');
 

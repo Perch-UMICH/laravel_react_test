@@ -30,6 +30,10 @@ class UserController extends Controller
         return $this->outputJSON($user, "User retrieved");
     }
 
+    public function getSelf(Request $request) {
+        $user = $request->user();
+        return $this->outputJSON($user, "Self user retrieved.");
+    }
 
     /**
      * Login api
