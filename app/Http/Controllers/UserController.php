@@ -117,25 +117,25 @@ class UserController extends Controller
 
         // Other info
 
-        if ($request->has('student')) {
-            // student
-            $student = new Student();
-            $student->first_name = $input['student']['first_name'];
-            $student->last_name = $input['student']['last_name'];
-            $student->year = $input['student']['year'];
-            $student->major = $input['student']['major'];
-            $user->student()->save($student);
-
-        }
-        else if ($request->has('faculty')) {
-            // faculty
-            $faculty = new Faculty();
-            $faculty->first_name = $input['faculty']['first_name'];
-            $faculty->last_name = $input['faculty']['last_name'];
-            $faculty->title = $input['faculty']['title'];
-            $faculty->department = $input['faculty']['department'];
-            $user->faculty()->save($faculty);
-        }
+//        if ($request->has('student')) {
+//            // student
+//            $student = new Student();
+//            $student->first_name = $input['student']['first_name'];
+//            $student->last_name = $input['student']['last_name'];
+//            $student->year = $input['student']['year'];
+//            $student->major = $input['student']['major'];
+//            $user->student()->save($student);
+//
+//        }
+//        else if ($request->has('faculty')) {
+//            // faculty
+//            $faculty = new Faculty();
+//            $faculty->first_name = $input['faculty']['first_name'];
+//            $faculty->last_name = $input['faculty']['last_name'];
+//            $faculty->title = $input['faculty']['title'];
+//            $faculty->department = $input['faculty']['department'];
+//            $user->faculty()->save($faculty);
+//        }
 
         return $this->outputJSON($token,"Successfully Registered");
     }

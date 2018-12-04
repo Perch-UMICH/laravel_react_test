@@ -26,7 +26,7 @@ class TagController extends Controller
      */
     public function store(Request $request)
     {
-        $tag = Tag::where('name', $request['name']);
+        $tag = Tag::where('name', $request['name'])->first();
         if ($tag) {
             return $this->outputJSON($tag, 'Error: tag of this name already exists');
         }

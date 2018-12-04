@@ -26,7 +26,7 @@ class SkillController extends Controller
      */
     public function store(Request $request)
     {
-        $skill = Skill::where('name', $request['name']);
+        $skill = Skill::where('name', $request['name'])->first();
         if ($skill) {
             return $this->outputJSON($skill, 'Error: skill of this name already exists');
         }
